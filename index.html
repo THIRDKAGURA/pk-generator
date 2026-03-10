@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THIRD KAGURA — PK Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface2: #1a1a1a;
+    --border: #2a2a2a;
+    --text: #e8e8e8;
+    --text-dim: #888;
+    --accent: #c4a265;
+    --accent-dim: #8a7245;
+    --danger: #e54;
+    --success: #4a4;
+  }
+
+  html { font-size: 15px; }
+  body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1.2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .app-header .brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .app-header .brand .kagura-mark {
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+  }
+  .app-header .brand .subtitle {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+  }
+  .btn-generate {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 0.65rem 1.8rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-generate:hover { background: #d4b275; transform: translateY(-1px); }
+  .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ── LAYOUT ── */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 60px);
+  }
+  @media (max-width: 1100px) {
+    .app-layout { grid-template-columns: 1fr; }
+    .preview-panel { display: none; }
+  }
+
+  /* ── FORM PANEL ── */
+  .form-panel {
+    padding: 2rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 60px);
+  }
+  .form-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .form-section h2 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .field { margin-bottom: 1rem; }
+  .field label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 0.35rem;
+  }
+  .field input, .field textarea, .field select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.6rem 0.8rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .field small { color: var(--text-dim); font-size: 0.72rem; }
+
+  .genre-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.3rem; }
+  .genre-chip {
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .genre-chip.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Timeline entries */
+  .timeline-entries { display: flex; flex-direction: column; gap: 0.6rem; }
+  .timeline-entry {
+    display: grid;
+    grid-template-columns: 80px 1fr 32px;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .timeline-entry input { font-size: 0.85rem; }
+  .btn-icon {
+    width: 32px; height: 32px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.15s;
+  }
+  .btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-icon.danger:hover { border-color: var(--danger); color: var(--danger); }
+  .btn-add {
+    background: transparent;
+    border: 1px dashed var(--border);
+    color: var(--text-dim);
+    padding: 0.5rem;
+    width: 100%;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.8rem;
+    margin-top: 0.4rem;
+    transition: all 0.15s;
+  }
+  .btn-add:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Photo upload */
+  .photo-upload {
+    width: 100%;
+    aspect-ratio: 3/2;
+    border: 2px dashed var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .photo-upload:hover { border-color: var(--accent); }
+  .photo-upload img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0; left: 0;
+  }
+  .photo-upload .placeholder {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+  .photo-upload .placeholder span { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
+  .sub-photos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+  }
+  .sub-photos .photo-upload { aspect-ratio: 1; }
+
+  /* ── PREVIEW PANEL ── */
+  .preview-panel {
+    background: #1e1e1e;
+    border-left: 1px solid var(--border);
+    padding: 2rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .preview-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    align-self: flex-start;
+  }
+
+  /* ── PRESS KIT PREVIEW (also used for PDF) ── */
+  #pk-preview {
+    width: 595px;
+    min-height: 842px;
+    background: #000;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+  .pk-hero {
+    width: 100%;
+    height: 360px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+  .pk-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0; left: 0;
+  }
+  .pk-hero-overlay {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  }
+  .pk-artist-name {
+    font-size: 2.4rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+  }
+  .pk-tagline {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-top: 0.3rem;
+  }
+
+  .pk-body { padding: 1.8rem 2rem; }
+
+  .pk-section {
+    margin-bottom: 1.5rem;
+  }
+  .pk-section-title {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #333;
+  }
+  .pk-bio {
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: #ccc;
+  }
+
+  .pk-timeline-item {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.78rem;
+  }
+  .pk-timeline-year {
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .pk-timeline-event { color: #ccc; }
+
+  .pk-awards-item {
+    font-size: 0.78rem;
+    color: #ccc;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .pk-releases-item {
+    font-size: 0.78rem;
+    color: #ccc;
+    padding: 0.3rem 0;
+  }
+
+  .pk-contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .pk-contact-item {
+    font-size: 0.72rem;
+  }
+  .pk-contact-label {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #666;
+    font-size: 0.6rem;
+  }
+  .pk-contact-value {
+    color: #ccc;
+    word-break: break-all;
+  }
+
+  .pk-footer {
+    padding: 1rem 2rem;
+    border-top: 1px solid #111;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.6rem;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .pk-footer .kagura-logo {
+    color: #1c1c1c;
+    font-weight: 700;
+  }
+
+  /* Sub photos in PK */
+  .pk-photos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 1rem;
+  }
+  .pk-photos-grid img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  /* Loading overlay */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .loading-overlay.active { display: flex; }
+  .loading-spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+  }
+
+  /* Sample data button */
+  .btn-sample {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 0.45rem 1rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+  .btn-sample:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="brand">
+    <div style="display:flex; align-items:center; gap:0.8rem;">
+      <img src="https://lh3.googleusercontent.com/d/1snrBritrC5F_EZrHR0kD4gVsRXBOWnjF" alt="THIRD KAGURA" style="height:40px; width:auto; object-fit:contain;">
+      <div class="subtitle">PK Generator</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:0.6rem; align-items:center;">
+    <button class="btn-sample" onclick="loadSampleData()">LOAD SAMPLE DATA</button>
+    <button class="btn-generate" onclick="generatePDF()">GENERATE PDF</button>
+  </div>
+</header>
+
+<!-- MAIN LAYOUT -->
+<div class="app-layout">
+
+  <!-- ═══ FORM PANEL ═══ -->
+  <div class="form-panel">
+
+    <!-- BASIC INFO -->
+    <div class="form-section">
+      <h2>Basic Information</h2>
+      <div class="field">
+        <label>DJ / Artist Name *</label>
+        <input type="text" id="artistName" placeholder="Your artist name" oninput="updatePreview()">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Real Name (optional)</label>
+          <input type="text" id="realName" placeholder="Your real name" oninput="updatePreview()">
+        </div>
+        <div class="field">
+          <label>Active Since</label>
+          <input type="text" id="activeSince" placeholder="Year started" oninput="updatePreview()">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Country of Origin</label>
+          <input type="text" id="country" placeholder="Your country" oninput="updatePreview()">
+        </div>
+        <div class="field">
+          <label>Based In</label>
+          <input type="text" id="basedIn" placeholder="Your city" oninput="updatePreview()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Genre(s)</label>
+        <div class="genre-chips" id="genreChips">
+          <button class="genre-chip" data-genre="Hip Hop" onclick="toggleGenre(this)">Hip Hop</button>
+          <button class="genre-chip" data-genre="House" onclick="toggleGenre(this)">House</button>
+          <button class="genre-chip" data-genre="Afro House" onclick="toggleGenre(this)">Afro House</button>
+          <button class="genre-chip" data-genre="Techno" onclick="toggleGenre(this)">Techno</button>
+          <button class="genre-chip" data-genre="Drum & Bass" onclick="toggleGenre(this)">Drum & Bass</button>
+          <button class="genre-chip" data-genre="Disco / Funk" onclick="toggleGenre(this)">Disco / Funk</button>
+          <button class="genre-chip" data-genre="R&B / Soul" onclick="toggleGenre(this)">R&B / Soul</button>
+          <button class="genre-chip" data-genre="Reggae / Dancehall" onclick="toggleGenre(this)">Reggae / Dancehall</button>
+          <button class="genre-chip" data-genre="Open Format" onclick="toggleGenre(this)">Open Format</button>
+          <button class="genre-chip" data-genre="Hardstyle" onclick="toggleGenre(this)">Hardstyle</button>
+          <button class="genre-chip" data-genre="Trance" onclick="toggleGenre(this)">Trance</button>
+          <button class="genre-chip" data-genre="Other" onclick="toggleGenre(this)">Other</button>
+        </div>
+        <input type="text" id="genreOther" placeholder="Other genres (e.g. Industrial, Progressive, Psytrance...)" style="margin-top:0.4rem; display:none;" oninput="updatePreview()">
+      </div>
+      <div class="field">
+        <label>Booking Email *</label>
+        <input type="email" id="bookingEmail" placeholder="your-booking@email.com" oninput="updatePreview()">
+      </div>
+      <div class="field">
+        <label>Management / Label Email (optional)</label>
+        <input type="email" id="mgmtEmail" placeholder="your-management@email.com" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <!-- PHOTO -->
+    <div class="form-section">
+      <h2>Profile Photos</h2>
+      <div class="field">
+        <label>Main Photo</label>
+        <div class="photo-upload" onclick="document.getElementById('mainPhotoInput').click()">
+          <div class="placeholder" id="mainPhotoPlaceholder">
+            <span>+</span>
+            Click to upload main photo
+          </div>
+          <img id="mainPhotoPreview" style="display:none;">
+        </div>
+        <input type="file" id="mainPhotoInput" accept="image/*" style="display:none;" onchange="handleMainPhoto(this)">
+      </div>
+      <div class="field">
+        <label>Sub Photos (optional, up to 3)</label>
+        <div class="sub-photos">
+          <div class="photo-upload" onclick="document.getElementById('subPhoto1Input').click()">
+            <div class="placeholder" id="subPhoto1Placeholder"><span>+</span></div>
+            <img id="subPhoto1Preview" style="display:none;">
+            <input type="file" accept="image/*" id="subPhoto1Input" style="display:none;" onchange="handleSubPhoto(this, 1)">
+          </div>
+          <div class="photo-upload" onclick="document.getElementById('subPhoto2Input').click()">
+            <div class="placeholder" id="subPhoto2Placeholder"><span>+</span></div>
+            <img id="subPhoto2Preview" style="display:none;">
+            <input type="file" accept="image/*" id="subPhoto2Input" style="display:none;" onchange="handleSubPhoto(this, 2)">
+          </div>
+          <div class="photo-upload" onclick="document.getElementById('subPhoto3Input').click()">
+            <div class="placeholder" id="subPhoto3Placeholder"><span>+</span></div>
+            <img id="subPhoto3Preview" style="display:none;">
+            <input type="file" accept="image/*" id="subPhoto3Input" style="display:none;" onchange="handleSubPhoto(this, 3)">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIO -->
+    <div class="form-section">
+      <h2>Biography</h2>
+      <div class="field">
+        <label>Short Bio (English)</label>
+        <textarea id="bio" rows="5" placeholder="Write your artist bio here in 3rd person..." oninput="updatePreview()"></textarea>
+        <small>Recommended: 80-150 words. Write in English, 3rd person.</small>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="form-section">
+      <h2>Career Timeline</h2>
+      <div class="timeline-entries" id="timelineEntries">
+        <div class="timeline-entry" data-idx="0">
+          <input type="text" placeholder="Year" class="tl-year" oninput="updatePreview()">
+          <input type="text" placeholder="Event description" class="tl-event" oninput="updatePreview()">
+          <button class="btn-icon danger" onclick="removeTimeline(this)" title="Remove">×</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addTimeline()">+ Add Timeline Entry</button>
+    </div>
+
+    <!-- AWARDS -->
+    <div class="form-section">
+      <h2>Awards & Achievements</h2>
+      <div id="awardsEntries">
+        <div class="field award-entry">
+          <input type="text" placeholder="Your award or achievement" oninput="updatePreview()">
+        </div>
+      </div>
+      <button class="btn-add" onclick="addAward()">+ Add Award</button>
+    </div>
+
+    <!-- RELEASES -->
+    <div class="form-section">
+      <h2>Releases (Optional)</h2>
+      <div id="releasesEntries">
+        <div class="field release-entry" style="display:grid; grid-template-columns: 1fr 80px 1fr; gap:0.5rem;">
+          <input type="text" placeholder="Track / Release name" class="rel-name" oninput="updatePreview()">
+          <input type="text" placeholder="Year" class="rel-year" oninput="updatePreview()">
+          <input type="text" placeholder="Chart result (optional)" class="rel-chart" oninput="updatePreview()">
+        </div>
+      </div>
+      <button class="btn-add" onclick="addRelease()">+ Add Release</button>
+    </div>
+
+    <!-- SOCIAL -->
+    <div class="form-section">
+      <h2>Social & Links</h2>
+      <div class="field">
+        <label>Instagram</label>
+        <input type="url" id="instagram" placeholder="https://instagram.com/..." oninput="updatePreview()">
+      </div>
+      <div class="field">
+        <label>SoundCloud</label>
+        <input type="url" id="soundcloud" placeholder="https://soundcloud.com/..." oninput="updatePreview()">
+      </div>
+      <div class="field">
+        <label>Spotify</label>
+        <input type="url" id="spotify" placeholder="https://open.spotify.com/artist/..." oninput="updatePreview()">
+      </div>
+      <div class="field">
+        <label>Bandcamp</label>
+        <input type="url" id="bandcamp" placeholder="https://....bandcamp.com" oninput="updatePreview()">
+      </div>
+      <div class="field">
+        <label>Website</label>
+        <input type="url" id="website" placeholder="https://..." oninput="updatePreview()">
+      </div>
+    </div>
+
+    <!-- Submit to Database -->
+    <div class="form-section" style="border-color: var(--accent); background: linear-gradient(135deg, var(--surface) 0%, #1a1712 100%);">
+      <h2 style="color: var(--accent);">Submit Your Profile</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1rem;">Save your profile data for booking opportunities. Your information will be securely stored and used for artist matching.</p>
+      <button class="btn-generate" onclick="submitToSheet()" id="btnSubmit" style="width:100%; padding:0.8rem;">SUBMIT PROFILE</button>
+      <div id="submitStatus" style="margin-top:0.6rem; font-size:0.85rem; text-align:center;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ PREVIEW PANEL ═══ -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div id="pk-preview" style="transform-origin: top center; transform: scale(0.85);">
+      <!-- Hero -->
+      <div class="pk-hero" id="pkHero">
+        <div class="pk-hero-overlay">
+          <div class="pk-artist-name" id="pkArtistName">YOUR NAME</div>
+          <div class="pk-tagline" id="pkTagline">DJ / PRODUCER</div>
+        </div>
+      </div>
+
+      <div class="pk-body">
+        <!-- Bio -->
+        <div class="pk-section" id="pkBioSection" style="display:none;">
+          <div class="pk-section-title">BIO</div>
+          <div class="pk-bio" id="pkBio"></div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="pk-section" id="pkTimelineSection" style="display:none;">
+          <div class="pk-section-title">CAREER</div>
+          <div id="pkTimeline"></div>
+        </div>
+
+        <!-- Awards -->
+        <div class="pk-section" id="pkAwardsSection" style="display:none;">
+          <div class="pk-section-title">AWARDS & ACHIEVEMENTS</div>
+          <div id="pkAwards"></div>
+        </div>
+
+        <!-- Releases -->
+        <div class="pk-section" id="pkReleasesSection" style="display:none;">
+          <div class="pk-section-title">RELEASES</div>
+          <div id="pkReleases"></div>
+        </div>
+
+        <!-- Sub Photos -->
+        <div class="pk-section" id="pkPhotosSection" style="display:none;">
+          <div class="pk-section-title">PRESS PHOTOS</div>
+          <div class="pk-photos-grid" id="pkPhotosGrid"></div>
+        </div>
+
+        <!-- Contact -->
+        <div class="pk-section">
+          <div class="pk-section-title">CONTACT & LINKS</div>
+          <div class="pk-contact-grid" id="pkContact">
+            <div class="pk-contact-item">
+              <div class="pk-contact-label">Booking</div>
+              <div class="pk-contact-value" id="pkBooking">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="pk-footer">
+        <span id="pkYear">2026</span>
+        <img src="https://lh3.googleusercontent.com/d/1snrBritrC5F_EZrHR0kD4gVsRXBOWnjF" alt="THIRD KAGURA" class="kagura-logo" style="height:18px; width:auto; opacity:0.08;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Generating Press Kit PDF...</div>
+</div>
+
+<script>
+// ── State ──
+let selectedGenres = [];
+let mainPhotoData = null;
+let subPhotos = [null, null, null];
+
+// ── Genre toggle ──
+function toggleGenre(el) {
+  const genre = el.dataset.genre;
+  el.classList.toggle('active');
+  if (el.classList.contains('active')) {
+    selectedGenres.push(genre);
+  } else {
+    selectedGenres = selectedGenres.filter(g => g !== genre);
+  }
+  // Show/hide Other text input
+  const otherInput = document.getElementById('genreOther');
+  if (otherInput) {
+    otherInput.style.display = selectedGenres.includes('Other') ? 'block' : 'none';
+  }
+  updatePreview();
+}
+
+// ── Photo handlers ──
+function handleMainPhoto(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      mainPhotoData = e.target.result;
+      document.getElementById('mainPhotoPreview').src = mainPhotoData;
+      document.getElementById('mainPhotoPreview').style.display = 'block';
+      document.getElementById('mainPhotoPlaceholder').style.display = 'none';
+      updatePreview();
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function handleSubPhoto(input, idx) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      subPhotos[idx - 1] = e.target.result;
+      document.getElementById(`subPhoto${idx}Preview`).src = e.target.result;
+      document.getElementById(`subPhoto${idx}Preview`).style.display = 'block';
+      document.getElementById(`subPhoto${idx}Placeholder`).style.display = 'none';
+      updatePreview();
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+// ── Timeline ──
+function addTimeline() {
+  const container = document.getElementById('timelineEntries');
+  const div = document.createElement('div');
+  div.className = 'timeline-entry';
+  div.innerHTML = `
+    <input type="text" placeholder="Year" class="tl-year" oninput="updatePreview()">
+    <input type="text" placeholder="Event description" class="tl-event" oninput="updatePreview()">
+    <button class="btn-icon danger" onclick="removeTimeline(this)" title="Remove">×</button>
+  `;
+  container.appendChild(div);
+}
+
+function removeTimeline(btn) {
+  const entries = document.querySelectorAll('.timeline-entry');
+  if (entries.length > 1) {
+    btn.parentElement.remove();
+    updatePreview();
+  }
+}
+
+// ── Awards ──
+function addAward() {
+  const container = document.getElementById('awardsEntries');
+  const div = document.createElement('div');
+  div.className = 'field award-entry';
+  div.innerHTML = `<input type="text" placeholder="Your award or achievement" oninput="updatePreview()">`;
+  container.appendChild(div);
+}
+
+// ── Releases ──
+function addRelease() {
+  const container = document.getElementById('releasesEntries');
+  const div = document.createElement('div');
+  div.className = 'field release-entry';
+  div.style.cssText = 'display:grid; grid-template-columns: 1fr 80px 1fr; gap:0.5rem;';
+  div.innerHTML = `
+    <input type="text" placeholder="Track / Release name" class="rel-name" oninput="updatePreview()">
+    <input type="text" placeholder="Year" class="rel-year" oninput="updatePreview()">
+    <input type="text" placeholder="Chart result (optional)" class="rel-chart" oninput="updatePreview()">
+  `;
+  container.appendChild(div);
+}
+
+// ── UPDATE PREVIEW ──
+function updatePreview() {
+  const name = document.getElementById('artistName').value || 'YOUR NAME';
+  const based = document.getElementById('basedIn').value;
+  const country = document.getElementById('country').value;
+  const bio = document.getElementById('bio').value;
+  const booking = document.getElementById('bookingEmail').value;
+  const mgmt = document.getElementById('mgmtEmail').value;
+  const instagram = document.getElementById('instagram').value;
+  const soundcloud = document.getElementById('soundcloud').value;
+  const spotify = document.getElementById('spotify').value;
+  const bandcamp = document.getElementById('bandcamp').value;
+  const website = document.getElementById('website').value;
+
+  // Artist name
+  document.getElementById('pkArtistName').textContent = name.toUpperCase();
+
+  // Tagline
+  let tagParts = [];
+  let displayGenres = selectedGenres.filter(g => g !== 'Other');
+  const otherText = document.getElementById('genreOther')?.value?.trim();
+  if (selectedGenres.includes('Other') && otherText) displayGenres.push(otherText);
+  if (displayGenres.length > 0) tagParts.push(displayGenres.join(' / ').toUpperCase());
+  let location = [based, country].filter(Boolean).join(', ');
+  if (location) tagParts.push(location.toUpperCase());
+  document.getElementById('pkTagline').textContent = tagParts.join(' — ') || 'DJ / PRODUCER';
+
+  // Hero photo
+  const heroEl = document.getElementById('pkHero');
+  const existingHeroImg = heroEl.querySelector('img');
+  if (mainPhotoData) {
+    if (existingHeroImg) {
+      existingHeroImg.src = mainPhotoData;
+    } else {
+      const img = document.createElement('img');
+      img.src = mainPhotoData;
+      heroEl.insertBefore(img, heroEl.firstChild);
+    }
+  }
+
+  // Bio
+  const bioSection = document.getElementById('pkBioSection');
+  if (bio.trim()) {
+    bioSection.style.display = 'block';
+    document.getElementById('pkBio').textContent = bio;
+  } else {
+    bioSection.style.display = 'none';
+  }
+
+  // Timeline
+  const tlSection = document.getElementById('pkTimelineSection');
+  const tlEntries = document.querySelectorAll('.timeline-entry');
+  let tlHtml = '';
+  let hasTl = false;
+  tlEntries.forEach(entry => {
+    const year = entry.querySelector('.tl-year').value;
+    const event = entry.querySelector('.tl-event').value;
+    if (year || event) {
+      hasTl = true;
+      tlHtml += `<div class="pk-timeline-item">
+        <div class="pk-timeline-year">${year}</div>
+        <div class="pk-timeline-event">${event}</div>
+      </div>`;
+    }
+  });
+  tlSection.style.display = hasTl ? 'block' : 'none';
+  document.getElementById('pkTimeline').innerHTML = tlHtml;
+
+  // Awards
+  const awardsSection = document.getElementById('pkAwardsSection');
+  const awardInputs = document.querySelectorAll('.award-entry input');
+  let awardsHtml = '';
+  let hasAwards = false;
+  awardInputs.forEach(input => {
+    if (input.value.trim()) {
+      hasAwards = true;
+      awardsHtml += `<div class="pk-awards-item">${input.value}</div>`;
+    }
+  });
+  awardsSection.style.display = hasAwards ? 'block' : 'none';
+  document.getElementById('pkAwards').innerHTML = awardsHtml;
+
+  // Releases
+  const relSection = document.getElementById('pkReleasesSection');
+  const relEntries = document.querySelectorAll('.release-entry');
+  let relHtml = '';
+  let hasRel = false;
+  relEntries.forEach(entry => {
+    const rName = entry.querySelector('.rel-name').value;
+    const rYear = entry.querySelector('.rel-year').value;
+    const rChart = entry.querySelector('.rel-chart').value;
+    if (rName) {
+      hasRel = true;
+      relHtml += `<div class="pk-releases-item">${rName}${rYear ? ' (' + rYear + ')' : ''}${rChart ? ' — ' + rChart : ''}</div>`;
+    }
+  });
+  relSection.style.display = hasRel ? 'block' : 'none';
+  document.getElementById('pkReleases').innerHTML = relHtml;
+
+  // Sub photos
+  const photosSection = document.getElementById('pkPhotosSection');
+  const photosGrid = document.getElementById('pkPhotosGrid');
+  const validPhotos = subPhotos.filter(Boolean);
+  if (validPhotos.length > 0) {
+    photosSection.style.display = 'block';
+    photosGrid.innerHTML = validPhotos.map(src => `<img src="${src}">`).join('');
+  } else {
+    photosSection.style.display = 'none';
+  }
+
+  // Contact
+  let contactHtml = '';
+  if (booking) {
+    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Booking</div><div class="pk-contact-value">${booking}</div></div>`;
+  }
+  if (mgmt) {
+    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Management</div><div class="pk-contact-value">${mgmt}</div></div>`;
+  }
+  if (instagram) {
+    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Instagram</div><div class="pk-contact-value">${instagram.replace('https://instagram.com/','@').replace('https://www.instagram.com/','@')}</div></div>`;
+  }
+  if (soundcloud) {
+    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">SoundCloud</div><div class="pk-contact-value">${soundcloud.replace('https://soundcloud.com/','')}</div></div>`;
+  }
+  if (spotify) {
+    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Spotify</div><div class="pk-contact-value">On Spotify</div></div>`;
+  }
+  if (bandcamp) {
+    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Bandcamp</div><div class="pk-contact-value">${bandcamp.replace('https://','').replace('.bandcamp.com','')}</div></div>`;
+  }
+  if (website) {
+    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Website</div><div class="pk-contact-value">${website.replace('https://','').replace('http://','')}</div></div>`;
+  }
+  if (!contactHtml) {
+    contactHtml = `<div class="pk-contact-item"><div class="pk-contact-label">Booking</div><div class="pk-contact-value">—</div></div>`;
+  }
+  document.getElementById('pkContact').innerHTML = contactHtml;
+
+  // Year
+  document.getElementById('pkYear').textContent = new Date().getFullYear();
+}
+
+// ── GENERATE PDF ──
+async function generatePDF() {
+  const name = document.getElementById('artistName').value;
+  if (!name) {
+    alert('Please enter an artist name.');
+    return;
+  }
+
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+
+  const element = document.getElementById('pk-preview');
+  const originalTransform = element.style.transform;
+  element.style.transform = 'none';
+
+  const opt = {
+    margin: 0,
+    filename: `${name.replace(/[^a-zA-Z0-9]/g, '_')}_PRESS_KIT.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#000000',
+      width: 595,
+      windowWidth: 595
+    },
+    jsPDF: {
+      unit: 'pt',
+      format: 'a4',
+      orientation: 'portrait'
+    }
+  };
+
+  try {
+    await html2pdf().set(opt).from(element).save();
+  } catch (err) {
+    console.error('PDF generation error:', err);
+    alert('Error generating PDF. Please try again.');
+  } finally {
+    element.style.transform = originalTransform;
+    overlay.classList.remove('active');
+  }
+}
+
+// ── SAMPLE DATA ──
+function loadSampleData() {
+  document.getElementById('artistName').value = 'YOUR ARTIST NAME';
+  document.getElementById('realName').value = '';
+  document.getElementById('activeSince').value = '2018';
+  document.getElementById('country').value = 'Your Country';
+  document.getElementById('basedIn').value = 'Your City';
+  document.getElementById('bookingEmail').value = 'your-booking@email.com';
+  document.getElementById('mgmtEmail').value = 'your-management@email.com';
+  document.getElementById('bio').value = 'Write your artist biography here in 3rd person. Describe your style, career highlights, where you have performed, and what makes you unique as an artist. Aim for 80-150 words. This text will appear in your press kit as your official bio.';
+  document.getElementById('instagram').value = 'https://instagram.com/yourhandle';
+  document.getElementById('soundcloud').value = 'https://soundcloud.com/yourhandle';
+  document.getElementById('website').value = 'https://yourwebsite.com';
+
+  // Genres
+  selectedGenres = [];
+  document.querySelectorAll('.genre-chip').forEach(chip => {
+    chip.classList.remove('active');
+    if (['House', 'Hip Hop'].includes(chip.dataset.genre)) {
+      chip.classList.add('active');
+      selectedGenres.push(chip.dataset.genre);
+    }
+  });
+
+  // Timeline
+  const tlContainer = document.getElementById('timelineEntries');
+  tlContainer.innerHTML = '';
+  const tlData = [
+    ['2018', 'Started DJing'],
+    ['2020', 'First residency'],
+    ['2022', 'International debut'],
+    ['2024', 'Major festival appearance'],
+    ['2025', 'New milestone']
+  ];
+  tlData.forEach(([year, event]) => {
+    const div = document.createElement('div');
+    div.className = 'timeline-entry';
+    div.innerHTML = `
+      <input type="text" placeholder="Year" class="tl-year" value="${year}" oninput="updatePreview()">
+      <input type="text" placeholder="Event description" class="tl-event" value="${event}" oninput="updatePreview()">
+      <button class="btn-icon danger" onclick="removeTimeline(this)" title="Remove">×</button>
+    `;
+    tlContainer.appendChild(div);
+  });
+
+  // Awards
+  const awardsContainer = document.getElementById('awardsEntries');
+  awardsContainer.innerHTML = '';
+  ['Your first award or achievement', 'Your second award or achievement'].forEach(award => {
+    const div = document.createElement('div');
+    div.className = 'field award-entry';
+    div.innerHTML = `<input type="text" value="${award}" oninput="updatePreview()">`;
+    awardsContainer.appendChild(div);
+  });
+
+  updatePreview();
+}
+
+// ── Submit to Google Sheets ──
+async function submitToSheet() {
+  const btn = document.getElementById('btnSubmit');
+  const status = document.getElementById('submitStatus');
+
+  // Validate required fields
+  const artistName = document.getElementById('artistName').value.trim();
+  const email = document.getElementById('bookingEmail').value.trim();
+  if (!artistName || !email) {
+    status.style.color = 'var(--danger)';
+    status.textContent = 'Please fill in at least Artist Name and Email before submitting.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'SUBMITTING...';
+  status.style.color = 'var(--text-dim)';
+  status.textContent = 'Sending your profile...';
+
+  // Collect all form data
+  let displayGenres = selectedGenres.filter(g => g !== 'Other');
+  const otherGenre = document.getElementById('genreOther')?.value?.trim();
+  if (selectedGenres.includes('Other') && otherGenre) displayGenres.push(otherGenre);
+
+  const timelineEntries = [];
+  document.querySelectorAll('.timeline-entry').forEach(entry => {
+    const year = entry.querySelector('.tl-year')?.value || '';
+    const event = entry.querySelector('.tl-event')?.value || '';
+    if (year || event) timelineEntries.push(`${year}: ${event}`);
+  });
+
+  const awards = [];
+  document.querySelectorAll('.award-entry input').forEach(input => {
+    if (input.value.trim()) awards.push(input.value.trim());
+  });
+
+  const releases = [];
+  document.querySelectorAll('.release-entry').forEach(entry => {
+    const title = entry.querySelector('.rel-title')?.value || '';
+    const year = entry.querySelector('.rel-year')?.value || '';
+    const label = entry.querySelector('.rel-label')?.value || '';
+    if (title) releases.push(`${title} (${year}) - ${label}`);
+  });
+
+  const data = {
+    timestamp: new Date().toISOString(),
+    artistName: artistName,
+    realName: document.getElementById('realName').value.trim(),
+    activeSince: document.getElementById('activeSince').value.trim(),
+    country: document.getElementById('country').value.trim(),
+    city: document.getElementById('city').value.trim(),
+    genres: displayGenres.join(', '),
+    bookingEmail: email,
+    mgmtEmail: document.getElementById('mgmtEmail').value.trim(),
+    bio: document.getElementById('bio').value.trim(),
+    timeline: timelineEntries.join(' | '),
+    awards: awards.join(' | '),
+    releases: releases.join(' | '),
+    instagram: document.getElementById('instagram').value.trim(),
+    soundcloud: document.getElementById('soundcloud').value.trim(),
+    spotify: document.getElementById('spotify')?.value?.trim() || '',
+    bandcamp: document.getElementById('bandcamp')?.value?.trim() || '',
+    website: document.getElementById('website').value.trim()
+  };
+
+  // GOOGLE_SHEETS_URL should be replaced with your actual Google Apps Script Web App URL
+  const SHEETS_URL = window.GOOGLE_SHEETS_URL || '';
+
+  if (!SHEETS_URL) {
+    // If no Sheets URL configured, save as JSON download instead
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${artistName.replace(/\s+/g, '_')}_profile.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    status.style.color = 'var(--success)';
+    status.textContent = 'Profile saved as JSON file. (Google Sheets not yet configured)';
+    btn.disabled = false;
+    btn.textContent = 'SUBMIT PROFILE';
+    return;
+  }
+
+  try {
+    const response = await fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    status.style.color = 'var(--success)';
+    status.textContent = 'Profile submitted successfully!';
+  } catch (err) {
+    status.style.color = 'var(--danger)';
+    status.textContent = 'Submission failed. Please try again or download as JSON.';
+    console.error('Submit error:', err);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'SUBMIT PROFILE';
+}
+
+// Init
+updatePreview();
+</script>
+</body>
+</html>
