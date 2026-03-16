@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THIRD KAGURA â PK Generator</title>
+<title>THIRD KAGURA — PK Generator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Playfair+Display:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
@@ -16,14 +16,14 @@
 html { font-size: 15px; }
 body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
 
-/* ââââââ SHARED ââââââ */
+/* ══════ SHARED ══════ */
 .btn-primary { background: var(--accent); color: #000; border: none; padding: 0.7rem 2rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; transition: all 0.2s; font-family: inherit; }
 .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 0.5rem 1.2rem; font-size: 0.8rem; cursor: pointer; font-family: inherit; letter-spacing: 0.05em; transition: all 0.15s; }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ââââââ GENERATOR MODE ââââââ */
+/* ══════ GENERATOR MODE ══════ */
 #generatorMode { display: none; }
 .gen-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 1.2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
 .gen-header img { height: 32px; width: auto; }
@@ -78,7 +78,7 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 /* Submit section */
 .gen-submit { border-color: var(--accent) !important; background: linear-gradient(135deg, var(--surface) 0%, #1a1712 100%) !important; }
 
-/* ââââââ VIEW MODE (PRESS KIT) ââââââ */
+/* ══════ VIEW MODE (PRESS KIT) ══════ */
 #viewMode { display: none; }
 
 /* Hero */
@@ -130,7 +130,7 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 .pk-footer img { height: 20px; opacity: 0.15; }
 .pk-footer small { display: block; margin-top: 0.5rem; font-size: 0.65rem; color: #333; }
 
-/* ââââââ LOADING & ERROR ââââââ */
+/* ══════ LOADING & ERROR ══════ */
 #loadingState, #notFoundState { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; }
 .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -138,9 +138,9 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 </head>
 <body>
 
-<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
-<!-- â         GENERATOR MODE (FORM)           â -->
-<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║         GENERATOR MODE (FORM)           ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
 <div id="generatorMode">
   <header class="gen-header">
     <img src="https://lh3.googleusercontent.com/d/1snrBritrC5F_EZrHR0kD4gVsRXBOWnjF" alt="THIRD KAGURA">
@@ -158,7 +158,7 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
       <div class="field">
         <label>Choose your unique URL slug *</label>
         <input type="text" id="slugInput" placeholder="your-artist-name" oninput="updateSlugPreview()">
-        <div class="url-preview" id="slugPreview">thirdkagura.github.io/pk-generator/?id=<b>your-slug</b></div>
+        <div class="url-preview" id="slugPreview"></div>
         <small>Lowercase letters, numbers, and hyphens only. This is the link you'll share.</small>
       </div>
     </div>
@@ -261,12 +261,12 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
       <div class="field">
         <label>Title Font</label>
         <div class="font-options" id="fontOptions">
-          <button class="font-option active" data-font="Inter" onclick="selectFont(this)"><span style="font-family:'Inter';font-weight:900">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Inter â Clean & Modern</small></button>
-          <button class="font-option" data-font="Bebas Neue" onclick="selectFont(this)"><span style="font-family:'Bebas Neue'">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Bebas Neue â Bold & Condensed</small></button>
-          <button class="font-option" data-font="Oswald" onclick="selectFont(this)"><span style="font-family:'Oswald';font-weight:700">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Oswald â Strong & Impactful</small></button>
-          <button class="font-option" data-font="Playfair Display" onclick="selectFont(this)"><span style="font-family:'Playfair Display';font-weight:900">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Playfair â Elegant & Classic</small></button>
-          <button class="font-option" data-font="Rajdhani" onclick="selectFont(this)"><span style="font-family:'Rajdhani';font-weight:700">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Rajdhani â Futuristic & Techy</small></button>
-          <button class="font-option" data-font="Permanent Marker" onclick="selectFont(this)"><span style="font-family:'Permanent Marker'">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Permanent Marker â Handwritten</small></button>
+          <button class="font-option active" data-font="Inter" onclick="selectFont(this)"><span style="font-family:'Inter';font-weight:900">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Inter — Clean & Modern</small></button>
+          <button class="font-option" data-font="Bebas Neue" onclick="selectFont(this)"><span style="font-family:'Bebas Neue'">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Bebas Neue — Bold & Condensed</small></button>
+          <button class="font-option" data-font="Oswald" onclick="selectFont(this)"><span style="font-family:'Oswald';font-weight:700">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Oswald — Strong & Impactful</small></button>
+          <button class="font-option" data-font="Playfair Display" onclick="selectFont(this)"><span style="font-family:'Playfair Display';font-weight:900">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Playfair — Elegant & Classic</small></button>
+          <button class="font-option" data-font="Rajdhani" onclick="selectFont(this)"><span style="font-family:'Rajdhani';font-weight:700">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Rajdhani — Futuristic & Techy</small></button>
+          <button class="font-option" data-font="Permanent Marker" onclick="selectFont(this)"><span style="font-family:'Permanent Marker'">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Permanent Marker — Handwritten</small></button>
         </div>
       </div>
     </div>
@@ -288,7 +288,7 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
         <div class="dynamic-entry">
           <input type="text" placeholder="Year" class="tl-year">
           <input type="text" placeholder="Event description" class="tl-event">
-          <button class="btn-icon" onclick="removeEntry(this)">Ã</button>
+          <button class="btn-icon" onclick="removeEntry(this)">×</button>
         </div>
       </div>
       <button class="btn-add" onclick="addTimeline()">+ Add Entry</button>
@@ -312,7 +312,7 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
         <div class="dynamic-entry" style="grid-template-columns: 1fr 70px 32px;">
           <input type="text" placeholder="Track / Release name" class="rel-name">
           <input type="text" placeholder="Year" class="rel-year">
-          <button class="btn-icon" onclick="removeEntry(this)">Ã</button>
+          <button class="btn-icon" onclick="removeEntry(this)">×</button>
         </div>
       </div>
       <button class="btn-add" onclick="addRelease()">+ Add Release</button>
@@ -371,9 +371,9 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
   </div>
 </div>
 
-<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
-<!-- â       VIEW MODE (PRESS KIT PAGE)        â -->
-<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║       VIEW MODE (PRESS KIT PAGE)        ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
 <div id="viewMode">
   <!-- Hero -->
   <section class="pk-hero" id="pkHero">
@@ -381,10 +381,10 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
     <div class="pk-hero-overlay"></div>
     <div class="pk-hero-content">
       <div class="pk-artist-name" id="pkName">ARTIST NAME</div>
-      <div class="pk-tagline" id="pkTagline">GENRE â CITY</div>
+      <div class="pk-tagline" id="pkTagline">GENRE — CITY</div>
       <div class="pk-hero-actions">
         <button class="btn-primary" onclick="sharePK()">SHARE</button>
-        <button class="btn-secondary" onclick="scrollToInfo()">VIEW INFO â</button>
+        <button class="btn-secondary" onclick="scrollToInfo()">VIEW INFO ↓</button>
       </div>
     </div>
   </section>
@@ -412,39 +412,39 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
   </div>
 </div>
 
-<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
-<!-- â            LOADING STATE                â -->
-<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║            LOADING STATE                ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
 <div id="loadingState">
   <div class="spinner"></div>
   <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.2em; color:var(--text-dim);">Loading Press Kit...</div>
 </div>
 
-<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
-<!-- â            NOT FOUND STATE              â -->
-<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║            NOT FOUND STATE              ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
 <div id="notFoundState">
-  <div style="font-size:3rem;">ð§</div>
+  <div style="font-size:3rem;">🎧</div>
   <div style="font-size:1.2rem; font-weight:700;">Press Kit Not Found</div>
   <div style="color:var(--text-dim); font-size:0.9rem;">This artist profile doesn't exist or hasn't been published yet.</div>
   <button class="btn-primary" onclick="window.location.href=window.location.pathname" style="margin-top:1rem;">CREATE YOUR PRESS KIT</button>
 </div>
 
 <script>
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 //  STATE
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 let selectedGenres = [];
 let selectedColor = '#c4a265';
 let selectedFont = 'Inter';
 let bgImageData = null; // base64 or URL
 
-// Google Apps Script Web App URL â replace with your actual URL
-const SHEETS_URL = window.GOOGLE_SHEETS_URL || '';
+// Google Apps Script Web App URL
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwNci61gkt_prxO2jn_7wQBIddn7HDQAZ5rqB5Q-quSfUQyulaxaX7RUnvRX3Eve8CX/exec';
 
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 //  INIT: Detect mode from URL
-// ââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 (function init() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
@@ -457,11 +457,12 @@ const SHEETS_URL = window.GOOGLE_SHEETS_URL || '';
 
 function showGenerator() {
   document.getElementById('generatorMode').style.display = 'block';
+  updateSlugPreview();
 }
 
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 //  GENERATOR: Chips, Colors, Fonts
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 function toggleChip(el, type) {
   const val = el.dataset.v;
   el.classList.toggle('active');
@@ -491,12 +492,13 @@ function updateSlugPreview() {
   const raw = document.getElementById('slugInput').value;
   const slug = raw.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/--+/g, '-');
   document.getElementById('slugInput').value = slug;
-  document.getElementById('slugPreview').innerHTML = `thirdkagura.github.io/pk-generator/?id=<b>${slug || 'your-slug'}</b>`;
+  const base = window.location.origin + window.location.pathname;
+  document.getElementById('slugPreview').innerHTML = `${base}?id=<b>${slug || 'your-slug'}</b>`;
 }
 
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 //  GENERATOR: Image handling
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 function handleBgImage(input) {
   if (!input.files || !input.files[0]) return;
   const file = input.files[0];
@@ -533,14 +535,14 @@ function showBgPreview(src) {
   document.getElementById('bgImagePlaceholder').style.display = 'none';
 }
 
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 //  GENERATOR: Dynamic entries
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 function addTimeline() {
   const c = document.getElementById('timelineEntries');
   const d = document.createElement('div');
   d.className = 'dynamic-entry';
-  d.innerHTML = `<input type="text" placeholder="Year" class="tl-year"><input type="text" placeholder="Event description" class="tl-event"><button class="btn-icon" onclick="removeEntry(this)">Ã</button>`;
+  d.innerHTML = `<input type="text" placeholder="Year" class="tl-year"><input type="text" placeholder="Event description" class="tl-event"><button class="btn-icon" onclick="removeEntry(this)">×</button>`;
   c.appendChild(d);
 }
 function addAward() {
@@ -555,7 +557,7 @@ function addRelease() {
   const d = document.createElement('div');
   d.className = 'dynamic-entry';
   d.style.gridTemplateColumns = '1fr 70px 32px';
-  d.innerHTML = `<input type="text" placeholder="Track / Release name" class="rel-name"><input type="text" placeholder="Year" class="rel-year"><button class="btn-icon" onclick="removeEntry(this)">Ã</button>`;
+  d.innerHTML = `<input type="text" placeholder="Track / Release name" class="rel-name"><input type="text" placeholder="Year" class="rel-year"><button class="btn-icon" onclick="removeEntry(this)">×</button>`;
   c.appendChild(d);
 }
 function removeEntry(btn) {
@@ -563,9 +565,9 @@ function removeEntry(btn) {
   if (parent.children.length > 1) btn.parentElement.remove();
 }
 
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 //  GENERATOR: Sample data
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 function loadSampleData() {
   document.getElementById('slugInput').value = 'sample-dj';
   updateSlugPreview();
@@ -590,14 +592,14 @@ function loadSampleData() {
   [['2018','Started DJing'],['2020','First residency'],['2023','International debut']].forEach(([y,e]) => {
     const d = document.createElement('div');
     d.className = 'dynamic-entry';
-    d.innerHTML = `<input type="text" placeholder="Year" class="tl-year" value="${y}"><input type="text" placeholder="Event" class="tl-event" value="${e}"><button class="btn-icon" onclick="removeEntry(this)">Ã</button>`;
+    d.innerHTML = `<input type="text" placeholder="Year" class="tl-year" value="${y}"><input type="text" placeholder="Event" class="tl-event" value="${e}"><button class="btn-icon" onclick="removeEntry(this)">×</button>`;
     tlContainer.appendChild(d);
   });
 }
 
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 //  GENERATOR: Collect & submit
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 function collectFormData() {
   let genres = selectedGenres.filter(g => g !== 'Other');
   const otherG = document.getElementById('genreOther').value.trim();
@@ -665,7 +667,7 @@ async function submitProfile() {
   status.textContent = 'Saving your press kit...';
 
   if (!SHEETS_URL) {
-    // No backend configured â save as JSON
+    // No backend configured — save as JSON
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url; a.download = `${data.slug}_presskit.json`; a.click();
@@ -679,7 +681,7 @@ async function submitProfile() {
   try {
     await fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     status.style.color = '#4a4';
-    status.innerHTML = `Press kit published! <a href="?id=${data.slug}" style="color:var(--accent);">View it here â</a>`;
+    status.innerHTML = `Press kit published! <a href="?id=${data.slug}" style="color:var(--accent);">View it here →</a>`;
   } catch (err) {
     status.style.color = '#e54';
     status.textContent = 'Error saving. Please try again.';
@@ -687,9 +689,9 @@ async function submitProfile() {
   btn.disabled = false; btn.textContent = 'PUBLISH PRESS KIT';
 }
 
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 //  VIEW MODE: Load press kit data
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 async function loadPressKit(slug) {
   document.getElementById('loadingState').style.display = 'flex';
 
@@ -737,16 +739,16 @@ function getDemoData() {
   };
 }
 
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 //  VIEW MODE: Render press kit
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 function renderPressKit(d) {
   // Apply custom accent color
   const accent = d.accentColor || '#c4a265';
   document.documentElement.style.setProperty('--accent', accent);
 
   // Title
-  document.title = `${d.artistName} â Press Kit`;
+  document.title = `${d.artistName} — Press Kit`;
 
   // Hero
   const heroBg = document.getElementById('pkHeroBg');
@@ -768,7 +770,7 @@ function renderPressKit(d) {
   if (d.genres) tagParts.push(d.genres.toUpperCase());
   const loc = [d.city, d.country].filter(Boolean).join(', ');
   if (loc) tagParts.push(loc.toUpperCase());
-  document.getElementById('pkTagline').textContent = tagParts.join(' â ') || '';
+  document.getElementById('pkTagline').textContent = tagParts.join(' — ') || '';
   document.getElementById('pkTagline').style.color = accent;
 
   // Social bar
@@ -851,15 +853,15 @@ function renderPressKit(d) {
 function makeAccordion(title, content, openByDefault = false) {
   return `<div class="pk-acc-item${openByDefault ? ' open' : ''}">
     <button class="pk-acc-header" onclick="this.parentElement.classList.toggle('open')">
-      <span>${title}</span><span class="pk-acc-arrow">â¼</span>
+      <span>${title}</span><span class="pk-acc-arrow">▼</span>
     </button>
     <div class="pk-acc-body"><div class="pk-acc-content">${content}</div></div>
   </div>`;
 }
 
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 //  VIEW: Actions
-// âââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════
 function sharePK() {
   const url = window.location.href;
   if (navigator.share) {
