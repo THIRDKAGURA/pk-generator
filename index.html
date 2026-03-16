@@ -104,6 +104,12 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 /* ══════ VIEW MODE (PRESS KIT) ══════ */
 #viewMode { display: none; }
 
+/* Hero/Banner section */
+.pk-hero { width: 100%; height: 300px; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; padding: 2rem 1.5rem; }
+.pk-hero-gradient { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.8) 100%); }
+.pk-hero-content { position: relative; z-index: 2; }
+.pk-hero-title { font-size: 2.2rem; font-weight: 900; letter-spacing: 0.05em; }
+
 /* Header area */
 .pk-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1.5rem; position: sticky; top: 0; z-index: 50; }
 .pk-header-content { max-width: 1200px; margin: 0 auto; }
@@ -119,9 +125,17 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 /* Main content */
 .pk-main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
 
-/* Three-column layout */
-.pk-three-col { display: grid; grid-template-columns: 300px 1fr 300px; gap: 1.5rem; margin-bottom: 2rem; }
-@media (max-width: 900px) { .pk-three-col { grid-template-columns: 1fr; } }
+/* Three-column layout - responsive */
+.pk-three-col { display: grid; gap: 1.5rem; margin-bottom: 2rem; }
+.pk-three-col.has-all { grid-template-columns: 300px 1fr 300px; }
+.pk-three-col.has-center-right { grid-template-columns: 1fr 300px; }
+.pk-three-col.has-all-left-center { grid-template-columns: 300px 1fr; }
+.pk-three-col.center-only { grid-template-columns: 1fr; }
+@media (max-width: 900px) {
+  .pk-three-col.has-all { grid-template-columns: 1fr; }
+  .pk-three-col.has-center-right { grid-template-columns: 1fr; }
+  .pk-three-col.has-all-left-center { grid-template-columns: 1fr; }
+}
 
 .pk-left-col, .pk-center-col, .pk-right-col { }
 
@@ -138,9 +152,10 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 
 /* Social icons */
 .pk-social-row { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin: 1.5rem 0; }
-.pk-social-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 50%; cursor: pointer; transition: all 0.2s; text-decoration: none; color: var(--text); }
+.pk-social-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 50%; cursor: pointer; transition: all 0.2s; text-decoration: none; color: var(--text); font-size: 0.75rem; font-weight: 600; }
 .pk-social-icon:hover { border-color: var(--accent); color: var(--accent); }
 .pk-social-icon svg { width: 20px; height: 20px; }
+.pk-social-icon.text-label { font-size: 0.7rem; }
 
 /* Accordion */
 .pk-accordion { margin: 2rem 0; }
@@ -156,15 +171,14 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 
 /* Image galleries */
 .pk-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; }
-.pk-gallery-item { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; aspect-ratio: 1; }
-.pk-gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+.pk-gallery img { width: 100%; height: auto; border: 1px solid var(--border); border-radius: 4px; display: block; }
 
 /* Riders section */
 .pk-riders { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2rem 0; }
 @media (max-width: 600px) { .pk-riders { grid-template-columns: 1fr; } }
 .pk-rider-card { background: var(--surface); border: 1px solid var(--border); padding: 1.2rem; border-radius: 4px; }
 .pk-rider-card h3 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 0.8rem; color: var(--accent); }
-.pk-rider-card pre { font-family: inherit; font-size: 0.85rem; color: #ccc; white-space: pre-wrap; }
+.pk-rider-card pre { font-family: inherit; font-size: 0.85rem; color: #ccc; white-space: pre-wrap; word-wrap: break-word; }
 
 /* Timeline section */
 .pk-timeline { margin: 1.5rem 0; }
@@ -190,6 +204,7 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
   .pk-header-actions { display: none; }
   .pk-header { position: static; }
   .pk-main { padding: 0; }
+  .pk-hero { display: none; }
 }
 </style>
 </head>
@@ -304,198 +319,196 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
       </div>
     </div>
 
-    <!-- IMAGES -->
+    <!-- MEDIA -->
     <div class="gen-section">
-      <h2>Images</h2>
+      <h2>Media</h2>
 
       <div class="field">
-        <label>Artist Logo (optional)</label>
-        <div class="photo-upload-area" onclick="document.getElementById('artistLogoInput').click()">
-          <div class="placeholder" id="artistLogoPlaceholder"><span>+</span>Click to upload logo (recommended: square, max 600px)</div>
+        <label>Artist Logo (max 100px width)</label>
+        <div class="photo-upload-area" onclick="document.getElementById('logoInput').click()">
           <img id="artistLogoPreview" style="display:none;">
+          <div id="artistLogoPlaceholder" class="placeholder"><span>🎵</span>Click to upload</div>
         </div>
-        <input type="file" id="artistLogoInput" accept="image/*" style="display:none;" onchange="handleSingleImage(this, 'artistLogo', 600)">
+        <input type="file" id="logoInput" style="display:none;" onchange="handleSingleImage(this, 'artistLogo', 100)">
       </div>
 
       <div class="field">
-        <label>Profile Photo (optional)</label>
-        <div class="photo-upload-area" onclick="document.getElementById('profilePhotoInput').click()">
-          <div class="placeholder" id="profilePhotoPlaceholder"><span>+</span>Click to upload (recommended: portrait, max 400px width)</div>
+        <label>Profile Photo (max 200px width)</label>
+        <div class="photo-upload-area" onclick="document.getElementById('profileInput').click()">
           <img id="profilePhotoPreview" style="display:none;">
+          <div id="profilePhotoPlaceholder" class="placeholder"><span>📸</span>Click to upload</div>
         </div>
-        <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" onchange="handleSingleImage(this, 'profilePhoto', 400)">
+        <input type="file" id="profileInput" style="display:none;" onchange="handleSingleImage(this, 'profilePhoto', 200)">
       </div>
 
       <div class="field">
-        <label>Background Image (optional)</label>
-        <div class="photo-upload-area" onclick="document.getElementById('bgImageInput').click()">
-          <div class="placeholder" id="bgImagePlaceholder"><span>+</span>Click to upload (recommended: 1920x1080)</div>
+        <label>Background Image (max 800px width)</label>
+        <div class="photo-upload-area" onclick="document.getElementById('bgInput').click()">
           <img id="bgImagePreview" style="display:none;">
+          <div id="bgImagePlaceholder" class="placeholder"><span>🖼️</span>Click to upload</div>
         </div>
-        <input type="file" id="bgImageInput" accept="image/*" style="display:none;" onchange="handleSingleImage(this, 'bgImage', 1200)">
+        <input type="file" id="bgInput" style="display:none;" onchange="handleSingleImage(this, 'bgImage', 800)">
       </div>
 
       <div class="field">
-        <label>Press Photos</label>
+        <label>Press Photos (max 600px width)</label>
         <div class="multi-upload-area" onclick="document.getElementById('pressPhotosInput').click()">
-          <span>+</span> Click to add press photos
+          <span>📸</span>
+          <span>Click to upload multiple images</span>
         </div>
-        <div id="pressPhotosGrid" class="image-preview-grid"></div>
-        <input type="file" id="pressPhotosInput" accept="image/*" multiple style="display:none;" onchange="handleMultipleImages(this, 'pressPhotos', 1200)">
+        <input type="file" id="pressPhotosInput" style="display:none;" multiple onchange="handleMultipleImages(this, 'pressPhotos', 600)">
+        <div class="image-preview-grid" id="pressPhotosGrid"></div>
       </div>
 
       <div class="field">
-        <label>Performance Photos</label>
+        <label>Performance Photos (max 600px width)</label>
         <div class="multi-upload-area" onclick="document.getElementById('perfPhotosInput').click()">
-          <span>+</span> Click to add performance photos
+          <span>🎤</span>
+          <span>Click to upload multiple images</span>
         </div>
-        <div id="perfPhotosGrid" class="image-preview-grid"></div>
-        <input type="file" id="perfPhotosInput" accept="image/*" multiple style="display:none;" onchange="handleMultipleImages(this, 'perfPhotos', 1200)">
+        <input type="file" id="perfPhotosInput" style="display:none;" multiple onchange="handleMultipleImages(this, 'perfPhotos', 600)">
+        <div class="image-preview-grid" id="perfPhotosGrid"></div>
       </div>
 
       <div class="field">
-        <label>EP/Release Covers</label>
+        <label>EP / Album Covers (max 600px width)</label>
         <div class="multi-upload-area" onclick="document.getElementById('epCoversInput').click()">
-          <span>+</span> Click to add EP/release covers
+          <span>💿</span>
+          <span>Click to upload multiple images</span>
         </div>
-        <div id="epCoversGrid" class="image-preview-grid"></div>
-        <input type="file" id="epCoversInput" accept="image/*" multiple style="display:none;" onchange="handleMultipleImages(this, 'epCovers', 800)">
+        <input type="file" id="epCoversInput" style="display:none;" multiple onchange="handleMultipleImages(this, 'epCovers', 600)">
+        <div class="image-preview-grid" id="epCoversGrid"></div>
       </div>
     </div>
 
-    <!-- BIO -->
+    <!-- CUSTOMIZATION -->
     <div class="gen-section">
-      <h2>Biography</h2>
+      <h2>Customization</h2>
       <div class="field">
-        <label>Short Bio</label>
-        <textarea id="bio" rows="5" placeholder="Write your artist bio here in 3rd person..."></textarea>
-        <small>Recommended: 80-150 words.</small>
-      </div>
-    </div>
-
-    <!-- CAREER TIMELINE -->
-    <div class="gen-section">
-      <h2>Career Timeline</h2>
-      <div class="dynamic-entries" id="timelineEntries">
-        <div class="dynamic-entry">
-          <input type="text" placeholder="Year" class="tl-year">
-          <input type="text" placeholder="Event description" class="tl-event">
-          <button class="btn-icon" onclick="removeEntry(this)">×</button>
+        <label>Accent Color</label>
+        <div class="color-options">
+          <div class="color-swatch active" style="background:#c4a265;" data-color="#c4a265" onclick="selectColor(this)"></div>
+          <div class="color-swatch" style="background:#ff6b6b;" data-color="#ff6b6b" onclick="selectColor(this)"></div>
+          <div class="color-swatch" style="background:#51cf66;" data-color="#51cf66" onclick="selectColor(this)"></div>
+          <div class="color-swatch" style="background:#339af0;" data-color="#339af0" onclick="selectColor(this)"></div>
+          <div class="color-swatch" style="background:#f59f00;" data-color="#f59f00" onclick="selectColor(this)"></div>
+          <div class="color-swatch" style="background:#9c36b5;" data-color="#9c36b5" onclick="selectColor(this)"></div>
         </div>
       </div>
-      <button class="btn-add" onclick="addTimeline()">+ Add Entry</button>
-    </div>
 
-    <!-- SPOTIFY TRACKS -->
-    <div class="gen-section">
-      <h2>Spotify Tracks</h2>
-      <div id="spotifyTracksContainer">
-        <div class="spotify-entry">
-          <input type="url" placeholder="https://open.spotify.com/track/..." class="spotify-url">
-          <button class="btn-icon" onclick="removeSpotifyTrack(this)">×</button>
-        </div>
-      </div>
-      <button class="btn-add" onclick="addSpotifyTrack()">+ Add Spotify Track</button>
-    </div>
-
-    <!-- TECH RIDER -->
-    <div class="gen-section">
-      <h2>Technical Requirements</h2>
       <div class="field">
-        <label>Tech Rider</label>
-        <textarea id="techRider" rows="4" placeholder="e.g. 2x CDJ 3000, 1x DJM-A9, 2x Monitor Speakers..."></textarea>
+        <label>Artist Name Font</label>
+        <div class="font-options">
+          <button class="font-option active" data-font="Inter" onclick="selectFont(this)"><span>Inter</span></button>
+          <button class="font-option" data-font="Bebas Neue" onclick="selectFont(this)"><span style="font-family:'Bebas Neue';">Bebas Neue</span></button>
+          <button class="font-option" data-font="Oswald" onclick="selectFont(this)"><span style="font-family:'Oswald';">Oswald</span></button>
+          <button class="font-option" data-font="Playfair Display" onclick="selectFont(this)"><span style="font-family:'Playfair Display';">Playfair Display</span></button>
+          <button class="font-option" data-font="Rajdhani" onclick="selectFont(this)"><span style="font-family:'Rajdhani';">Rajdhani</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIO & DETAILS -->
+    <div class="gen-section">
+      <h2>About You</h2>
+      <div class="field">
+        <label>Bio</label>
+        <textarea id="bio" placeholder="Tell your story..."></textarea>
+      </div>
+    </div>
+
+    <!-- MUSIC -->
+    <div class="gen-section">
+      <h2>Music & Content</h2>
+
+      <div class="field">
+        <label>Spotify Tracks (paste full Spotify track URLs)</label>
+        <div id="spotifyTracksContainer" class="dynamic-entries"></div>
+        <button class="btn-add" onclick="addSpotifyTrack()">+ ADD TRACK</button>
+      </div>
+    </div>
+
+    <!-- CAREER -->
+    <div class="gen-section">
+      <h2>Career & Achievements</h2>
+      <div class="field">
+        <label>Career Timeline (key events/years)</label>
+        <div id="timelineEntries" class="dynamic-entries"></div>
+        <button class="btn-add" onclick="addTimeline()">+ ADD EVENT</button>
+      </div>
+    </div>
+
+    <!-- TECH & HOSPITALITY RIDERS -->
+    <div class="gen-section">
+      <h2>Riders (Optional)</h2>
+      <div class="field">
+        <label>Technical Rider</label>
+        <textarea id="techRider" placeholder="Audio setup, lighting requirements, etc."></textarea>
       </div>
       <div class="field">
         <label>Hospitality Rider</label>
-        <textarea id="hospRider" rows="3" placeholder="e.g. 2x Water bottles, Towel, Drink vouchers..."></textarea>
-      </div>
-    </div>
-
-    <!-- DESIGN CUSTOMIZATION -->
-    <div class="gen-section">
-      <h2>Design Customization</h2>
-      <div class="field">
-        <label>Accent Color</label>
-        <div class="color-options" id="colorOptions">
-          <div class="color-swatch active" data-color="#c4a265" style="background:#c4a265;" onclick="selectColor(this)"></div>
-          <div class="color-swatch" data-color="#e53e3e" style="background:#e53e3e;" onclick="selectColor(this)"></div>
-          <div class="color-swatch" data-color="#4299e1" style="background:#4299e1;" onclick="selectColor(this)"></div>
-          <div class="color-swatch" data-color="#48bb78" style="background:#48bb78;" onclick="selectColor(this)"></div>
-          <div class="color-swatch" data-color="#9f7aea" style="background:#9f7aea;" onclick="selectColor(this)"></div>
-          <div class="color-swatch" data-color="#ed64a6" style="background:#ed64a6;" onclick="selectColor(this)"></div>
-          <div class="color-swatch" data-color="#38b2ac" style="background:#38b2ac;" onclick="selectColor(this)"></div>
-          <div class="color-swatch" data-color="#ed8936" style="background:#ed8936;" onclick="selectColor(this)"></div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Title Font</label>
-        <div class="font-options" id="fontOptions">
-          <button class="font-option active" data-font="Inter" onclick="selectFont(this)"><span style="font-family:'Inter';font-weight:900">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Inter — Clean & Modern</small></button>
-          <button class="font-option" data-font="Bebas Neue" onclick="selectFont(this)"><span style="font-family:'Bebas Neue'">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Bebas Neue — Bold & Condensed</small></button>
-          <button class="font-option" data-font="Oswald" onclick="selectFont(this)"><span style="font-family:'Oswald';font-weight:700">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Oswald — Strong & Impactful</small></button>
-          <button class="font-option" data-font="Playfair Display" onclick="selectFont(this)"><span style="font-family:'Playfair Display';font-weight:900">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Playfair — Elegant & Classic</small></button>
-          <button class="font-option" data-font="Rajdhani" onclick="selectFont(this)"><span style="font-family:'Rajdhani';font-weight:700">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Rajdhani — Futuristic & Techy</small></button>
-          <button class="font-option" data-font="Permanent Marker" onclick="selectFont(this)"><span style="font-family:'Permanent Marker'">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Permanent Marker — Handwritten</small></button>
-        </div>
+        <textarea id="hospRider" placeholder="Accommodations, meals, transportation, etc."></textarea>
       </div>
     </div>
 
     <!-- SOCIAL LINKS -->
     <div class="gen-section">
-      <h2>Social & Links</h2>
+      <h2>Social Media & Links</h2>
       <div class="field">
         <label>Instagram</label>
-        <input type="url" id="instagram" placeholder="https://instagram.com/...">
+        <input type="url" id="instagram" placeholder="https://instagram.com/yourprofile">
       </div>
       <div class="field">
         <label>SoundCloud</label>
-        <input type="url" id="soundcloud" placeholder="https://soundcloud.com/...">
+        <input type="url" id="soundcloud" placeholder="https://soundcloud.com/yourprofile">
       </div>
       <div class="field">
-        <label>Spotify</label>
+        <label>Spotify Artist</label>
         <input type="url" id="spotify" placeholder="https://open.spotify.com/artist/...">
       </div>
       <div class="field">
         <label>Bandcamp</label>
-        <input type="url" id="bandcamp" placeholder="https://....bandcamp.com">
-      </div>
-      <div class="field">
-        <label>Website</label>
-        <input type="url" id="website" placeholder="https://...">
+        <input type="url" id="bandcamp" placeholder="https://yourname.bandcamp.com">
       </div>
       <div class="field">
         <label>Facebook</label>
-        <input type="url" id="facebook" placeholder="https://facebook.com/...">
+        <input type="url" id="facebook" placeholder="https://facebook.com/yourprofile">
+      </div>
+      <div class="field">
+        <label>Personal Website</label>
+        <input type="url" id="website" placeholder="https://yourwebsite.com">
+      </div>
+    </div>
+
+    <!-- CONSENT -->
+    <div class="consent-group">
+      <div class="consent-item">
+        <input type="checkbox" id="consent1" checked>
+        <label for="consent1">I confirm that all information is accurate and I have rights to use all images provided.</label>
+      </div>
+      <div class="consent-item">
+        <input type="checkbox" id="consent2" checked>
+        <label for="consent2">I allow my press kit to be stored in THIRD KAGURA's database for booking and promotional purposes.</label>
       </div>
     </div>
 
     <!-- SUBMIT -->
-    <div class="gen-section gen-submit">
-      <h2 style="color:var(--accent);">Submit Your Press Kit</h2>
-      <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1rem;">Your press kit will be published at the URL shown above. You can update it anytime by resubmitting with the same slug.</p>
-
-      <div class="consent-group">
-        <div class="consent-item">
-          <input type="checkbox" id="consentMatching">
-          <label for="consentMatching">I agree that my information may be used for client matching purposes (e.g., connecting DJs with event opportunities)</label>
-        </div>
-        <div class="consent-item">
-          <input type="checkbox" id="consentCommunity">
-          <label for="consentCommunity">I agree to receive invitations to the THIRD KAGURA DJ Community</label>
-        </div>
-      </div>
-
-      <button class="btn-primary" onclick="submitProfile()" style="width:100%; padding:0.8rem; margin-top:1rem;" id="btnSubmit">PUBLISH PRESS KIT</button>
-      <div id="submitStatus" style="margin-top:0.6rem; font-size:0.85rem; text-align:center;"></div>
-    </div>
-
+    <button class="btn-primary gen-submit" style="width:100%; margin-top:2rem; padding:1rem;" onclick="submitProfile()">SUBMIT PROFILE</button>
   </div>
 </div>
 
 <!-- ╔══════════════════════════════════════════╗ -->
-<!-- ║       VIEW MODE (PRESS KIT PAGE)        ║ -->
+<!-- ║           VIEW MODE (PRESS KIT)         ║ -->
 <!-- ╚══════════════════════════════════════════╝ -->
 <div id="viewMode">
+  <!-- Hero section with background image -->
+  <div class="pk-hero" id="pkHero" style="display:none;">
+    <div class="pk-hero-gradient"></div>
+    <div class="pk-hero-content">
+      <div class="pk-hero-title" id="pkHeroTitle">Artist Name</div>
+    </div>
+  </div>
+
   <!-- Header -->
   <header class="pk-header" id="pkHeader">
     <div class="pk-header-content">
@@ -521,7 +534,7 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
   <!-- Main content -->
   <div class="pk-main" id="pkMainContent">
     <!-- Three column layout -->
-    <div class="pk-three-col">
+    <div class="pk-three-col" id="pkThreeCol">
       <div class="pk-left-col">
         <img id="pkProfilePhoto" class="pk-profile-photo" style="display:none;">
       </div>
@@ -598,38 +611,37 @@ let multiImageData = {
 let spotifyTracks = [];
 
 // Google Apps Script Web App URL
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwNci61gkt_prxO2jn_7wQBIddn7HDQAZ5rqB5Q-quSfUQyulaxaX7RUnvRX3Eve8CX/exec';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwRvwpDM53VcBhHAbZrmCPDXm01IzmMjmHvpysebuF_tayn9tWmDCX8my3hdu7_G9Jg/exec';
 
 // ═══════════════════════════════════════
-//  INIT: Detect mode from URL
+//  INITIALIZATION
 // ═══════════════════════════════════════
 (function init() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
+
   if (id) {
-    loadPressKit(id);
+    showViewMode(id);
   } else {
-    showGenerator();
+    document.getElementById('generatorMode').style.display = 'block';
   }
 })();
 
 function showGenerator() {
   document.getElementById('generatorMode').style.display = 'block';
-  updateSlugPreview();
+  document.getElementById('viewMode').style.display = 'none';
 }
 
 // ═══════════════════════════════════════
-//  GENERATOR: Chips, Colors, Fonts
+//  FORM HELPERS
 // ═══════════════════════════════════════
 function toggleChip(el, type) {
   const val = el.dataset.v;
   el.classList.toggle('active');
   if (type === 'genre') {
-    if (el.classList.contains('active')) {
-      selectedGenres.push(val);
-    } else {
-      selectedGenres = selectedGenres.filter(g => g !== val);
-    }
+    const idx = selectedGenres.indexOf(val);
+    if (idx > -1) selectedGenres.splice(idx, 1);
+    else selectedGenres.push(val);
     document.getElementById('genreOther').style.display = selectedGenres.includes('Other') ? 'block' : 'none';
   }
 }
@@ -649,28 +661,41 @@ function selectFont(el) {
 function updateSlugPreview() {
   const raw = document.getElementById('slugInput').value;
   const slug = raw.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/--+/g, '-');
-  document.getElementById('slugInput').value = slug;
   const base = window.location.origin + window.location.pathname;
-  document.getElementById('slugPreview').innerHTML = `${base}?id=<b>${slug || 'your-slug'}</b>`;
+  document.getElementById('slugPreview').innerHTML = `<b>${base}?id=</b>${slug}`;
 }
 
 // ═══════════════════════════════════════
-//  IMAGE HANDLING
+//  IMAGE COMPRESSION & HANDLING
 // ═══════════════════════════════════════
+function compressImage(canvas, quality) {
+  return canvas.toDataURL('image/jpeg', quality);
+}
+
+function isBase64(str) {
+  return str && str.startsWith('data:image');
+}
+
+function isHttpUrl(str) {
+  return str && (str.startsWith('http://') || str.startsWith('https://'));
+}
+
 function handleSingleImage(input, type, maxWidth) {
-  if (!input.files || !input.files[0]) return;
+  if (!input.files[0]) return;
   const file = input.files[0];
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = (e) => {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
-      let w = img.width, h = img.height;
-      if (w > maxWidth) { h = h * (maxWidth / w); w = maxWidth; }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      singleImageData[type] = canvas.toDataURL('image/jpeg', 0.8);
-      showSingleImagePreview(type, singleImageData[type]);
+      const ratio = img.height / img.width;
+      canvas.width = maxWidth;
+      canvas.height = maxWidth * ratio;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const b64 = compressImage(canvas, 0.5);
+      singleImageData[type] = b64;
+      showSingleImagePreview(type, b64);
     };
     img.src = e.target.result;
   };
@@ -682,33 +707,30 @@ function showSingleImagePreview(type, src) {
   const placeholderId = type === 'bgImage' ? 'bgImagePlaceholder' : type === 'profilePhoto' ? 'profilePhotoPlaceholder' : 'artistLogoPlaceholder';
   const prev = document.getElementById(previewId);
   const placeholder = document.getElementById(placeholderId);
-  if (prev) {
-    prev.src = src;
-    prev.style.display = 'block';
-    if (placeholder) placeholder.style.display = 'none';
-  }
+  prev.src = src;
+  prev.style.display = 'block';
+  placeholder.style.display = 'none';
 }
 
 function handleMultipleImages(input, type, maxWidth) {
-  if (!input.files) return;
+  if (!input.files[0]) return;
   const files = Array.from(input.files);
-  let processed = 0;
-  files.forEach(file => {
+  multiImageData[type] = [];
+
+  files.forEach((file, idx) => {
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        let w = img.width, h = img.height;
-        if (w > maxWidth) { h = h * (maxWidth / w); w = maxWidth; }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        const b64 = canvas.toDataURL('image/jpeg', 0.8);
+        const ratio = img.height / img.width;
+        canvas.width = maxWidth;
+        canvas.height = maxWidth * ratio;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const b64 = compressImage(canvas, 0.5);
         multiImageData[type].push(b64);
-        processed++;
-        if (processed === files.length) {
-          showMultiImagePreview(type);
-        }
+        showMultiImagePreview(type);
       };
       img.src = e.target.result;
     };
@@ -723,7 +745,7 @@ function showMultiImagePreview(type) {
   multiImageData[type].forEach((src, idx) => {
     const thumb = document.createElement('div');
     thumb.className = 'preview-thumb';
-    thumb.innerHTML = `<img src="${src}"><button class="btn-remove" onclick="removeMultiImage('${type}', ${idx})">×</button>`;
+    thumb.innerHTML = `<img src="${src}"><button class="btn-remove" onclick="removeMultiImage('${type}',${idx})">×</button>`;
     grid.appendChild(thumb);
   });
 }
@@ -734,113 +756,108 @@ function removeMultiImage(type, idx) {
 }
 
 // ═══════════════════════════════════════
-//  SPOTIFY TRACKS
+//  DYNAMIC ENTRIES
 // ═══════════════════════════════════════
 function addSpotifyTrack() {
   const container = document.getElementById('spotifyTracksContainer');
   const entry = document.createElement('div');
   entry.className = 'spotify-entry';
-  entry.innerHTML = `<input type="url" placeholder="https://open.spotify.com/track/..." class="spotify-url"><button class="btn-icon" onclick="removeSpotifyTrack(this)">×</button>`;
+  entry.innerHTML = `<input type="url" placeholder="https://open.spotify.com/track/..."><button class="btn-icon" onclick="removeSpotifyTrack(this)">✕</button>`;
   container.appendChild(entry);
 }
 
 function removeSpotifyTrack(btn) {
   const container = document.getElementById('spotifyTracksContainer');
-  if (container.children.length > 1) btn.parentElement.remove();
+  btn.parentElement.remove();
 }
 
 function collectSpotifyTracks() {
   const tracks = [];
-  document.querySelectorAll('.spotify-url').forEach(input => {
-    if (input.value.trim()) tracks.push(input.value.trim());
+  document.querySelectorAll('#spotifyTracksContainer .spotify-entry input').forEach(inp => {
+    if (inp.value.trim()) tracks.push(inp.value.trim());
   });
   return tracks;
 }
 
-// ═══════════════════════════════════════
-//  GENERATOR: Dynamic entries
-// ═══════════════════════════════════════
 function addTimeline() {
   const c = document.getElementById('timelineEntries');
   const d = document.createElement('div');
   d.className = 'dynamic-entry';
-  d.innerHTML = `<input type="text" placeholder="Year" class="tl-year"><input type="text" placeholder="Event description" class="tl-event"><button class="btn-icon" onclick="removeEntry(this)">×</button>`;
+  d.innerHTML = `<input type="text" placeholder="Year" style="width:80px;"><input type="text" placeholder="Event/Achievement"><button class="btn-icon" onclick="removeEntry(this)">✕</button>`;
   c.appendChild(d);
 }
 
 function removeEntry(btn) {
   const parent = btn.parentElement.parentElement;
-  if (parent.children.length > 1) btn.parentElement.remove();
+  parent.remove();
 }
 
-// ═══════════════════════════════════════
-//  GENERATOR: Sample data
-// ═══════════════════════════════════════
 function loadSampleData() {
-  document.getElementById('slugInput').value = 'sample-dj';
-  updateSlugPreview();
-  document.getElementById('artistName').value = 'Sample DJ';
-  document.getElementById('realName').value = 'Jane Doe';
-  document.getElementById('activeSince').value = '2018';
+  document.getElementById('slugInput').value = 'test-artist';
+  document.getElementById('artistName').value = 'Test Artist';
+  document.getElementById('realName').value = 'Real Name';
+  document.getElementById('activeSince').value = '2015';
   document.getElementById('country').value = 'Japan';
   document.getElementById('city').value = 'Tokyo';
-  document.getElementById('bookingEmail').value = 'booking@sampledj.com';
-  document.getElementById('mgmtEmail').value = 'management@sampledj.com';
-  document.getElementById('agencyName').value = 'Creative Artists Agency';
-  document.getElementById('agencyEmail').value = 'contact@caa.com';
-  document.getElementById('agencyWebsite').value = 'https://caa.com';
-  document.getElementById('bio').value = 'Sample DJ is an innovative producer and performer known for blending house, techno, and experimental sounds. With performances across Asia and Europe, they have established themselves as a key figure in the underground electronic music scene.';
-  document.getElementById('instagram').value = 'https://instagram.com/sampledj';
-  document.getElementById('soundcloud').value = 'https://soundcloud.com/sampledj';
-  document.getElementById('spotify').value = 'https://open.spotify.com/artist/sampledj';
-  document.getElementById('techRider').value = '2x CDJ 3000\n1x DJM-A9\n2x Monitor Speakers\nMic stand';
-  document.getElementById('hospRider').value = '2x Water Bottles\n1x Towel\n3x Drink Vouchers';
+  document.getElementById('bookingEmail').value = 'booking@example.com';
+  document.getElementById('bio').value = 'An incredible artist bringing innovation to the electronic music scene.';
+  document.getElementById('agencyName').value = 'Sample Agency';
+  document.getElementById('agencyEmail').value = 'agency@example.com';
 
-  selectedGenres = ['House', 'Techno'];
-  document.querySelectorAll('#genreChips .chip').forEach(chip => {
-    chip.classList.toggle('active', selectedGenres.includes(chip.dataset.v));
+  selectedGenres = ['Techno', 'House'];
+  document.querySelectorAll('#genreChips .chip').forEach(c => {
+    if (['Techno', 'House'].includes(c.dataset.v)) c.classList.add('active');
   });
 
   const tlContainer = document.getElementById('timelineEntries');
   tlContainer.innerHTML = '';
-  [['2018','Started DJing'],['2020','First residency in Tokyo'],['2023','International debut in Berlin']].forEach(([y,e]) => {
+  [
+    { year: '2015', event: 'Started producing electronic music' },
+    { year: '2018', event: 'First major festival performance' },
+    { year: '2021', event: 'Released debut album' }
+  ].forEach(t => {
     const d = document.createElement('div');
     d.className = 'dynamic-entry';
-    d.innerHTML = `<input type="text" placeholder="Year" class="tl-year" value="${y}"><input type="text" placeholder="Event" class="tl-event" value="${e}"><button class="btn-icon" onclick="removeEntry(this)">×</button>`;
+    d.innerHTML = `<input type="text" placeholder="Year" value="${t.year}" style="width:80px;"><input type="text" placeholder="Event" value="${t.event}"><button class="btn-icon" onclick="removeEntry(this)">✕</button>`;
     tlContainer.appendChild(d);
   });
 
-  document.getElementById('consentMatching').checked = true;
-  document.getElementById('consentCommunity').checked = true;
+  updateSlugPreview();
 }
 
-// ═══════════════════════════════════════
-//  GENERATOR: Collect & submit
-// ═══════════════════════════════════════
 function collectFormData() {
-  let genres = selectedGenres.filter(g => g !== 'Other');
-  const otherG = document.getElementById('genreOther').value.trim();
-  if (selectedGenres.includes('Other') && otherG) genres.push(otherG);
-
+  const genres = selectedGenres.includes('Other') ? [...selectedGenres, document.getElementById('genreOther').value].filter(Boolean).join(', ') : selectedGenres.join(', ');
   const timeline = [];
   document.querySelectorAll('#timelineEntries .dynamic-entry').forEach(e => {
-    const y = e.querySelector('.tl-year')?.value || '';
-    const ev = e.querySelector('.tl-event')?.value || '';
-    if (y || ev) timeline.push({ year: y, event: ev });
+    const inputs = e.querySelectorAll('input');
+    if (inputs[0].value && inputs[1].value) {
+      timeline.push({ year: inputs[0].value, event: inputs[1].value });
+    }
   });
 
   return {
-    slug: document.getElementById('slugInput').value.trim(),
-    artistName: document.getElementById('artistName').value.trim(),
-    realName: document.getElementById('realName')?.value?.trim() || '',
-    activeSince: document.getElementById('activeSince')?.value?.trim() || '',
-    country: document.getElementById('country')?.value?.trim() || '',
-    city: document.getElementById('city')?.value?.trim() || '',
-    genres: genres.join(', '),
-    bookingEmail: document.getElementById('bookingEmail').value.trim(),
-    mgmtEmail: document.getElementById('mgmtEmail')?.value?.trim() || '',
-    bookingFee: document.getElementById('bookingFee')?.value?.trim() || '',
-    bio: document.getElementById('bio')?.value?.trim() || '',
+    slug: document.getElementById('slugInput').value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/--+/g, '-'),
+    artistName: document.getElementById('artistName').value,
+    realName: document.getElementById('realName').value || '',
+    activeSince: document.getElementById('activeSince').value || '',
+    country: document.getElementById('country').value || '',
+    city: document.getElementById('city').value || '',
+    genres: genres,
+    bookingEmail: document.getElementById('bookingEmail').value,
+    mgmtEmail: document.getElementById('mgmtEmail').value || '',
+    bookingFee: document.getElementById('bookingFee').value || '',
+    agencyName: document.getElementById('agencyName').value || '',
+    agencyEmail: document.getElementById('agencyEmail').value || '',
+    agencyWebsite: document.getElementById('agencyWebsite').value || '',
+    bio: document.getElementById('bio').value || '',
+    instagram: document.getElementById('instagram').value || '',
+    soundcloud: document.getElementById('soundcloud').value || '',
+    spotify: document.getElementById('spotify').value || '',
+    bandcamp: document.getElementById('bandcamp').value || '',
+    facebook: document.getElementById('facebook').value || '',
+    website: document.getElementById('website').value || '',
+    accentColor: selectedColor,
+    font: selectedFont,
     artistLogo: singleImageData.artistLogo || '',
     profilePhoto: singleImageData.profilePhoto || '',
     bgImage: singleImageData.bgImage || '',
@@ -848,148 +865,93 @@ function collectFormData() {
     perfPhotos: JSON.stringify(multiImageData.perfPhotos),
     epCovers: JSON.stringify(multiImageData.epCovers),
     spotifyTracks: JSON.stringify(collectSpotifyTracks()),
-    font: selectedFont,
-    accentColor: selectedColor,
     timeline: JSON.stringify(timeline),
-    techRider: document.getElementById('techRider')?.value?.trim() || '',
-    hospRider: document.getElementById('hospRider')?.value?.trim() || '',
-    instagram: document.getElementById('instagram')?.value?.trim() || '',
-    soundcloud: document.getElementById('soundcloud')?.value?.trim() || '',
-    spotify: document.getElementById('spotify')?.value?.trim() || '',
-    bandcamp: document.getElementById('bandcamp')?.value?.trim() || '',
-    website: document.getElementById('website')?.value?.trim() || '',
-    facebook: document.getElementById('facebook')?.value?.trim() || '',
-    agencyName: document.getElementById('agencyName')?.value?.trim() || '',
-    agencyEmail: document.getElementById('agencyEmail')?.value?.trim() || '',
-    agencyWebsite: document.getElementById('agencyWebsite')?.value?.trim() || '',
-    consentMatching: document.getElementById('consentMatching').checked ? 'true' : 'false',
-    consentCommunity: document.getElementById('consentCommunity').checked ? 'true' : 'false',
-    timestamp: new Date().toISOString()
+    techRider: document.getElementById('techRider').value || '',
+    hospRider: document.getElementById('hospRider').value || ''
   };
 }
 
-async function submitProfile() {
+function submitProfile() {
   const data = collectFormData();
-  const status = document.getElementById('submitStatus');
-  const btn = document.getElementById('btnSubmit');
-
-  if (!data.slug) { status.style.color = '#e54'; status.textContent = 'Please choose a URL slug.'; return; }
-  if (!data.artistName) { status.style.color = '#e54'; status.textContent = 'Please enter an artist name.'; return; }
-  if (!data.bookingEmail) { status.style.color = '#e54'; status.textContent = 'Please enter a booking email.'; return; }
-  if (!document.getElementById('consentMatching').checked || !document.getElementById('consentCommunity').checked) {
-    status.style.color = '#e54'; status.textContent = 'Please agree to both consent items to submit.'; return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'PUBLISHING...';
-  status.style.color = 'var(--text-dim)';
-  status.textContent = 'Saving your press kit...';
-
-  if (!SHEETS_URL) {
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `${data.slug}_presskit.json`; a.click();
-    URL.revokeObjectURL(url);
-    status.style.color = '#4a4';
-    status.textContent = 'Saved as JSON. Your press kit URL will be: ' + window.location.pathname + '?id=' + data.slug;
-    btn.disabled = false; btn.textContent = 'PUBLISH PRESS KIT';
+  if (!data.slug || !data.artistName || !data.bookingEmail) {
+    alert('Please fill in: Slug, Artist Name, and Booking Email');
     return;
   }
 
-  try {
-    await fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-    status.style.color = '#4a4';
-    status.innerHTML = `Press kit published! <a href="?id=${data.slug}" style="color:var(--accent);">View it here →</a>`;
-  } catch (err) {
-    status.style.color = '#e54';
-    status.textContent = 'Error saving. Please try again.';
-  }
-  btn.disabled = false; btn.textContent = 'PUBLISH PRESS KIT';
-}
-
-// ═══════════════════════════════════════
-//  VIEW MODE: Load press kit data
-// ═══════════════════════════════════════
-async function loadPressKit(slug) {
+  document.getElementById('generatorMode').style.display = 'none';
   document.getElementById('loadingState').style.display = 'flex';
 
-  if (!SHEETS_URL) {
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(() => {
+    // no-cors means opaque response, assume success
+    const url = `${window.location.origin}${window.location.pathname}?id=${data.slug}`;
+    window.history.pushState({}, '', url);
+    showViewMode(data.slug, data);
+  })
+  .catch(e => {
+    alert('Error submitting: ' + e.message);
+    document.getElementById('generatorMode').style.display = 'block';
     document.getElementById('loadingState').style.display = 'none';
-    if (slug === 'sample-dj') {
-      renderPressKit(getDemoData());
-    } else {
-      document.getElementById('notFoundState').style.display = 'flex';
-    }
-    return;
-  }
-
-  try {
-    const res = await fetch(`${SHEETS_URL}?id=${encodeURIComponent(slug)}`);
-    const data = await res.json();
-    document.getElementById('loadingState').style.display = 'none';
-    if (data && data.artistName) {
-      renderPressKit(data);
-    } else {
-      document.getElementById('notFoundState').style.display = 'flex';
-    }
-  } catch (err) {
-    document.getElementById('loadingState').style.display = 'none';
-    document.getElementById('notFoundState').style.display = 'flex';
-  }
-}
-
-function getDemoData() {
-  return {
-    slug: 'sample-dj',
-    artistName: 'Sample DJ',
-    realName: 'Jane Doe',
-    activeSince: '2018',
-    country: 'Japan',
-    city: 'Tokyo',
-    genres: 'House, Techno',
-    bookingEmail: 'booking@sampledj.com',
-    mgmtEmail: 'management@sampledj.com',
-    bio: 'Sample DJ is an innovative producer and performer known for blending house, techno, and experimental sounds. With performances across Asia and Europe, they have established themselves as a key figure in the underground electronic music scene.',
-    font: 'Inter',
-    accentColor: '#c4a265',
-    timeline: JSON.stringify([
-      {year:'2018',event:'Started DJing'},
-      {year:'2020',event:'First residency in Tokyo'},
-      {year:'2023',event:'International debut in Berlin'}
-    ]),
-    techRider: '2x CDJ 3000\n1x DJM-A9\n2x Monitor Speakers',
-    hospRider: '2x Water Bottles\n1x Towel\n3x Drink Vouchers',
-    instagram: 'https://instagram.com/sampledj',
-    soundcloud: 'https://soundcloud.com/sampledj',
-    spotify: 'https://open.spotify.com/artist/sampledj',
-    bandcamp: '',
-    website: '',
-    facebook: '',
-    agencyName: 'Creative Artists Agency',
-    agencyEmail: 'contact@caa.com',
-    agencyWebsite: 'https://caa.com',
-    artistLogo: '',
-    profilePhoto: '',
-    bgImage: '',
-    pressPhotos: '[]',
-    perfPhotos: '[]',
-    epCovers: '[]',
-    spotifyTracks: '[]'
-  };
+  });
 }
 
 // ═══════════════════════════════════════
-//  VIEW MODE: Render press kit
+//  VIEW MODE
 // ═══════════════════════════════════════
+function showViewMode(id, dataOverride = null) {
+  document.getElementById('generatorMode').style.display = 'none';
+  document.getElementById('viewMode').style.display = 'block';
+  document.getElementById('loadingState').style.display = 'flex';
+  document.getElementById('notFoundState').style.display = 'none';
+
+  if (dataOverride) {
+    renderPressKit(dataOverride);
+    document.getElementById('loadingState').style.display = 'none';
+  } else {
+    fetch(SHEETS_URL + '?id=' + encodeURIComponent(id))
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.artistName) {
+          renderPressKit(data);
+          document.getElementById('loadingState').style.display = 'none';
+        } else {
+          document.getElementById('loadingState').style.display = 'none';
+          document.getElementById('notFoundState').style.display = 'flex';
+          document.getElementById('viewMode').style.display = 'none';
+        }
+      })
+      .catch(e => {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('notFoundState').style.display = 'flex';
+        document.getElementById('viewMode').style.display = 'none';
+      });
+  }
+}
+
 function renderPressKit(d) {
   // Apply custom accent color
   const accent = d.accentColor || '#c4a265';
   document.documentElement.style.setProperty('--accent', accent);
   document.title = `${d.artistName} — Press Kit`;
 
+  // Hero section with background image
+  const bgImageEl = document.getElementById('pkHero');
+  if (d.bgImage && (isBase64(d.bgImage) || isHttpUrl(d.bgImage))) {
+    bgImageEl.style.backgroundImage = `url('${d.bgImage}')`;
+    bgImageEl.style.display = 'flex';
+    document.getElementById('pkHeroTitle').textContent = d.artistName.toUpperCase();
+  } else {
+    bgImageEl.style.display = 'none';
+  }
+
   // Header
   const logoImg = document.getElementById('pkLogoImg');
-  if (d.artistLogo) {
+  if (d.artistLogo && (isBase64(d.artistLogo) || isHttpUrl(d.artistLogo))) {
     logoImg.src = d.artistLogo;
     logoImg.style.display = 'block';
   } else {
@@ -1005,7 +967,8 @@ function renderPressKit(d) {
 
   // Profile photo
   const profileImg = document.getElementById('pkProfilePhoto');
-  if (d.profilePhoto) {
+  const hasProfile = d.profilePhoto && (isBase64(d.profilePhoto) || isHttpUrl(d.profilePhoto));
+  if (hasProfile) {
     profileImg.src = d.profilePhoto;
     profileImg.style.display = 'block';
   } else {
@@ -1022,23 +985,39 @@ function renderPressKit(d) {
   document.getElementById('pkArtistInfo').innerHTML = artistInfoHtml;
 
   // Agency info
-  if (d.agencyName || d.agencyEmail || d.agencyWebsite) {
+  const hasAgency = d.agencyName || d.agencyEmail || d.agencyWebsite;
+  if (hasAgency) {
     document.getElementById('pkAgencyCard').style.display = 'block';
     let agencyInfoHtml = '';
     if (d.agencyName) agencyInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Agency</div><div class="pk-info-value">${d.agencyName}</div></div>`;
     if (d.agencyEmail) agencyInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Email</div><div class="pk-info-value"><a href="mailto:${d.agencyEmail}">${d.agencyEmail}</a></div></div>`;
     if (d.agencyWebsite) agencyInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Website</div><div class="pk-info-value"><a href="${d.agencyWebsite}" target="_blank">${d.agencyWebsite}</a></div></div>`;
     document.getElementById('pkAgencyInfo').innerHTML = agencyInfoHtml;
+  } else {
+    document.getElementById('pkAgencyCard').style.display = 'none';
+  }
+
+  // Update three-col layout class based on what's visible
+  const threeColEl = document.getElementById('pkThreeCol');
+  threeColEl.className = 'pk-three-col';
+  if (hasProfile && hasAgency) {
+    threeColEl.classList.add('has-all');
+  } else if (hasProfile && !hasAgency) {
+    threeColEl.classList.add('has-all-left-center');
+  } else if (!hasProfile && hasAgency) {
+    threeColEl.classList.add('has-center-right');
+  } else {
+    threeColEl.classList.add('center-only');
   }
 
   // Social icons
   const socials = [];
-  if (d.instagram) socials.push({ icon: 'instagram', url: d.instagram });
-  if (d.soundcloud) socials.push({ icon: 'soundcloud', url: d.soundcloud });
-  if (d.spotify) socials.push({ icon: 'spotify', url: d.spotify });
-  if (d.bandcamp) socials.push({ icon: 'bandcamp', url: d.bandcamp });
-  if (d.facebook) socials.push({ icon: 'facebook', url: d.facebook });
-  if (d.website) socials.push({ icon: 'globe', url: d.website });
+  if (d.instagram) socials.push({ icon: 'instagram', label: 'IG', url: d.instagram });
+  if (d.soundcloud) socials.push({ icon: 'soundcloud', label: 'SC', url: d.soundcloud });
+  if (d.spotify) socials.push({ icon: 'spotify', label: 'SP', url: d.spotify });
+  if (d.bandcamp) socials.push({ icon: 'bandcamp', label: 'BC', url: d.bandcamp });
+  if (d.facebook) socials.push({ icon: 'facebook', label: 'FB', url: d.facebook });
+  if (d.website) socials.push({ icon: 'globe', label: 'WEB', url: d.website });
 
   const socialRow = document.getElementById('pkSocialRow');
   socialRow.innerHTML = socials.map(s => `
@@ -1051,7 +1030,7 @@ function renderPressKit(d) {
   let accHtml = '';
 
   // Bio
-  if (d.bio) {
+  if (d.bio && d.bio.trim()) {
     accHtml += makeAccordion('BIO', `<p>${d.bio.replace(/\n/g, '<br>')}</p>`, true, null);
   }
 
@@ -1059,32 +1038,44 @@ function renderPressKit(d) {
   let pressPhotos = [];
   try { pressPhotos = JSON.parse(d.pressPhotos || '[]'); } catch(e) {}
   if (pressPhotos.length > 0) {
-    const gallery = pressPhotos.map(src => `<img src="${src}" alt="Press photo">`).join('');
-    accHtml += makeAccordion('PRESS PHOTOS', `<div class="pk-gallery">${gallery}</div>`, false, 'images');
+    const gallery = pressPhotos.map(src => {
+      if (!src || typeof src !== 'string') return '';
+      return `<img src="${src}" alt="Press photo" style="max-width:100%; height:auto;">`;
+    }).join('');
+    if (gallery) accHtml += makeAccordion('PRESS PHOTOS', `<div class="pk-gallery">${gallery}</div>`, false, 'images');
   }
 
   // Performance photos
   let perfPhotos = [];
   try { perfPhotos = JSON.parse(d.perfPhotos || '[]'); } catch(e) {}
   if (perfPhotos.length > 0) {
-    const gallery = perfPhotos.map(src => `<img src="${src}" alt="Performance photo">`).join('');
-    accHtml += makeAccordion('PERFORMANCE PHOTOS', `<div class="pk-gallery">${gallery}</div>`, false, 'images');
+    const gallery = perfPhotos.map(src => {
+      if (!src || typeof src !== 'string') return '';
+      return `<img src="${src}" alt="Performance photo" style="max-width:100%; height:auto;">`;
+    }).join('');
+    if (gallery) accHtml += makeAccordion('PERFORMANCE PHOTOS', `<div class="pk-gallery">${gallery}</div>`, false, 'images');
   }
 
   // Spotify tracks
   let spotifyTracks = [];
   try { spotifyTracks = JSON.parse(d.spotifyTracks || '[]'); } catch(e) {}
   if (spotifyTracks.length > 0) {
-    const trackList = spotifyTracks.map(url => `<div style="margin-bottom:0.8rem;"><a href="${url}" target="_blank" style="color:var(--accent); text-decoration:none;">Listen on Spotify →</a></div>`).join('');
-    accHtml += makeAccordion('SPOTIFY TRACKS', trackList, false, null);
+    const trackList = spotifyTracks.map(url => {
+      if (!url || typeof url !== 'string') return '';
+      return `<div style="margin-bottom:0.8rem;"><a href="${url}" target="_blank" style="color:${accent}; text-decoration:none;">Listen on Spotify →</a></div>`;
+    }).join('');
+    if (trackList) accHtml += makeAccordion('SPOTIFY TRACKS', trackList, false, null);
   }
 
   // EP covers
   let epCovers = [];
   try { epCovers = JSON.parse(d.epCovers || '[]'); } catch(e) {}
   if (epCovers.length > 0) {
-    const gallery = epCovers.map(src => `<img src="${src}" alt="EP cover">`).join('');
-    accHtml += makeAccordion('EP COVERS', `<div class="pk-gallery">${gallery}</div>`, false, 'images');
+    const gallery = epCovers.map(src => {
+      if (!src || typeof src !== 'string') return '';
+      return `<img src="${src}" alt="EP cover" style="max-width:100%; height:auto;">`;
+    }).join('');
+    if (gallery) accHtml += makeAccordion('EP COVERS', `<div class="pk-gallery">${gallery}</div>`, false, 'images');
   }
 
   // Timeline
@@ -1102,13 +1093,26 @@ function renderPressKit(d) {
 
   document.getElementById('pkAccordion').innerHTML = accHtml;
 
-  // Tech riders
-  if (d.techRider || d.hospRider) {
+  // Tech riders - with proper null/empty checking
+  const fontNames = ['inter', 'bebas neue', 'oswald', 'playfair display', 'rajdhani', 'permanent marker', 'noto sans jp'];
+  function isValidRider(val) {
+    if (!val || !val.trim()) return false;
+    const t = val.trim().toLowerCase();
+    if (t === '[]' || t === 'null' || t === 'undefined' || t === '{}') return false;
+    if (fontNames.includes(t)) return false;
+    return true;
+  }
+  const techRiderValid = isValidRider(d.techRider);
+  const hospRiderValid = isValidRider(d.hospRider);
+
+  if (techRiderValid || hospRiderValid) {
     document.getElementById('pkRidersSection').style.display = 'block';
     let ridersHtml = '';
-    if (d.techRider) ridersHtml += `<div class="pk-rider-card"><h3 style="color:${accent}">Tech Rider</h3><pre>${d.techRider}</pre></div>`;
-    if (d.hospRider) ridersHtml += `<div class="pk-rider-card"><h3 style="color:${accent}">Hospitality Rider</h3><pre>${d.hospRider}</pre></div>`;
+    if (techRiderValid) ridersHtml += `<div class="pk-rider-card"><h3 style="color:${accent}">Tech Rider</h3><pre>${d.techRider}</pre></div>`;
+    if (hospRiderValid) ridersHtml += `<div class="pk-rider-card"><h3 style="color:${accent}">Hospitality Rider</h3><pre>${d.hospRider}</pre></div>`;
     document.getElementById('pkRiders').innerHTML = ridersHtml;
+  } else {
+    document.getElementById('pkRidersSection').style.display = 'none';
   }
 
   // Show view mode
@@ -1153,16 +1157,133 @@ function sharePK() {
   }
 }
 
+// ═══════════════════════════════════════
+//  PDF EXPORT WITH INLINE STYLES
+// ═══════════════════════════════════════
 function exportPDF() {
-  const element = document.getElementById('viewMode');
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#c4a265';
+  const artistName = document.getElementById('pkArtistName').textContent || 'presskit';
+
+  // Clone the view content
+  const original = document.getElementById('viewMode');
+  const clone = original.cloneNode(true);
+
+  // Create a wrapper div with all inline styles for PDF
+  const pdfWrapper = document.createElement('div');
+  pdfWrapper.style.backgroundColor = '#0a0a0a';
+  pdfWrapper.style.color = '#e8e8e8';
+  pdfWrapper.style.fontFamily = "'Inter', 'Noto Sans JP', sans-serif";
+  pdfWrapper.style.lineHeight = '1.6';
+  pdfWrapper.style.padding = '0';
+  pdfWrapper.style.margin = '0';
+
+  // Remove header actions and hero
+  const headerActions = clone.querySelector('.pk-header-actions');
+  if (headerActions) headerActions.style.display = 'none';
+
+  const hero = clone.querySelector('.pk-hero');
+  if (hero) hero.style.display = 'none';
+
+  // Make header position static
+  const header = clone.querySelector('.pk-header');
+  if (header) header.style.position = 'static';
+
+  // Expand all accordions
+  clone.querySelectorAll('.pk-acc-item').forEach(item => {
+    item.classList.add('open');
+  });
+
+  // Convert social SVG icons to text labels
+  clone.querySelectorAll('.pk-social-icon').forEach((el, idx) => {
+    const labels = ['IG', 'SC', 'SP', 'BC', 'FB', 'WEB'];
+    if (idx < labels.length) {
+      el.textContent = labels[idx];
+      el.style.fontSize = '0.7rem';
+      el.style.fontWeight = '600';
+    }
+  });
+
+  // Ensure all images have proper src
+  clone.querySelectorAll('img').forEach(img => {
+    if (!img.src || img.src === '') {
+      img.style.display = 'none';
+    }
+  });
+
+  // Resolve ALL CSS variable references in inline styles
+  clone.querySelectorAll('*').forEach(el => {
+    const style = el.getAttribute('style');
+    if (style && style.includes('var(')) {
+      el.setAttribute('style', style
+        .replace(/var\(--accent\)/g, accent)
+        .replace(/var\(--bg\)/g, '#0a0a0a')
+        .replace(/var\(--surface\)/g, '#141414')
+        .replace(/var\(--surface2\)/g, '#1a1a1a')
+        .replace(/var\(--border\)/g, '#2a2a2a')
+        .replace(/var\(--text\)/g, '#e8e8e8')
+        .replace(/var\(--text-dim\)/g, '#888')
+      );
+    }
+  });
+
+  // Force accent color on headings and labels
+  clone.querySelectorAll('.pk-info-card h3, .pk-rider-card h3, .pk-timeline-year').forEach(el => {
+    el.style.color = accent;
+  });
+  clone.querySelectorAll('.pk-info-label').forEach(el => {
+    el.style.color = '#888';
+  });
+
+  // Flatten three-col grid to single column for PDF
+  clone.querySelectorAll('.pk-three-col').forEach(grid => {
+    grid.style.display = 'block';
+  });
+  clone.querySelectorAll('.pk-left-col, .pk-center-col, .pk-right-col').forEach(col => {
+    col.style.marginBottom = '1.5rem';
+  });
+
+  // Flatten timeline grid to flexbox
+  clone.querySelectorAll('.pk-timeline-item').forEach(item => {
+    item.style.display = 'flex';
+    item.style.gap = '1rem';
+    item.style.marginBottom = '1.2rem';
+    item.style.paddingBottom = '1rem';
+    item.style.borderBottom = '1px solid #2a2a2a';
+  });
+
+  // Convert CSS Grid to flexbox for riders
+  clone.querySelectorAll('.pk-riders').forEach(riders => {
+    riders.style.display = 'flex';
+    riders.style.flexDirection = 'column';
+    riders.style.gap = '1.5rem';
+    riders.style.margin = '2rem 0';
+  });
+
+  // Style gallery images for PDF
+  clone.querySelectorAll('.pk-gallery').forEach(gallery => {
+    gallery.style.display = 'flex';
+    gallery.style.flexDirection = 'column';
+    gallery.style.gap = '1rem';
+  });
+
+  clone.querySelectorAll('.pk-gallery img').forEach(img => {
+    img.style.maxWidth = '100%';
+    img.style.height = 'auto';
+    img.style.border = '1px solid #2a2a2a';
+    img.style.borderRadius = '4px';
+  });
+
+  pdfWrapper.appendChild(clone);
+
   const opt = {
-    margin: 10,
-    filename: document.getElementById('pkArtistName').textContent + '_presskit.pdf',
+    margin: [10, 10, 10, 10],
+    filename: `${artistName.toLowerCase()}_presskit.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
+    html2canvas: { scale: 2, backgroundColor: '#0a0a0a', useCORS: true, allowTaint: true },
     jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
   };
-  html2pdf().set(opt).from(element).save();
+
+  html2pdf().set(opt).from(pdfWrapper).save();
 }
 </script>
 </body>
