@@ -3,1146 +3,876 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THIRD KAGURA — PK Generator</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<title>THIRD KAGURA â PK Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Playfair+Display:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --surface: #141414; --surface2: #1a1a1a;
+  --border: #2a2a2a; --text: #e8e8e8; --text-dim: #888;
+  --accent: #c4a265; --accent-dim: #8a7245;
+}
+html { font-size: 15px; }
+body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ââââââ SHARED ââââââ */
+.btn-primary { background: var(--accent); color: #000; border: none; padding: 0.7rem 2rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 0.5rem 1.2rem; font-size: 0.8rem; cursor: pointer; font-family: inherit; letter-spacing: 0.05em; transition: all 0.15s; }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
-  :root {
-    --bg: #0a0a0a;
-    --surface: #141414;
-    --surface2: #1a1a1a;
-    --border: #2a2a2a;
-    --text: #e8e8e8;
-    --text-dim: #888;
-    --accent: #c4a265;
-    --accent-dim: #8a7245;
-    --danger: #e54;
-    --success: #4a4;
-  }
+/* ââââââ GENERATOR MODE ââââââ */
+#generatorMode { display: none; }
+.gen-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 1.2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.gen-header img { height: 32px; width: auto; }
+.gen-body { max-width: 640px; margin: 0 auto; padding: 1.2rem; }
+.gen-section { background: var(--surface); border: 1px solid var(--border); padding: 1.2rem; margin-bottom: 1rem; border-radius: 4px; }
+.gen-section h2 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.25em; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+.field { margin-bottom: 0.9rem; }
+.field label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.3rem; }
+.field input, .field textarea, .field select { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.55rem 0.7rem; font-family: inherit; font-size: 0.9rem; transition: border-color 0.2s; border-radius: 2px; }
+.field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--accent); }
+.field textarea { resize: vertical; min-height: 80px; }
+.field small { color: var(--text-dim); font-size: 0.7rem; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+@media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
 
-  html { font-size: 15px; }
-  body {
-    font-family: 'Inter', 'Noto Sans JP', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+/* Chips */
+.chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.chip { padding: 0.3rem 0.65rem; border: 1px solid var(--border); background: transparent; color: var(--text-dim); font-size: 0.75rem; cursor: pointer; transition: all 0.15s; font-family: inherit; border-radius: 2px; }
+.chip.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
 
-  /* ── HEADER ── */
-  .app-header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 1.2rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .app-header .brand {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .app-header .brand .kagura-mark {
-    font-size: 1.8rem;
-    font-weight: 900;
-    letter-spacing: 0.05em;
-    color: var(--accent);
-  }
-  .app-header .brand .subtitle {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--text-dim);
-  }
-  .btn-generate {
-    background: var(--accent);
-    color: #000;
-    border: none;
-    padding: 0.65rem 1.8rem;
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-generate:hover { background: #d4b275; transform: translateY(-1px); }
-  .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+/* Color picker */
+.color-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.color-swatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: all 0.15s; }
+.color-swatch.active { border-color: #fff; transform: scale(1.15); }
 
-  /* ── LAYOUT ── */
-  .app-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: calc(100vh - 60px);
-  }
-  @media (max-width: 1100px) {
-    .app-layout { grid-template-columns: 1fr; }
-    .preview-panel { display: none; }
-  }
+/* Font picker */
+.font-options { display: flex; flex-direction: column; gap: 0.4rem; }
+.font-option { padding: 0.6rem 0.8rem; border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s; text-align: left; border-radius: 2px; }
+.font-option.active { border-color: var(--accent); background: rgba(196,162,101,0.1); }
+.font-option span { font-size: 1.1rem; }
 
-  /* ── FORM PANEL ── */
-  .form-panel {
-    padding: 2rem;
-    overflow-y: auto;
-    max-height: calc(100vh - 60px);
-  }
-  .form-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 1.5rem;
-    margin-bottom: 1.2rem;
-  }
-  .form-section h2 {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.25em;
-    color: var(--accent);
-    margin-bottom: 1.2rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .field { margin-bottom: 1rem; }
-  .field label {
-    display: block;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-    margin-bottom: 0.35rem;
-  }
-  .field input, .field textarea, .field select {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.6rem 0.8rem;
-    font-family: inherit;
-    font-size: 0.9rem;
-    transition: border-color 0.2s;
-  }
-  .field input:focus, .field textarea:focus, .field select:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-  .field textarea { resize: vertical; min-height: 80px; }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-  .field small { color: var(--text-dim); font-size: 0.72rem; }
+/* Photo upload */
+.photo-upload-area { width: 100%; aspect-ratio: 16/9; border: 2px dashed var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; background: var(--bg); border-radius: 4px; }
+.photo-upload-area:hover { border-color: var(--accent); }
+.photo-upload-area img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+.photo-upload-area .placeholder { text-align: center; color: var(--text-dim); font-size: 0.8rem; }
+.photo-upload-area .placeholder span { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
 
-  .genre-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.3rem; }
-  .genre-chip {
-    padding: 0.3rem 0.7rem;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-dim);
-    font-size: 0.78rem;
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: inherit;
-  }
-  .genre-chip.active {
-    background: var(--accent);
-    color: #000;
-    border-color: var(--accent);
-    font-weight: 600;
-  }
+/* URL preview */
+.url-preview { background: var(--bg); border: 1px solid var(--border); padding: 0.5rem 0.7rem; border-radius: 2px; font-size: 0.8rem; color: var(--text-dim); margin-top: 0.3rem; word-break: break-all; }
+.url-preview b { color: var(--accent); }
 
-  /* Timeline entries */
-  .timeline-entries { display: flex; flex-direction: column; gap: 0.6rem; }
-  .timeline-entry {
-    display: grid;
-    grid-template-columns: 80px 1fr 32px;
-    gap: 0.5rem;
-    align-items: center;
-  }
-  .timeline-entry input { font-size: 0.85rem; }
-  .btn-icon {
-    width: 32px; height: 32px;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    transition: all 0.15s;
-  }
-  .btn-icon:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-icon.danger:hover { border-color: var(--danger); color: var(--danger); }
-  .btn-add {
-    background: transparent;
-    border: 1px dashed var(--border);
-    color: var(--text-dim);
-    padding: 0.5rem;
-    width: 100%;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.8rem;
-    margin-top: 0.4rem;
-    transition: all 0.15s;
-  }
-  .btn-add:hover { border-color: var(--accent); color: var(--accent); }
+/* Timeline entries */
+.dynamic-entries { display: flex; flex-direction: column; gap: 0.5rem; }
+.dynamic-entry { display: grid; grid-template-columns: 80px 1fr 32px; gap: 0.4rem; align-items: center; }
+@media (max-width: 480px) { .dynamic-entry { grid-template-columns: 70px 1fr 32px; } }
+.btn-icon { width: 32px; height: 32px; background: transparent; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: all 0.15s; border-radius: 2px; }
+.btn-icon:hover { border-color: #e54; color: #e54; }
+.btn-add { background: transparent; border: 1px dashed var(--border); color: var(--text-dim); padding: 0.45rem; width: 100%; cursor: pointer; font-family: inherit; font-size: 0.78rem; margin-top: 0.3rem; transition: all 0.15s; border-radius: 2px; }
+.btn-add:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* Photo upload */
-  .photo-upload {
-    width: 100%;
-    aspect-ratio: 3/2;
-    border: 2px dashed var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-    background: var(--bg);
-  }
-  .photo-upload:hover { border-color: var(--accent); }
-  .photo-upload img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0; left: 0;
-  }
-  .photo-upload .placeholder {
-    text-align: center;
-    color: var(--text-dim);
-    font-size: 0.8rem;
-  }
-  .photo-upload .placeholder span { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
-  .sub-photos {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.6rem;
-    margin-top: 0.6rem;
-  }
-  .sub-photos .photo-upload { aspect-ratio: 1; }
+/* Submit section */
+.gen-submit { border-color: var(--accent) !important; background: linear-gradient(135deg, var(--surface) 0%, #1a1712 100%) !important; }
 
-  /* ── PREVIEW PANEL ── */
-  .preview-panel {
-    background: #1e1e1e;
-    border-left: 1px solid var(--border);
-    padding: 2rem;
-    overflow-y: auto;
-    max-height: calc(100vh - 60px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .preview-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.25em;
-    color: var(--text-dim);
-    margin-bottom: 1rem;
-    align-self: flex-start;
-  }
+/* ââââââ VIEW MODE (PRESS KIT) ââââââ */
+#viewMode { display: none; }
 
-  /* ── PRESS KIT PREVIEW (also used for PDF) ── */
-  #pk-preview {
-    width: 595px;
-    min-height: 842px;
-    background: #000;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    position: relative;
-    overflow: hidden;
-  }
-  .pk-hero {
-    width: 100%;
-    height: 360px;
-    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-  }
-  .pk-hero img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0; left: 0;
-  }
-  .pk-hero-overlay {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    padding: 1.5rem 2rem;
-    background: linear-gradient(transparent, rgba(0,0,0,0.85));
-  }
-  .pk-artist-name {
-    font-size: 2.4rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    line-height: 1.1;
-  }
-  .pk-tagline {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--accent);
-    margin-top: 0.3rem;
-  }
+/* Hero */
+.pk-hero { width: 100%; min-height: 100vh; position: relative; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+.pk-hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.pk-hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(transparent 30%, rgba(0,0,0,0.85) 100%); z-index: 1; }
+.pk-hero-content { position: relative; z-index: 2; padding: 2rem 1.5rem; }
+.pk-artist-name { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,0.5); }
+.pk-tagline { font-size: clamp(0.75rem, 2vw, 1rem); text-transform: uppercase; letter-spacing: 0.25em; margin-top: 0.5rem; }
+.pk-hero-actions { display: flex; gap: 0.6rem; margin-top: 1.2rem; flex-wrap: wrap; }
+.pk-hero-actions button { padding: 0.6rem 1.5rem; font-size: 0.8rem; border-radius: 2px; }
 
-  .pk-body { padding: 1.8rem 2rem; }
+/* Social bar */
+.pk-social-bar { display: flex; gap: 1rem; padding: 1.2rem 1.5rem; justify-content: center; flex-wrap: wrap; }
+.pk-social-link { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-dim); text-decoration: none; font-size: 0.7rem; font-weight: 700; transition: all 0.2s; }
+.pk-social-link:hover { border-color: var(--accent); color: var(--accent); }
 
-  .pk-section {
-    margin-bottom: 1.5rem;
-  }
-  .pk-section-title {
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    color: var(--accent);
-    margin-bottom: 0.6rem;
-    padding-bottom: 0.3rem;
-    border-bottom: 1px solid #333;
-  }
-  .pk-bio {
-    font-size: 0.78rem;
-    line-height: 1.7;
-    color: #ccc;
-  }
+/* Info section */
+.pk-info-section { padding: 1.5rem; }
+.pk-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 600px) { .pk-info-grid { grid-template-columns: 1fr; } }
+.pk-info-card { background: var(--surface); border: 1px solid var(--border); padding: 1.2rem; border-radius: 4px; }
+.pk-info-card h3 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 0.8rem; }
+.pk-info-item { margin-bottom: 0.5rem; }
+.pk-info-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-dim); }
+.pk-info-value { font-size: 0.9rem; color: var(--text); }
+.pk-info-value a { color: var(--accent); text-decoration: none; }
 
-  .pk-timeline-item {
-    display: grid;
-    grid-template-columns: 50px 1fr;
-    gap: 0.6rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.78rem;
-  }
-  .pk-timeline-year {
-    font-weight: 700;
-    color: var(--accent);
-  }
-  .pk-timeline-event { color: #ccc; }
+/* Accordion */
+.pk-accordion { margin: 0 1.5rem; }
+.pk-acc-item { border-bottom: 1px solid var(--border); }
+.pk-acc-header { width: 100%; background: transparent; border: none; color: var(--text); padding: 1rem 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-family: inherit; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; }
+.pk-acc-header:hover { color: var(--accent); }
+.pk-acc-arrow { transition: transform 0.3s; font-size: 0.9rem; }
+.pk-acc-item.open .pk-acc-arrow { transform: rotate(180deg); }
+.pk-acc-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+.pk-acc-item.open .pk-acc-body { max-height: 2000px; }
+.pk-acc-content { padding: 0 0 1.2rem 0; color: #ccc; font-size: 0.9rem; line-height: 1.8; }
 
-  .pk-awards-item {
-    font-size: 0.78rem;
-    color: #ccc;
-    padding: 0.3rem 0;
-    border-bottom: 1px solid #1a1a1a;
-  }
+/* Tech rider */
+.pk-tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1.5rem; }
+@media (max-width: 600px) { .pk-tech-grid { grid-template-columns: 1fr; } }
+.pk-tech-card { background: var(--surface); border: 1px solid var(--border); padding: 1.2rem; border-radius: 4px; }
+.pk-tech-card h3 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 0.6rem; }
+.pk-tech-card pre { font-family: inherit; font-size: 0.85rem; color: #ccc; white-space: pre-wrap; }
 
-  .pk-releases-item {
-    font-size: 0.78rem;
-    color: #ccc;
-    padding: 0.3rem 0;
-  }
+/* Footer */
+.pk-footer { padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border); margin-top: 2rem; }
+.pk-footer img { height: 20px; opacity: 0.15; }
+.pk-footer small { display: block; margin-top: 0.5rem; font-size: 0.65rem; color: #333; }
 
-  .pk-contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-  }
-  .pk-contact-item {
-    font-size: 0.72rem;
-  }
-  .pk-contact-label {
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: #666;
-    font-size: 0.6rem;
-  }
-  .pk-contact-value {
-    color: #ccc;
-    word-break: break-all;
-  }
-
-  .pk-footer {
-    padding: 1rem 2rem;
-    border-top: 1px solid #111;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.6rem;
-    color: #1a1a1a;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-  }
-  .pk-footer .kagura-logo {
-    color: #1c1c1c;
-    font-weight: 700;
-  }
-
-  /* Sub photos in PK */
-  .pk-photos-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    margin-top: 1rem;
-  }
-  .pk-photos-grid img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-  }
-
-  /* Loading overlay */
-  .loading-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 999;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-  }
-  .loading-overlay.active { display: flex; }
-  .loading-spinner {
-    width: 40px; height: 40px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--text-dim);
-  }
-
-  /* Sample data button */
-  .btn-sample {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    padding: 0.45rem 1rem;
-    font-size: 0.75rem;
-    cursor: pointer;
-    font-family: inherit;
-    letter-spacing: 0.05em;
-    transition: all 0.15s;
-  }
-  .btn-sample:hover { border-color: var(--accent); color: var(--accent); }
+/* ââââââ LOADING & ERROR ââââââ */
+#loadingState, #notFoundState { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="app-header">
-  <div class="brand">
-    <div style="display:flex; align-items:center; gap:0.8rem;">
-      <img src="https://lh3.googleusercontent.com/d/1snrBritrC5F_EZrHR0kD4gVsRXBOWnjF" alt="THIRD KAGURA" style="height:40px; width:auto; object-fit:contain;">
-      <div class="subtitle">PK Generator</div>
+<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- â         GENERATOR MODE (FORM)           â -->
+<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<div id="generatorMode">
+  <header class="gen-header">
+    <img src="https://lh3.googleusercontent.com/d/1snrBritrC5F_EZrHR0kD4gVsRXBOWnjF" alt="THIRD KAGURA">
+    <div style="display:flex; gap:0.5rem;">
+      <button class="btn-secondary" onclick="loadSampleData()">SAMPLE DATA</button>
+      <button class="btn-primary" onclick="submitProfile()">SUBMIT</button>
     </div>
-  </div>
-  <div style="display:flex; gap:0.6rem; align-items:center;">
-    <button class="btn-sample" onclick="loadSampleData()">LOAD SAMPLE DATA</button>
-    <button class="btn-generate" onclick="generatePDF()">GENERATE PDF</button>
-  </div>
-</header>
+  </header>
 
-<!-- MAIN LAYOUT -->
-<div class="app-layout">
+  <div class="gen-body">
 
-  <!-- ═══ FORM PANEL ═══ -->
-  <div class="form-panel">
+    <!-- URL SLUG -->
+    <div class="gen-section">
+      <h2>Your Press Kit URL</h2>
+      <div class="field">
+        <label>Choose your unique URL slug *</label>
+        <input type="text" id="slugInput" placeholder="your-artist-name" oninput="updateSlugPreview()">
+        <div class="url-preview" id="slugPreview">thirdkagura.github.io/pk-generator/?id=<b>your-slug</b></div>
+        <small>Lowercase letters, numbers, and hyphens only. This is the link you'll share.</small>
+      </div>
+    </div>
 
     <!-- BASIC INFO -->
-    <div class="form-section">
+    <div class="gen-section">
       <h2>Basic Information</h2>
       <div class="field">
         <label>DJ / Artist Name *</label>
-        <input type="text" id="artistName" placeholder="Your artist name" oninput="updatePreview()">
+        <input type="text" id="artistName" placeholder="Your artist name">
       </div>
       <div class="field-row">
         <div class="field">
           <label>Real Name (optional)</label>
-          <input type="text" id="realName" placeholder="Your real name" oninput="updatePreview()">
+          <input type="text" id="realName" placeholder="Your real name">
         </div>
         <div class="field">
           <label>Active Since</label>
-          <input type="text" id="activeSince" placeholder="Year started" oninput="updatePreview()">
+          <input type="text" id="activeSince" placeholder="Year started">
         </div>
       </div>
       <div class="field-row">
         <div class="field">
-          <label>Country of Origin</label>
-          <input type="text" id="country" placeholder="Your country" oninput="updatePreview()">
+          <label>Country</label>
+          <input type="text" id="country" placeholder="Your country">
         </div>
         <div class="field">
-          <label>Based In</label>
-          <input type="text" id="basedIn" placeholder="Your city" oninput="updatePreview()">
+          <label>City</label>
+          <input type="text" id="city" placeholder="Your city">
         </div>
       </div>
       <div class="field">
         <label>Genre(s)</label>
-        <div class="genre-chips" id="genreChips">
-          <button class="genre-chip" data-genre="Hip Hop" onclick="toggleGenre(this)">Hip Hop</button>
-          <button class="genre-chip" data-genre="House" onclick="toggleGenre(this)">House</button>
-          <button class="genre-chip" data-genre="Afro House" onclick="toggleGenre(this)">Afro House</button>
-          <button class="genre-chip" data-genre="Techno" onclick="toggleGenre(this)">Techno</button>
-          <button class="genre-chip" data-genre="Drum & Bass" onclick="toggleGenre(this)">Drum & Bass</button>
-          <button class="genre-chip" data-genre="Disco / Funk" onclick="toggleGenre(this)">Disco / Funk</button>
-          <button class="genre-chip" data-genre="R&B / Soul" onclick="toggleGenre(this)">R&B / Soul</button>
-          <button class="genre-chip" data-genre="Reggae / Dancehall" onclick="toggleGenre(this)">Reggae / Dancehall</button>
-          <button class="genre-chip" data-genre="Open Format" onclick="toggleGenre(this)">Open Format</button>
-          <button class="genre-chip" data-genre="Hardstyle" onclick="toggleGenre(this)">Hardstyle</button>
-          <button class="genre-chip" data-genre="Trance" onclick="toggleGenre(this)">Trance</button>
-          <button class="genre-chip" data-genre="Other" onclick="toggleGenre(this)">Other</button>
+        <div class="chips" id="genreChips">
+          <button class="chip" data-v="Hip Hop" onclick="toggleChip(this,'genre')">Hip Hop</button>
+          <button class="chip" data-v="House" onclick="toggleChip(this,'genre')">House</button>
+          <button class="chip" data-v="Afro House" onclick="toggleChip(this,'genre')">Afro House</button>
+          <button class="chip" data-v="Techno" onclick="toggleChip(this,'genre')">Techno</button>
+          <button class="chip" data-v="Drum & Bass" onclick="toggleChip(this,'genre')">Drum & Bass</button>
+          <button class="chip" data-v="Disco / Funk" onclick="toggleChip(this,'genre')">Disco / Funk</button>
+          <button class="chip" data-v="R&B / Soul" onclick="toggleChip(this,'genre')">R&B / Soul</button>
+          <button class="chip" data-v="Reggae / Dancehall" onclick="toggleChip(this,'genre')">Reggae / Dancehall</button>
+          <button class="chip" data-v="Open Format" onclick="toggleChip(this,'genre')">Open Format</button>
+          <button class="chip" data-v="Hardstyle" onclick="toggleChip(this,'genre')">Hardstyle</button>
+          <button class="chip" data-v="Trance" onclick="toggleChip(this,'genre')">Trance</button>
+          <button class="chip" data-v="Other" onclick="toggleChip(this,'genre')">Other</button>
         </div>
-        <input type="text" id="genreOther" placeholder="Other genres (e.g. Industrial, Progressive, Psytrance...)" style="margin-top:0.4rem; display:none;" oninput="updatePreview()">
+        <input type="text" id="genreOther" placeholder="Other genres (e.g. Industrial, Progressive...)" style="margin-top:0.4rem; display:none;">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Booking Email *</label>
+          <input type="email" id="bookingEmail" placeholder="booking@email.com">
+        </div>
+        <div class="field">
+          <label>Management Email</label>
+          <input type="email" id="mgmtEmail" placeholder="management@email.com">
+        </div>
       </div>
       <div class="field">
-        <label>Booking Email *</label>
-        <input type="email" id="bookingEmail" placeholder="your-booking@email.com" oninput="updatePreview()">
-      </div>
-      <div class="field">
-        <label>Management / Label Email (optional)</label>
-        <input type="email" id="mgmtEmail" placeholder="your-management@email.com" oninput="updatePreview()">
+        <label>Booking Fee (optional, internal use)</label>
+        <input type="text" id="bookingFee" placeholder="e.g. $500/hr, Negotiable">
+        <small>This will not be displayed publicly. Used for internal booking reference only.</small>
       </div>
     </div>
 
-    <!-- PHOTO -->
-    <div class="form-section">
-      <h2>Profile Photos</h2>
+    <!-- BACKGROUND IMAGE -->
+    <div class="gen-section">
+      <h2>Background Image</h2>
       <div class="field">
-        <label>Main Photo</label>
-        <div class="photo-upload" onclick="document.getElementById('mainPhotoInput').click()">
-          <div class="placeholder" id="mainPhotoPlaceholder">
-            <span>+</span>
-            Click to upload main photo
-          </div>
-          <img id="mainPhotoPreview" style="display:none;">
+        <label>Upload your hero background photo</label>
+        <div class="photo-upload-area" onclick="document.getElementById('bgImageInput').click()">
+          <div class="placeholder" id="bgImagePlaceholder"><span>+</span>Click to upload (recommended: 1920x1080)</div>
+          <img id="bgImagePreview" style="display:none;">
         </div>
-        <input type="file" id="mainPhotoInput" accept="image/*" style="display:none;" onchange="handleMainPhoto(this)">
+        <input type="file" id="bgImageInput" accept="image/*" style="display:none;" onchange="handleBgImage(this)">
       </div>
       <div class="field">
-        <label>Sub Photos (optional, up to 3)</label>
-        <div class="sub-photos">
-          <div class="photo-upload" onclick="document.getElementById('subPhoto1Input').click()">
-            <div class="placeholder" id="subPhoto1Placeholder"><span>+</span></div>
-            <img id="subPhoto1Preview" style="display:none;">
-            <input type="file" accept="image/*" id="subPhoto1Input" style="display:none;" onchange="handleSubPhoto(this, 1)">
-          </div>
-          <div class="photo-upload" onclick="document.getElementById('subPhoto2Input').click()">
-            <div class="placeholder" id="subPhoto2Placeholder"><span>+</span></div>
-            <img id="subPhoto2Preview" style="display:none;">
-            <input type="file" accept="image/*" id="subPhoto2Input" style="display:none;" onchange="handleSubPhoto(this, 2)">
-          </div>
-          <div class="photo-upload" onclick="document.getElementById('subPhoto3Input').click()">
-            <div class="placeholder" id="subPhoto3Placeholder"><span>+</span></div>
-            <img id="subPhoto3Preview" style="display:none;">
-            <input type="file" accept="image/*" id="subPhoto3Input" style="display:none;" onchange="handleSubPhoto(this, 3)">
-          </div>
+        <label>Or paste image URL</label>
+        <input type="url" id="bgImageUrl" placeholder="https://..." oninput="handleBgUrl(this.value)">
+      </div>
+    </div>
+
+    <!-- DESIGN CUSTOMIZATION -->
+    <div class="gen-section">
+      <h2>Design Customization</h2>
+      <div class="field">
+        <label>Accent Color</label>
+        <div class="color-options" id="colorOptions">
+          <div class="color-swatch active" data-color="#c4a265" style="background:#c4a265;" onclick="selectColor(this)"></div>
+          <div class="color-swatch" data-color="#e53e3e" style="background:#e53e3e;" onclick="selectColor(this)"></div>
+          <div class="color-swatch" data-color="#4299e1" style="background:#4299e1;" onclick="selectColor(this)"></div>
+          <div class="color-swatch" data-color="#48bb78" style="background:#48bb78;" onclick="selectColor(this)"></div>
+          <div class="color-swatch" data-color="#9f7aea" style="background:#9f7aea;" onclick="selectColor(this)"></div>
+          <div class="color-swatch" data-color="#ed64a6" style="background:#ed64a6;" onclick="selectColor(this)"></div>
+          <div class="color-swatch" data-color="#38b2ac" style="background:#38b2ac;" onclick="selectColor(this)"></div>
+          <div class="color-swatch" data-color="#ed8936" style="background:#ed8936;" onclick="selectColor(this)"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Title Font</label>
+        <div class="font-options" id="fontOptions">
+          <button class="font-option active" data-font="Inter" onclick="selectFont(this)"><span style="font-family:'Inter';font-weight:900">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Inter â Clean & Modern</small></button>
+          <button class="font-option" data-font="Bebas Neue" onclick="selectFont(this)"><span style="font-family:'Bebas Neue'">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Bebas Neue â Bold & Condensed</small></button>
+          <button class="font-option" data-font="Oswald" onclick="selectFont(this)"><span style="font-family:'Oswald';font-weight:700">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Oswald â Strong & Impactful</small></button>
+          <button class="font-option" data-font="Playfair Display" onclick="selectFont(this)"><span style="font-family:'Playfair Display';font-weight:900">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Playfair â Elegant & Classic</small></button>
+          <button class="font-option" data-font="Rajdhani" onclick="selectFont(this)"><span style="font-family:'Rajdhani';font-weight:700">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Rajdhani â Futuristic & Techy</small></button>
+          <button class="font-option" data-font="Permanent Marker" onclick="selectFont(this)"><span style="font-family:'Permanent Marker'">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Permanent Marker â Handwritten</small></button>
         </div>
       </div>
     </div>
 
     <!-- BIO -->
-    <div class="form-section">
+    <div class="gen-section">
       <h2>Biography</h2>
       <div class="field">
-        <label>Short Bio (English)</label>
-        <textarea id="bio" rows="5" placeholder="Write your artist bio here in 3rd person..." oninput="updatePreview()"></textarea>
-        <small>Recommended: 80-150 words. Write in English, 3rd person.</small>
+        <label>Short Bio</label>
+        <textarea id="bio" rows="5" placeholder="Write your artist bio here in 3rd person..."></textarea>
+        <small>Recommended: 80-150 words.</small>
       </div>
     </div>
 
-    <!-- TIMELINE -->
-    <div class="form-section">
+    <!-- CAREER TIMELINE -->
+    <div class="gen-section">
       <h2>Career Timeline</h2>
-      <div class="timeline-entries" id="timelineEntries">
-        <div class="timeline-entry" data-idx="0">
-          <input type="text" placeholder="Year" class="tl-year" oninput="updatePreview()">
-          <input type="text" placeholder="Event description" class="tl-event" oninput="updatePreview()">
-          <button class="btn-icon danger" onclick="removeTimeline(this)" title="Remove">×</button>
+      <div class="dynamic-entries" id="timelineEntries">
+        <div class="dynamic-entry">
+          <input type="text" placeholder="Year" class="tl-year">
+          <input type="text" placeholder="Event description" class="tl-event">
+          <button class="btn-icon" onclick="removeEntry(this)">Ã</button>
         </div>
       </div>
-      <button class="btn-add" onclick="addTimeline()">+ Add Timeline Entry</button>
+      <button class="btn-add" onclick="addTimeline()">+ Add Entry</button>
     </div>
 
     <!-- AWARDS -->
-    <div class="form-section">
+    <div class="gen-section">
       <h2>Awards & Achievements</h2>
       <div id="awardsEntries">
         <div class="field award-entry">
-          <input type="text" placeholder="Your award or achievement" oninput="updatePreview()">
+          <input type="text" placeholder="Your award or achievement">
         </div>
       </div>
       <button class="btn-add" onclick="addAward()">+ Add Award</button>
     </div>
 
     <!-- RELEASES -->
-    <div class="form-section">
-      <h2>Releases (Optional)</h2>
-      <div id="releasesEntries">
-        <div class="field release-entry" style="display:grid; grid-template-columns: 1fr 80px 1fr; gap:0.5rem;">
-          <input type="text" placeholder="Track / Release name" class="rel-name" oninput="updatePreview()">
-          <input type="text" placeholder="Year" class="rel-year" oninput="updatePreview()">
-          <input type="text" placeholder="Chart result (optional)" class="rel-chart" oninput="updatePreview()">
+    <div class="gen-section">
+      <h2>Releases</h2>
+      <div class="dynamic-entries" id="releasesEntries">
+        <div class="dynamic-entry" style="grid-template-columns: 1fr 70px 32px;">
+          <input type="text" placeholder="Track / Release name" class="rel-name">
+          <input type="text" placeholder="Year" class="rel-year">
+          <button class="btn-icon" onclick="removeEntry(this)">Ã</button>
         </div>
       </div>
       <button class="btn-add" onclick="addRelease()">+ Add Release</button>
     </div>
 
-    <!-- SOCIAL -->
-    <div class="form-section">
+    <!-- TECH RIDER -->
+    <div class="gen-section">
+      <h2>Technical Requirements</h2>
+      <div class="field">
+        <label>Tech Rider</label>
+        <textarea id="techRider" rows="4" placeholder="e.g. 2x CDJ 3000, 1x DJM-A9, 2x Monitor Speakers..."></textarea>
+      </div>
+      <div class="field">
+        <label>Hospitality Rider</label>
+        <textarea id="hospRider" rows="3" placeholder="e.g. 2x Water bottles, Towel, Drink vouchers..."></textarea>
+      </div>
+    </div>
+
+    <!-- SOCIAL LINKS -->
+    <div class="gen-section">
       <h2>Social & Links</h2>
       <div class="field">
         <label>Instagram</label>
-        <input type="url" id="instagram" placeholder="https://instagram.com/..." oninput="updatePreview()">
+        <input type="url" id="instagram" placeholder="https://instagram.com/...">
       </div>
       <div class="field">
         <label>SoundCloud</label>
-        <input type="url" id="soundcloud" placeholder="https://soundcloud.com/..." oninput="updatePreview()">
+        <input type="url" id="soundcloud" placeholder="https://soundcloud.com/...">
       </div>
       <div class="field">
         <label>Spotify</label>
-        <input type="url" id="spotify" placeholder="https://open.spotify.com/artist/..." oninput="updatePreview()">
+        <input type="url" id="spotify" placeholder="https://open.spotify.com/artist/...">
       </div>
       <div class="field">
         <label>Bandcamp</label>
-        <input type="url" id="bandcamp" placeholder="https://....bandcamp.com" oninput="updatePreview()">
+        <input type="url" id="bandcamp" placeholder="https://....bandcamp.com">
       </div>
       <div class="field">
         <label>Website</label>
-        <input type="url" id="website" placeholder="https://..." oninput="updatePreview()">
+        <input type="url" id="website" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label>Facebook</label>
+        <input type="url" id="facebook" placeholder="https://facebook.com/...">
       </div>
     </div>
 
-    <!-- Submit to Database -->
-    <div class="form-section" style="border-color: var(--accent); background: linear-gradient(135deg, var(--surface) 0%, #1a1712 100%);">
-      <h2 style="color: var(--accent);">Submit Your Profile</h2>
-      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1rem;">Save your profile data for booking opportunities. Your information will be securely stored and used for artist matching.</p>
-      <button class="btn-generate" onclick="submitToSheet()" id="btnSubmit" style="width:100%; padding:0.8rem;">SUBMIT PROFILE</button>
+    <!-- SUBMIT -->
+    <div class="gen-section gen-submit">
+      <h2 style="color:var(--accent);">Submit Your Press Kit</h2>
+      <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1rem;">Your press kit will be published at the URL shown above. You can update it anytime by resubmitting with the same slug.</p>
+      <button class="btn-primary" onclick="submitProfile()" style="width:100%; padding:0.8rem;" id="btnSubmit">PUBLISH PRESS KIT</button>
       <div id="submitStatus" style="margin-top:0.6rem; font-size:0.85rem; text-align:center;"></div>
     </div>
-  </div>
 
-  <!-- ═══ PREVIEW PANEL ═══ -->
-  <div class="preview-panel">
-    <div class="preview-label">Live Preview</div>
-    <div id="pk-preview" style="transform-origin: top center; transform: scale(0.85);">
-      <!-- Hero -->
-      <div class="pk-hero" id="pkHero">
-        <div class="pk-hero-overlay">
-          <div class="pk-artist-name" id="pkArtistName">YOUR NAME</div>
-          <div class="pk-tagline" id="pkTagline">DJ / PRODUCER</div>
-        </div>
-      </div>
-
-      <div class="pk-body">
-        <!-- Bio -->
-        <div class="pk-section" id="pkBioSection" style="display:none;">
-          <div class="pk-section-title">BIO</div>
-          <div class="pk-bio" id="pkBio"></div>
-        </div>
-
-        <!-- Timeline -->
-        <div class="pk-section" id="pkTimelineSection" style="display:none;">
-          <div class="pk-section-title">CAREER</div>
-          <div id="pkTimeline"></div>
-        </div>
-
-        <!-- Awards -->
-        <div class="pk-section" id="pkAwardsSection" style="display:none;">
-          <div class="pk-section-title">AWARDS & ACHIEVEMENTS</div>
-          <div id="pkAwards"></div>
-        </div>
-
-        <!-- Releases -->
-        <div class="pk-section" id="pkReleasesSection" style="display:none;">
-          <div class="pk-section-title">RELEASES</div>
-          <div id="pkReleases"></div>
-        </div>
-
-        <!-- Sub Photos -->
-        <div class="pk-section" id="pkPhotosSection" style="display:none;">
-          <div class="pk-section-title">PRESS PHOTOS</div>
-          <div class="pk-photos-grid" id="pkPhotosGrid"></div>
-        </div>
-
-        <!-- Contact -->
-        <div class="pk-section">
-          <div class="pk-section-title">CONTACT & LINKS</div>
-          <div class="pk-contact-grid" id="pkContact">
-            <div class="pk-contact-item">
-              <div class="pk-contact-label">Booking</div>
-              <div class="pk-contact-value" id="pkBooking">—</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="pk-footer">
-        <span id="pkYear">2026</span>
-        <img src="https://lh3.googleusercontent.com/d/1snrBritrC5F_EZrHR0kD4gVsRXBOWnjF" alt="THIRD KAGURA" class="kagura-logo" style="height:18px; width:auto; opacity:0.08;">
-      </div>
-    </div>
   </div>
 </div>
 
-<!-- Loading overlay -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-spinner"></div>
-  <div class="loading-text">Generating Press Kit PDF...</div>
+<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- â       VIEW MODE (PRESS KIT PAGE)        â -->
+<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<div id="viewMode">
+  <!-- Hero -->
+  <section class="pk-hero" id="pkHero">
+    <img class="pk-hero-bg" id="pkHeroBg" src="" alt="">
+    <div class="pk-hero-overlay"></div>
+    <div class="pk-hero-content">
+      <div class="pk-artist-name" id="pkName">ARTIST NAME</div>
+      <div class="pk-tagline" id="pkTagline">GENRE â CITY</div>
+      <div class="pk-hero-actions">
+        <button class="btn-primary" onclick="sharePK()">SHARE</button>
+        <button class="btn-secondary" onclick="scrollToInfo()">VIEW INFO â</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social bar -->
+  <div class="pk-social-bar" id="pkSocialBar"></div>
+
+  <!-- Info section -->
+  <div class="pk-info-section" id="pkInfoSection">
+    <div class="pk-info-grid" id="pkInfoGrid"></div>
+  </div>
+
+  <!-- Accordion sections -->
+  <div class="pk-accordion" id="pkAccordion"></div>
+
+  <!-- Tech riders -->
+  <div id="pkTechSection" style="display:none;">
+    <div class="pk-tech-grid" id="pkTechGrid"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="pk-footer">
+    <img src="https://lh3.googleusercontent.com/d/1snrBritrC5F_EZrHR0kD4gVsRXBOWnjF" alt="THIRD KAGURA">
+    <small>Powered by THIRD KAGURA</small>
+  </div>
+</div>
+
+<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- â            LOADING STATE                â -->
+<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<div id="loadingState">
+  <div class="spinner"></div>
+  <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.2em; color:var(--text-dim);">Loading Press Kit...</div>
+</div>
+
+<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- â            NOT FOUND STATE              â -->
+<!-- ââââââââââââââââââââââââââââââââââââââââââââ -->
+<div id="notFoundState">
+  <div style="font-size:3rem;">ð§</div>
+  <div style="font-size:1.2rem; font-weight:700;">Press Kit Not Found</div>
+  <div style="color:var(--text-dim); font-size:0.9rem;">This artist profile doesn't exist or hasn't been published yet.</div>
+  <button class="btn-primary" onclick="window.location.href=window.location.pathname" style="margin-top:1rem;">CREATE YOUR PRESS KIT</button>
 </div>
 
 <script>
-// ── State ──
+// âââââââââââââââââââââââââââââââââââââââ
+//  STATE
+// âââââââââââââââââââââââââââââââââââââââ
 let selectedGenres = [];
-let mainPhotoData = null;
-let subPhotos = [null, null, null];
+let selectedColor = '#c4a265';
+let selectedFont = 'Inter';
+let bgImageData = null; // base64 or URL
 
-// ── Genre toggle ──
-function toggleGenre(el) {
-  const genre = el.dataset.genre;
+// Google Apps Script Web App URL â replace with your actual URL
+const SHEETS_URL = window.GOOGLE_SHEETS_URL || '';
+
+// âââââââââââââââââââââââââââââââââââââââ
+//  INIT: Detect mode from URL
+// ââââââââââââââââââââââââââââââââââââââ
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (id) {
+    loadPressKit(id);
+  } else {
+    showGenerator();
+  }
+})();
+
+function showGenerator() {
+  document.getElementById('generatorMode').style.display = 'block';
+}
+
+// âââââââââââââââââââââââââââââââââââââââ
+//  GENERATOR: Chips, Colors, Fonts
+// âââââââââââââââââââââââââââââââââââââââ
+function toggleChip(el, type) {
+  const val = el.dataset.v;
   el.classList.toggle('active');
-  if (el.classList.contains('active')) {
-    selectedGenres.push(genre);
-  } else {
-    selectedGenres = selectedGenres.filter(g => g !== genre);
-  }
-  // Show/hide Other text input
-  const otherInput = document.getElementById('genreOther');
-  if (otherInput) {
-    otherInput.style.display = selectedGenres.includes('Other') ? 'block' : 'none';
-  }
-  updatePreview();
-}
-
-// ── Photo handlers ──
-function handleMainPhoto(input) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      mainPhotoData = e.target.result;
-      document.getElementById('mainPhotoPreview').src = mainPhotoData;
-      document.getElementById('mainPhotoPreview').style.display = 'block';
-      document.getElementById('mainPhotoPlaceholder').style.display = 'none';
-      updatePreview();
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
-function handleSubPhoto(input, idx) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      subPhotos[idx - 1] = e.target.result;
-      document.getElementById(`subPhoto${idx}Preview`).src = e.target.result;
-      document.getElementById(`subPhoto${idx}Preview`).style.display = 'block';
-      document.getElementById(`subPhoto${idx}Placeholder`).style.display = 'none';
-      updatePreview();
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
-// ── Timeline ──
-function addTimeline() {
-  const container = document.getElementById('timelineEntries');
-  const div = document.createElement('div');
-  div.className = 'timeline-entry';
-  div.innerHTML = `
-    <input type="text" placeholder="Year" class="tl-year" oninput="updatePreview()">
-    <input type="text" placeholder="Event description" class="tl-event" oninput="updatePreview()">
-    <button class="btn-icon danger" onclick="removeTimeline(this)" title="Remove">×</button>
-  `;
-  container.appendChild(div);
-}
-
-function removeTimeline(btn) {
-  const entries = document.querySelectorAll('.timeline-entry');
-  if (entries.length > 1) {
-    btn.parentElement.remove();
-    updatePreview();
-  }
-}
-
-// ── Awards ──
-function addAward() {
-  const container = document.getElementById('awardsEntries');
-  const div = document.createElement('div');
-  div.className = 'field award-entry';
-  div.innerHTML = `<input type="text" placeholder="Your award or achievement" oninput="updatePreview()">`;
-  container.appendChild(div);
-}
-
-// ── Releases ──
-function addRelease() {
-  const container = document.getElementById('releasesEntries');
-  const div = document.createElement('div');
-  div.className = 'field release-entry';
-  div.style.cssText = 'display:grid; grid-template-columns: 1fr 80px 1fr; gap:0.5rem;';
-  div.innerHTML = `
-    <input type="text" placeholder="Track / Release name" class="rel-name" oninput="updatePreview()">
-    <input type="text" placeholder="Year" class="rel-year" oninput="updatePreview()">
-    <input type="text" placeholder="Chart result (optional)" class="rel-chart" oninput="updatePreview()">
-  `;
-  container.appendChild(div);
-}
-
-// ── UPDATE PREVIEW ──
-function updatePreview() {
-  const name = document.getElementById('artistName').value || 'YOUR NAME';
-  const based = document.getElementById('basedIn').value;
-  const country = document.getElementById('country').value;
-  const bio = document.getElementById('bio').value;
-  const booking = document.getElementById('bookingEmail').value;
-  const mgmt = document.getElementById('mgmtEmail').value;
-  const instagram = document.getElementById('instagram').value;
-  const soundcloud = document.getElementById('soundcloud').value;
-  const spotify = document.getElementById('spotify').value;
-  const bandcamp = document.getElementById('bandcamp').value;
-  const website = document.getElementById('website').value;
-
-  // Artist name
-  document.getElementById('pkArtistName').textContent = name.toUpperCase();
-
-  // Tagline
-  let tagParts = [];
-  let displayGenres = selectedGenres.filter(g => g !== 'Other');
-  const otherText = document.getElementById('genreOther')?.value?.trim();
-  if (selectedGenres.includes('Other') && otherText) displayGenres.push(otherText);
-  if (displayGenres.length > 0) tagParts.push(displayGenres.join(' / ').toUpperCase());
-  let location = [based, country].filter(Boolean).join(', ');
-  if (location) tagParts.push(location.toUpperCase());
-  document.getElementById('pkTagline').textContent = tagParts.join(' — ') || 'DJ / PRODUCER';
-
-  // Hero photo
-  const heroEl = document.getElementById('pkHero');
-  const existingHeroImg = heroEl.querySelector('img');
-  if (mainPhotoData) {
-    if (existingHeroImg) {
-      existingHeroImg.src = mainPhotoData;
+  if (type === 'genre') {
+    if (el.classList.contains('active')) {
+      selectedGenres.push(val);
     } else {
-      const img = document.createElement('img');
-      img.src = mainPhotoData;
-      heroEl.insertBefore(img, heroEl.firstChild);
+      selectedGenres = selectedGenres.filter(g => g !== val);
     }
+    document.getElementById('genreOther').style.display = selectedGenres.includes('Other') ? 'block' : 'none';
   }
-
-  // Bio
-  const bioSection = document.getElementById('pkBioSection');
-  if (bio.trim()) {
-    bioSection.style.display = 'block';
-    document.getElementById('pkBio').textContent = bio;
-  } else {
-    bioSection.style.display = 'none';
-  }
-
-  // Timeline
-  const tlSection = document.getElementById('pkTimelineSection');
-  const tlEntries = document.querySelectorAll('.timeline-entry');
-  let tlHtml = '';
-  let hasTl = false;
-  tlEntries.forEach(entry => {
-    const year = entry.querySelector('.tl-year').value;
-    const event = entry.querySelector('.tl-event').value;
-    if (year || event) {
-      hasTl = true;
-      tlHtml += `<div class="pk-timeline-item">
-        <div class="pk-timeline-year">${year}</div>
-        <div class="pk-timeline-event">${event}</div>
-      </div>`;
-    }
-  });
-  tlSection.style.display = hasTl ? 'block' : 'none';
-  document.getElementById('pkTimeline').innerHTML = tlHtml;
-
-  // Awards
-  const awardsSection = document.getElementById('pkAwardsSection');
-  const awardInputs = document.querySelectorAll('.award-entry input');
-  let awardsHtml = '';
-  let hasAwards = false;
-  awardInputs.forEach(input => {
-    if (input.value.trim()) {
-      hasAwards = true;
-      awardsHtml += `<div class="pk-awards-item">${input.value}</div>`;
-    }
-  });
-  awardsSection.style.display = hasAwards ? 'block' : 'none';
-  document.getElementById('pkAwards').innerHTML = awardsHtml;
-
-  // Releases
-  const relSection = document.getElementById('pkReleasesSection');
-  const relEntries = document.querySelectorAll('.release-entry');
-  let relHtml = '';
-  let hasRel = false;
-  relEntries.forEach(entry => {
-    const rName = entry.querySelector('.rel-name').value;
-    const rYear = entry.querySelector('.rel-year').value;
-    const rChart = entry.querySelector('.rel-chart').value;
-    if (rName) {
-      hasRel = true;
-      relHtml += `<div class="pk-releases-item">${rName}${rYear ? ' (' + rYear + ')' : ''}${rChart ? ' — ' + rChart : ''}</div>`;
-    }
-  });
-  relSection.style.display = hasRel ? 'block' : 'none';
-  document.getElementById('pkReleases').innerHTML = relHtml;
-
-  // Sub photos
-  const photosSection = document.getElementById('pkPhotosSection');
-  const photosGrid = document.getElementById('pkPhotosGrid');
-  const validPhotos = subPhotos.filter(Boolean);
-  if (validPhotos.length > 0) {
-    photosSection.style.display = 'block';
-    photosGrid.innerHTML = validPhotos.map(src => `<img src="${src}">`).join('');
-  } else {
-    photosSection.style.display = 'none';
-  }
-
-  // Contact
-  let contactHtml = '';
-  if (booking) {
-    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Booking</div><div class="pk-contact-value">${booking}</div></div>`;
-  }
-  if (mgmt) {
-    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Management</div><div class="pk-contact-value">${mgmt}</div></div>`;
-  }
-  if (instagram) {
-    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Instagram</div><div class="pk-contact-value">${instagram.replace('https://instagram.com/','@').replace('https://www.instagram.com/','@')}</div></div>`;
-  }
-  if (soundcloud) {
-    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">SoundCloud</div><div class="pk-contact-value">${soundcloud.replace('https://soundcloud.com/','')}</div></div>`;
-  }
-  if (spotify) {
-    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Spotify</div><div class="pk-contact-value">On Spotify</div></div>`;
-  }
-  if (bandcamp) {
-    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Bandcamp</div><div class="pk-contact-value">${bandcamp.replace('https://','').replace('.bandcamp.com','')}</div></div>`;
-  }
-  if (website) {
-    contactHtml += `<div class="pk-contact-item"><div class="pk-contact-label">Website</div><div class="pk-contact-value">${website.replace('https://','').replace('http://','')}</div></div>`;
-  }
-  if (!contactHtml) {
-    contactHtml = `<div class="pk-contact-item"><div class="pk-contact-label">Booking</div><div class="pk-contact-value">—</div></div>`;
-  }
-  document.getElementById('pkContact').innerHTML = contactHtml;
-
-  // Year
-  document.getElementById('pkYear').textContent = new Date().getFullYear();
 }
 
-// ── GENERATE PDF ──
-async function generatePDF() {
-  const name = document.getElementById('artistName').value;
-  if (!name) {
-    alert('Please enter an artist name.');
-    return;
-  }
+function selectColor(el) {
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  selectedColor = el.dataset.color;
+}
 
-  const overlay = document.getElementById('loadingOverlay');
-  overlay.classList.add('active');
+function selectFont(el) {
+  document.querySelectorAll('.font-option').forEach(f => f.classList.remove('active'));
+  el.classList.add('active');
+  selectedFont = el.dataset.font;
+}
 
-  const element = document.getElementById('pk-preview');
-  const originalTransform = element.style.transform;
-  element.style.transform = 'none';
+function updateSlugPreview() {
+  const raw = document.getElementById('slugInput').value;
+  const slug = raw.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/--+/g, '-');
+  document.getElementById('slugInput').value = slug;
+  document.getElementById('slugPreview').innerHTML = `thirdkagura.github.io/pk-generator/?id=<b>${slug || 'your-slug'}</b>`;
+}
 
-  const opt = {
-    margin: 0,
-    filename: `${name.replace(/[^a-zA-Z0-9]/g, '_')}_PRESS_KIT.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#000000',
-      width: 595,
-      windowWidth: 595
-    },
-    jsPDF: {
-      unit: 'pt',
-      format: 'a4',
-      orientation: 'portrait'
-    }
+// âââââââââââââââââââââââââââââââââââââââ
+//  GENERATOR: Image handling
+// âââââââââââââââââââââââââââââââââââââââ
+function handleBgImage(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    // Resize for storage
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const maxW = 1200;
+      let w = img.width, h = img.height;
+      if (w > maxW) { h = h * (maxW / w); w = maxW; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      bgImageData = canvas.toDataURL('image/jpeg', 0.8);
+      showBgPreview(bgImageData);
+    };
+    img.src = e.target.result;
   };
+  reader.readAsDataURL(file);
+}
 
-  try {
-    await html2pdf().set(opt).from(element).save();
-  } catch (err) {
-    console.error('PDF generation error:', err);
-    alert('Error generating PDF. Please try again.');
-  } finally {
-    element.style.transform = originalTransform;
-    overlay.classList.remove('active');
+function handleBgUrl(url) {
+  if (url.trim()) {
+    bgImageData = url.trim();
+    showBgPreview(url.trim());
   }
 }
 
-// ── SAMPLE DATA ──
+function showBgPreview(src) {
+  const prev = document.getElementById('bgImagePreview');
+  prev.src = src;
+  prev.style.display = 'block';
+  document.getElementById('bgImagePlaceholder').style.display = 'none';
+}
+
+// âââââââââââââââââââââââââââââââââââââââ
+//  GENERATOR: Dynamic entries
+// âââââââââââââââââââââââââââââââââââââââ
+function addTimeline() {
+  const c = document.getElementById('timelineEntries');
+  const d = document.createElement('div');
+  d.className = 'dynamic-entry';
+  d.innerHTML = `<input type="text" placeholder="Year" class="tl-year"><input type="text" placeholder="Event description" class="tl-event"><button class="btn-icon" onclick="removeEntry(this)">Ã</button>`;
+  c.appendChild(d);
+}
+function addAward() {
+  const c = document.getElementById('awardsEntries');
+  const d = document.createElement('div');
+  d.className = 'field award-entry';
+  d.innerHTML = `<input type="text" placeholder="Your award or achievement">`;
+  c.appendChild(d);
+}
+function addRelease() {
+  const c = document.getElementById('releasesEntries');
+  const d = document.createElement('div');
+  d.className = 'dynamic-entry';
+  d.style.gridTemplateColumns = '1fr 70px 32px';
+  d.innerHTML = `<input type="text" placeholder="Track / Release name" class="rel-name"><input type="text" placeholder="Year" class="rel-year"><button class="btn-icon" onclick="removeEntry(this)">Ã</button>`;
+  c.appendChild(d);
+}
+function removeEntry(btn) {
+  const parent = btn.parentElement.parentElement;
+  if (parent.children.length > 1) btn.parentElement.remove();
+}
+
+// âââââââââââââââââââââââââââââââââââââââ
+//  GENERATOR: Sample data
+// âââââââââââââââââââââââââââââââââââââââ
 function loadSampleData() {
+  document.getElementById('slugInput').value = 'sample-dj';
+  updateSlugPreview();
   document.getElementById('artistName').value = 'YOUR ARTIST NAME';
-  document.getElementById('realName').value = '';
   document.getElementById('activeSince').value = '2018';
   document.getElementById('country').value = 'Your Country';
-  document.getElementById('basedIn').value = 'Your City';
+  document.getElementById('city').value = 'Your City';
   document.getElementById('bookingEmail').value = 'your-booking@email.com';
-  document.getElementById('mgmtEmail').value = 'your-management@email.com';
-  document.getElementById('bio').value = 'Write your artist biography here in 3rd person. Describe your style, career highlights, where you have performed, and what makes you unique as an artist. Aim for 80-150 words. This text will appear in your press kit as your official bio.';
+  document.getElementById('bio').value = 'Write your artist biography here in 3rd person. Describe your style, career highlights, where you have performed, and what makes you unique as an artist.';
   document.getElementById('instagram').value = 'https://instagram.com/yourhandle';
   document.getElementById('soundcloud').value = 'https://soundcloud.com/yourhandle';
-  document.getElementById('website').value = 'https://yourwebsite.com';
+  document.getElementById('techRider').value = '2x CDJ 3000\n1x DJM-A9\n2x Monitor Speakers';
+  document.getElementById('hospRider').value = '2x Water Bottles\n1x Towel\n3x Drink Vouchers';
 
-  // Genres
-  selectedGenres = [];
-  document.querySelectorAll('.genre-chip').forEach(chip => {
-    chip.classList.remove('active');
-    if (['House', 'Hip Hop'].includes(chip.dataset.genre)) {
-      chip.classList.add('active');
-      selectedGenres.push(chip.dataset.genre);
-    }
+  selectedGenres = ['House', 'Hip Hop'];
+  document.querySelectorAll('#genreChips .chip').forEach(chip => {
+    chip.classList.toggle('active', selectedGenres.includes(chip.dataset.v));
   });
 
-  // Timeline
   const tlContainer = document.getElementById('timelineEntries');
   tlContainer.innerHTML = '';
-  const tlData = [
-    ['2018', 'Started DJing'],
-    ['2020', 'First residency'],
-    ['2022', 'International debut'],
-    ['2024', 'Major festival appearance'],
-    ['2025', 'New milestone']
-  ];
-  tlData.forEach(([year, event]) => {
-    const div = document.createElement('div');
-    div.className = 'timeline-entry';
-    div.innerHTML = `
-      <input type="text" placeholder="Year" class="tl-year" value="${year}" oninput="updatePreview()">
-      <input type="text" placeholder="Event description" class="tl-event" value="${event}" oninput="updatePreview()">
-      <button class="btn-icon danger" onclick="removeTimeline(this)" title="Remove">×</button>
-    `;
-    tlContainer.appendChild(div);
+  [['2018','Started DJing'],['2020','First residency'],['2023','International debut']].forEach(([y,e]) => {
+    const d = document.createElement('div');
+    d.className = 'dynamic-entry';
+    d.innerHTML = `<input type="text" placeholder="Year" class="tl-year" value="${y}"><input type="text" placeholder="Event" class="tl-event" value="${e}"><button class="btn-icon" onclick="removeEntry(this)">Ã</button>`;
+    tlContainer.appendChild(d);
   });
-
-  // Awards
-  const awardsContainer = document.getElementById('awardsEntries');
-  awardsContainer.innerHTML = '';
-  ['Your first award or achievement', 'Your second award or achievement'].forEach(award => {
-    const div = document.createElement('div');
-    div.className = 'field award-entry';
-    div.innerHTML = `<input type="text" value="${award}" oninput="updatePreview()">`;
-    awardsContainer.appendChild(div);
-  });
-
-  updatePreview();
 }
 
-// ── Submit to Google Sheets ──
-async function submitToSheet() {
-  const btn = document.getElementById('btnSubmit');
-  const status = document.getElementById('submitStatus');
+// âââââââââââââââââââââââââââââââââââââââ
+//  GENERATOR: Collect & submit
+// âââââââââââââââââââââââââââââââââââââââ
+function collectFormData() {
+  let genres = selectedGenres.filter(g => g !== 'Other');
+  const otherG = document.getElementById('genreOther').value.trim();
+  if (selectedGenres.includes('Other') && otherG) genres.push(otherG);
 
-  // Validate required fields
-  const artistName = document.getElementById('artistName').value.trim();
-  const email = document.getElementById('bookingEmail').value.trim();
-  if (!artistName || !email) {
-    status.style.color = 'var(--danger)';
-    status.textContent = 'Please fill in at least Artist Name and Email before submitting.';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'SUBMITTING...';
-  status.style.color = 'var(--text-dim)';
-  status.textContent = 'Sending your profile...';
-
-  // Collect all form data
-  let displayGenres = selectedGenres.filter(g => g !== 'Other');
-  const otherGenre = document.getElementById('genreOther')?.value?.trim();
-  if (selectedGenres.includes('Other') && otherGenre) displayGenres.push(otherGenre);
-
-  const timelineEntries = [];
-  document.querySelectorAll('.timeline-entry').forEach(entry => {
-    const year = entry.querySelector('.tl-year')?.value || '';
-    const event = entry.querySelector('.tl-event')?.value || '';
-    if (year || event) timelineEntries.push(`${year}: ${event}`);
+  const timeline = [];
+  document.querySelectorAll('#timelineEntries .dynamic-entry').forEach(e => {
+    const y = e.querySelector('.tl-year')?.value || '';
+    const ev = e.querySelector('.tl-event')?.value || '';
+    if (y || ev) timeline.push({ year: y, event: ev });
   });
 
   const awards = [];
-  document.querySelectorAll('.award-entry input').forEach(input => {
-    if (input.value.trim()) awards.push(input.value.trim());
-  });
+  document.querySelectorAll('.award-entry input').forEach(i => { if (i.value.trim()) awards.push(i.value.trim()); });
 
   const releases = [];
-  document.querySelectorAll('.release-entry').forEach(entry => {
-    const title = entry.querySelector('.rel-title')?.value || '';
-    const year = entry.querySelector('.rel-year')?.value || '';
-    const label = entry.querySelector('.rel-label')?.value || '';
-    if (title) releases.push(`${title} (${year}) - ${label}`);
+  document.querySelectorAll('#releasesEntries .dynamic-entry').forEach(e => {
+    const n = e.querySelector('.rel-name')?.value || '';
+    const y = e.querySelector('.rel-year')?.value || '';
+    if (n) releases.push({ name: n, year: y });
   });
 
-  const data = {
-    timestamp: new Date().toISOString(),
-    artistName: artistName,
-    realName: document.getElementById('realName').value.trim(),
-    activeSince: document.getElementById('activeSince').value.trim(),
-    country: document.getElementById('country').value.trim(),
-    city: document.getElementById('city').value.trim(),
-    genres: displayGenres.join(', '),
-    bookingEmail: email,
-    mgmtEmail: document.getElementById('mgmtEmail').value.trim(),
-    bio: document.getElementById('bio').value.trim(),
-    timeline: timelineEntries.join(' | '),
-    awards: awards.join(' | '),
-    releases: releases.join(' | '),
-    instagram: document.getElementById('instagram').value.trim(),
-    soundcloud: document.getElementById('soundcloud').value.trim(),
+  return {
+    slug: document.getElementById('slugInput').value.trim(),
+    artistName: document.getElementById('artistName').value.trim(),
+    realName: document.getElementById('realName')?.value?.trim() || '',
+    activeSince: document.getElementById('activeSince')?.value?.trim() || '',
+    country: document.getElementById('country')?.value?.trim() || '',
+    city: document.getElementById('city')?.value?.trim() || '',
+    genres: genres.join(', '),
+    bookingEmail: document.getElementById('bookingEmail').value.trim(),
+    mgmtEmail: document.getElementById('mgmtEmail')?.value?.trim() || '',
+    bookingFee: document.getElementById('bookingFee')?.value?.trim() || '',
+    bio: document.getElementById('bio')?.value?.trim() || '',
+    bgImage: bgImageData || '',
+    font: selectedFont,
+    accentColor: selectedColor,
+    timeline: JSON.stringify(timeline),
+    awards: JSON.stringify(awards),
+    releases: JSON.stringify(releases),
+    techRider: document.getElementById('techRider')?.value?.trim() || '',
+    hospRider: document.getElementById('hospRider')?.value?.trim() || '',
+    instagram: document.getElementById('instagram')?.value?.trim() || '',
+    soundcloud: document.getElementById('soundcloud')?.value?.trim() || '',
     spotify: document.getElementById('spotify')?.value?.trim() || '',
     bandcamp: document.getElementById('bandcamp')?.value?.trim() || '',
-    website: document.getElementById('website').value.trim()
+    website: document.getElementById('website')?.value?.trim() || '',
+    facebook: document.getElementById('facebook')?.value?.trim() || '',
+    timestamp: new Date().toISOString()
   };
+}
 
-  // GOOGLE_SHEETS_URL should be replaced with your actual Google Apps Script Web App URL
-  const SHEETS_URL = window.GOOGLE_SHEETS_URL || '';
+async function submitProfile() {
+  const data = collectFormData();
+  const status = document.getElementById('submitStatus');
+  const btn = document.getElementById('btnSubmit');
+
+  if (!data.slug) { status.style.color = '#e54'; status.textContent = 'Please choose a URL slug.'; return; }
+  if (!data.artistName) { status.style.color = '#e54'; status.textContent = 'Please enter an artist name.'; return; }
+  if (!data.bookingEmail) { status.style.color = '#e54'; status.textContent = 'Please enter a booking email.'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'PUBLISHING...';
+  status.style.color = 'var(--text-dim)';
+  status.textContent = 'Saving your press kit...';
 
   if (!SHEETS_URL) {
-    // If no Sheets URL configured, save as JSON download instead
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    // No backend configured â save as JSON
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${artistName.replace(/\s+/g, '_')}_profile.json`;
-    a.click();
+    const a = document.createElement('a'); a.href = url; a.download = `${data.slug}_presskit.json`; a.click();
     URL.revokeObjectURL(url);
-
-    status.style.color = 'var(--success)';
-    status.textContent = 'Profile saved as JSON file. (Google Sheets not yet configured)';
-    btn.disabled = false;
-    btn.textContent = 'SUBMIT PROFILE';
+    status.style.color = '#4a4';
+    status.textContent = 'Saved as JSON (Google Sheets not configured yet). Your press kit URL will be: thirdkagura.github.io/pk-generator/?id=' + data.slug;
+    btn.disabled = false; btn.textContent = 'PUBLISH PRESS KIT';
     return;
   }
 
   try {
-    const response = await fetch(SHEETS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-
-    status.style.color = 'var(--success)';
-    status.textContent = 'Profile submitted successfully!';
+    await fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    status.style.color = '#4a4';
+    status.innerHTML = `Press kit published! <a href="?id=${data.slug}" style="color:var(--accent);">View it here â</a>`;
   } catch (err) {
-    status.style.color = 'var(--danger)';
-    status.textContent = 'Submission failed. Please try again or download as JSON.';
-    console.error('Submit error:', err);
+    status.style.color = '#e54';
+    status.textContent = 'Error saving. Please try again.';
   }
-
-  btn.disabled = false;
-  btn.textContent = 'SUBMIT PROFILE';
+  btn.disabled = false; btn.textContent = 'PUBLISH PRESS KIT';
 }
 
-// Init
-updatePreview();
+// âââââââââââââââââââââââââââââââââââââââ
+//  VIEW MODE: Load press kit data
+// âââââââââââââââââââââââââââââââââââââââ
+async function loadPressKit(slug) {
+  document.getElementById('loadingState').style.display = 'flex';
+
+  if (!SHEETS_URL) {
+    // Demo mode: show not found or demo data
+    document.getElementById('loadingState').style.display = 'none';
+    if (slug === 'sample-dj') {
+      renderPressKit(getDemoData());
+    } else {
+      document.getElementById('notFoundState').style.display = 'flex';
+    }
+    return;
+  }
+
+  try {
+    const res = await fetch(`${SHEETS_URL}?id=${encodeURIComponent(slug)}`);
+    const data = await res.json();
+    document.getElementById('loadingState').style.display = 'none';
+    if (data && data.artistName) {
+      renderPressKit(data);
+    } else {
+      document.getElementById('notFoundState').style.display = 'flex';
+    }
+  } catch (err) {
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('notFoundState').style.display = 'flex';
+  }
+}
+
+function getDemoData() {
+  return {
+    slug: 'sample-dj', artistName: 'YOUR ARTIST NAME', realName: '', activeSince: '2018',
+    country: 'Your Country', city: 'Your City', genres: 'House, Hip Hop',
+    bookingEmail: 'your-booking@email.com', mgmtEmail: 'your-management@email.com',
+    bio: 'Write your artist biography here in 3rd person. Describe your style, career highlights, where you have performed, and what makes you unique as an artist. This text will appear as your official bio on your press kit page.',
+    bgImage: '', font: 'Inter', accentColor: '#c4a265',
+    timeline: JSON.stringify([{year:'2018',event:'Started DJing'},{year:'2020',event:'First residency'},{year:'2023',event:'International debut'}]),
+    awards: JSON.stringify(['Your first award or achievement']),
+    releases: JSON.stringify([{name:'Your track name',year:'2024'}]),
+    techRider: '2x CDJ 3000\n1x DJM-A9\n2x Monitor Speakers',
+    hospRider: '2x Water Bottles\n1x Towel\n3x Drink Vouchers',
+    instagram: 'https://instagram.com/yourhandle',
+    soundcloud: 'https://soundcloud.com/yourhandle',
+    spotify: '', bandcamp: '', website: '', facebook: ''
+  };
+}
+
+// âââââââââââââââââââââââââââââââââââââââ
+//  VIEW MODE: Render press kit
+// âââââââââââââââââââââââââââââââââââââââ
+function renderPressKit(d) {
+  // Apply custom accent color
+  const accent = d.accentColor || '#c4a265';
+  document.documentElement.style.setProperty('--accent', accent);
+
+  // Title
+  document.title = `${d.artistName} â Press Kit`;
+
+  // Hero
+  const heroBg = document.getElementById('pkHeroBg');
+  if (d.bgImage) {
+    heroBg.src = d.bgImage;
+    heroBg.style.display = 'block';
+  } else {
+    heroBg.style.display = 'none';
+    document.getElementById('pkHero').style.background = 'linear-gradient(135deg, #1a1a1a, #0a0a0a)';
+  }
+
+  // Artist name with custom font
+  const nameEl = document.getElementById('pkName');
+  nameEl.textContent = d.artistName.toUpperCase();
+  nameEl.style.fontFamily = `'${d.font || 'Inter'}', sans-serif`;
+
+  // Tagline
+  const tagParts = [];
+  if (d.genres) tagParts.push(d.genres.toUpperCase());
+  const loc = [d.city, d.country].filter(Boolean).join(', ');
+  if (loc) tagParts.push(loc.toUpperCase());
+  document.getElementById('pkTagline').textContent = tagParts.join(' â ') || '';
+  document.getElementById('pkTagline').style.color = accent;
+
+  // Social bar
+  const socials = [];
+  if (d.instagram) socials.push({ label: 'IG', url: d.instagram });
+  if (d.soundcloud) socials.push({ label: 'SC', url: d.soundcloud });
+  if (d.spotify) socials.push({ label: 'SP', url: d.spotify });
+  if (d.bandcamp) socials.push({ label: 'BC', url: d.bandcamp });
+  if (d.facebook) socials.push({ label: 'FB', url: d.facebook });
+  if (d.website) socials.push({ label: 'WEB', url: d.website });
+  document.getElementById('pkSocialBar').innerHTML = socials.map(s =>
+    `<a href="${s.url}" target="_blank" class="pk-social-link">${s.label}</a>`
+  ).join('');
+
+  // Info cards
+  let infoHtml = '<div class="pk-info-card"><h3 style="color:' + accent + '">Artist Info</h3>';
+  if (d.realName) infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Name</div><div class="pk-info-value">${d.realName}</div></div>`;
+  infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Email</div><div class="pk-info-value"><a href="mailto:${d.bookingEmail}">${d.bookingEmail}</a></div></div>`;
+  if (d.city || d.country) infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Location</div><div class="pk-info-value">${[d.city, d.country].filter(Boolean).join(', ')}</div></div>`;
+  if (d.genres) infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Genres</div><div class="pk-info-value">${d.genres}</div></div>`;
+  if (d.activeSince) infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Active Since</div><div class="pk-info-value">${d.activeSince}</div></div>`;
+  infoHtml += '</div>';
+
+  if (d.mgmtEmail) {
+    infoHtml += '<div class="pk-info-card"><h3 style="color:' + accent + '">Management</h3>';
+    infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Email</div><div class="pk-info-value"><a href="mailto:${d.mgmtEmail}">${d.mgmtEmail}</a></div></div>`;
+    infoHtml += '</div>';
+  }
+  document.getElementById('pkInfoGrid').innerHTML = infoHtml;
+
+  // Accordion sections
+  let accHtml = '';
+
+  // Bio
+  if (d.bio) {
+    accHtml += makeAccordion('BIO', `<p>${d.bio.replace(/\n/g, '<br>')}</p>`, true);
+  }
+
+  // Timeline
+  let timeline = [];
+  try { timeline = JSON.parse(d.timeline || '[]'); } catch(e) {}
+  if (timeline.length > 0) {
+    const tlContent = timeline.map(t =>
+      `<div style="display:grid;grid-template-columns:60px 1fr;gap:0.6rem;margin-bottom:0.4rem;"><span style="font-weight:700;color:${accent}">${t.year}</span><span>${t.event}</span></div>`
+    ).join('');
+    accHtml += makeAccordion('CAREER', tlContent);
+  }
+
+  // Awards
+  let awards = [];
+  try { awards = JSON.parse(d.awards || '[]'); } catch(e) {}
+  if (awards.length > 0) {
+    const awContent = awards.map(a => `<div style="padding:0.3rem 0;border-bottom:1px solid var(--border);">${a}</div>`).join('');
+    accHtml += makeAccordion('AWARDS & ACHIEVEMENTS', awContent);
+  }
+
+  // Releases
+  let releases = [];
+  try { releases = JSON.parse(d.releases || '[]'); } catch(e) {}
+  if (releases.length > 0) {
+    const relContent = releases.map(r => `<div style="padding:0.3rem 0;">${r.name}${r.year ? ' (' + r.year + ')' : ''}</div>`).join('');
+    accHtml += makeAccordion('RELEASES', relContent);
+  }
+
+  document.getElementById('pkAccordion').innerHTML = accHtml;
+
+  // Tech riders
+  if (d.techRider || d.hospRider) {
+    document.getElementById('pkTechSection').style.display = 'block';
+    let techHtml = '';
+    if (d.techRider) techHtml += `<div class="pk-tech-card"><h3 style="color:${accent}">Tech Rider</h3><pre>${d.techRider}</pre></div>`;
+    if (d.hospRider) techHtml += `<div class="pk-tech-card"><h3 style="color:${accent}">Hospitality Rider</h3><pre>${d.hospRider}</pre></div>`;
+    document.getElementById('pkTechGrid').innerHTML = techHtml;
+  }
+
+  // Show view mode
+  document.getElementById('viewMode').style.display = 'block';
+}
+
+function makeAccordion(title, content, openByDefault = false) {
+  return `<div class="pk-acc-item${openByDefault ? ' open' : ''}">
+    <button class="pk-acc-header" onclick="this.parentElement.classList.toggle('open')">
+      <span>${title}</span><span class="pk-acc-arrow">â¼</span>
+    </button>
+    <div class="pk-acc-body"><div class="pk-acc-content">${content}</div></div>
+  </div>`;
+}
+
+// âââââââââââââââââââââââââââââââââââââââ
+//  VIEW: Actions
+// âââââââââââââââââââââââââââââââââââââââ
+function sharePK() {
+  const url = window.location.href;
+  if (navigator.share) {
+    navigator.share({ title: document.title, url: url });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(url);
+    alert('Link copied to clipboard!');
+  }
+}
+
+function scrollToInfo() {
+  document.getElementById('pkInfoSection').scrollIntoView({ behavior: 'smooth' });
+}
 </script>
 </body>
 </html>
