@@ -6,6 +6,7 @@
 <title>THIRD KAGURA — PK Generator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Playfair+Display:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -17,10 +18,10 @@ html { font-size: 15px; }
 body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
 
 /* ══════ SHARED ══════ */
-.btn-primary { background: var(--accent); color: #000; border: none; padding: 0.7rem 2rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.btn-primary { background: var(--accent); color: #000; border: none; padding: 0.7rem 2rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; transition: all 0.2s; font-family: inherit; border-radius: 2px; }
 .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 0.5rem 1.2rem; font-size: 0.8rem; cursor: pointer; font-family: inherit; letter-spacing: 0.05em; transition: all 0.15s; }
+.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 0.5rem 1.2rem; font-size: 0.8rem; cursor: pointer; font-family: inherit; letter-spacing: 0.05em; transition: all 0.15s; border-radius: 2px; }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ══════ GENERATOR MODE ══════ */
@@ -62,11 +63,20 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 .photo-upload-area .placeholder { text-align: center; color: var(--text-dim); font-size: 0.8rem; }
 .photo-upload-area .placeholder span { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
 
+/* Multiple image uploads */
+.multi-upload-area { border: 2px dashed var(--border); padding: 1rem; border-radius: 4px; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.2s; text-align: center; color: var(--text-dim); }
+.multi-upload-area:hover { border-color: var(--accent); color: var(--accent); }
+.multi-upload-area span { display: block; font-size: 1.5rem; margin-bottom: 0.3rem; }
+.image-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; margin-top: 0.5rem; }
+.preview-thumb { position: relative; aspect-ratio: 1; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+.preview-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.preview-thumb .btn-remove { position: absolute; top: 2px; right: 2px; width: 24px; height: 24px; background: #d32f2f; color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+
 /* URL preview */
 .url-preview { background: var(--bg); border: 1px solid var(--border); padding: 0.5rem 0.7rem; border-radius: 2px; font-size: 0.8rem; color: var(--text-dim); margin-top: 0.3rem; word-break: break-all; }
 .url-preview b { color: var(--accent); }
 
-/* Timeline entries */
+/* Timeline/Dynamic entries */
 .dynamic-entries { display: flex; flex-direction: column; gap: 0.5rem; }
 .dynamic-entry { display: grid; grid-template-columns: 80px 1fr 32px; gap: 0.4rem; align-items: center; }
 @media (max-width: 480px) { .dynamic-entry { grid-template-columns: 70px 1fr 32px; } }
@@ -75,65 +85,112 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 .btn-add { background: transparent; border: 1px dashed var(--border); color: var(--text-dim); padding: 0.45rem; width: 100%; cursor: pointer; font-family: inherit; font-size: 0.78rem; margin-top: 0.3rem; transition: all 0.15s; border-radius: 2px; }
 .btn-add:hover { border-color: var(--accent); color: var(--accent); }
 
+/* Spotify tracks */
+.spotify-entry { display: grid; grid-template-columns: 1fr 32px; gap: 0.4rem; align-items: center; margin-bottom: 0.5rem; }
+
+/* Consent checkboxes */
+.consent-group { background: var(--surface2); border: 1px solid var(--border); padding: 1rem; border-radius: 4px; margin-top: 1rem; }
+.consent-item { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.8rem; }
+.consent-item:last-child { margin-bottom: 0; }
+.consent-item input[type="checkbox"] { margin-top: 0.25rem; cursor: pointer; }
+.consent-item label { font-size: 0.8rem; color: var(--text); cursor: pointer; flex: 1; }
+
+/* Language note */
+.language-note { background: var(--surface2); border: 1px solid var(--border); padding: 0.8rem; border-radius: 4px; margin-bottom: 1.2rem; font-size: 0.75rem; color: var(--text-dim); line-height: 1.6; }
+
 /* Submit section */
 .gen-submit { border-color: var(--accent) !important; background: linear-gradient(135deg, var(--surface) 0%, #1a1712 100%) !important; }
 
 /* ══════ VIEW MODE (PRESS KIT) ══════ */
 #viewMode { display: none; }
 
-/* Hero */
-.pk-hero { width: 100%; min-height: 100vh; position: relative; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
-.pk-hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
-.pk-hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(transparent 30%, rgba(0,0,0,0.85) 100%); z-index: 1; }
-.pk-hero-content { position: relative; z-index: 2; padding: 2rem 1.5rem; }
-.pk-artist-name { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,0.5); }
-.pk-tagline { font-size: clamp(0.75rem, 2vw, 1rem); text-transform: uppercase; letter-spacing: 0.25em; margin-top: 0.5rem; }
-.pk-hero-actions { display: flex; gap: 0.6rem; margin-top: 1.2rem; flex-wrap: wrap; }
-.pk-hero-actions button { padding: 0.6rem 1.5rem; font-size: 0.8rem; border-radius: 2px; }
+/* Header area */
+.pk-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1.5rem; position: sticky; top: 0; z-index: 50; }
+.pk-header-content { max-width: 1200px; margin: 0 auto; }
+.pk-header-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.pk-logo-section { display: flex; align-items: center; gap: 1rem; }
+.pk-logo { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; background: var(--bg); }
+.pk-artist-title { flex: 1; }
+.pk-artist-title h1 { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.05em; margin: 0; }
+.pk-artist-title p { font-size: 0.8rem; color: var(--text-dim); margin-top: 0.2rem; }
+.pk-header-actions { display: flex; gap: 0.5rem; }
+.pk-header-actions button { padding: 0.5rem 1rem; font-size: 0.75rem; }
 
-/* Social bar */
-.pk-social-bar { display: flex; gap: 1rem; padding: 1.2rem 1.5rem; justify-content: center; flex-wrap: wrap; }
-.pk-social-link { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-dim); text-decoration: none; font-size: 0.7rem; font-weight: 700; transition: all 0.2s; }
-.pk-social-link:hover { border-color: var(--accent); color: var(--accent); }
+/* Main content */
+.pk-main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
 
-/* Info section */
-.pk-info-section { padding: 1.5rem; }
-.pk-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-@media (max-width: 600px) { .pk-info-grid { grid-template-columns: 1fr; } }
-.pk-info-card { background: var(--surface); border: 1px solid var(--border); padding: 1.2rem; border-radius: 4px; }
-.pk-info-card h3 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 0.8rem; }
-.pk-info-item { margin-bottom: 0.5rem; }
+/* Three-column layout */
+.pk-three-col { display: grid; grid-template-columns: 300px 1fr 300px; gap: 1.5rem; margin-bottom: 2rem; }
+@media (max-width: 900px) { .pk-three-col { grid-template-columns: 1fr; } }
+
+.pk-left-col, .pk-center-col, .pk-right-col { }
+
+/* Profile photo */
+.pk-profile-photo { width: 100%; aspect-ratio: 4/5; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; object-fit: cover; }
+
+/* Info cards */
+.pk-info-card { background: var(--surface); border: 1px solid var(--border); padding: 1.2rem; border-radius: 4px; margin-bottom: 1rem; }
+.pk-info-card h3 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 0.8rem; color: var(--accent); }
+.pk-info-item { margin-bottom: 0.6rem; }
 .pk-info-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-dim); }
-.pk-info-value { font-size: 0.9rem; color: var(--text); }
+.pk-info-value { font-size: 0.9rem; color: var(--text); margin-top: 0.2rem; word-break: break-word; }
 .pk-info-value a { color: var(--accent); text-decoration: none; }
 
+/* Social icons */
+.pk-social-row { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin: 1.5rem 0; }
+.pk-social-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 50%; cursor: pointer; transition: all 0.2s; text-decoration: none; color: var(--text); }
+.pk-social-icon:hover { border-color: var(--accent); color: var(--accent); }
+.pk-social-icon svg { width: 20px; height: 20px; }
+
 /* Accordion */
-.pk-accordion { margin: 0 1.5rem; }
+.pk-accordion { margin: 2rem 0; }
 .pk-acc-item { border-bottom: 1px solid var(--border); }
-.pk-acc-header { width: 100%; background: transparent; border: none; color: var(--text); padding: 1rem 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-family: inherit; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; }
+.pk-acc-header { width: 100%; background: transparent; border: none; color: var(--text); padding: 1.2rem 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-family: inherit; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; transition: all 0.2s; }
 .pk-acc-header:hover { color: var(--accent); }
 .pk-acc-arrow { transition: transform 0.3s; font-size: 0.9rem; }
 .pk-acc-item.open .pk-acc-arrow { transform: rotate(180deg); }
 .pk-acc-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
 .pk-acc-item.open .pk-acc-body { max-height: 2000px; }
 .pk-acc-content { padding: 0 0 1.2rem 0; color: #ccc; font-size: 0.9rem; line-height: 1.8; }
+.pk-acc-download { display: inline-block; margin-left: 0.5rem; font-size: 0.8rem; color: var(--accent); text-decoration: none; }
 
-/* Tech rider */
-.pk-tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1.5rem; }
-@media (max-width: 600px) { .pk-tech-grid { grid-template-columns: 1fr; } }
-.pk-tech-card { background: var(--surface); border: 1px solid var(--border); padding: 1.2rem; border-radius: 4px; }
-.pk-tech-card h3 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 0.6rem; }
-.pk-tech-card pre { font-family: inherit; font-size: 0.85rem; color: #ccc; white-space: pre-wrap; }
+/* Image galleries */
+.pk-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; }
+.pk-gallery-item { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; aspect-ratio: 1; }
+.pk-gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Riders section */
+.pk-riders { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2rem 0; }
+@media (max-width: 600px) { .pk-riders { grid-template-columns: 1fr; } }
+.pk-rider-card { background: var(--surface); border: 1px solid var(--border); padding: 1.2rem; border-radius: 4px; }
+.pk-rider-card h3 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 0.8rem; color: var(--accent); }
+.pk-rider-card pre { font-family: inherit; font-size: 0.85rem; color: #ccc; white-space: pre-wrap; }
+
+/* Timeline section */
+.pk-timeline { margin: 1.5rem 0; }
+.pk-timeline-item { display: grid; grid-template-columns: 80px 1fr; gap: 1rem; margin-bottom: 1.2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.pk-timeline-item:last-child { border-bottom: none; }
+.pk-timeline-year { font-weight: 700; color: var(--accent); font-size: 0.95rem; }
+.pk-timeline-event { color: #ccc; font-size: 0.9rem; }
 
 /* Footer */
 .pk-footer { padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border); margin-top: 2rem; }
-.pk-footer img { height: 20px; opacity: 0.15; }
-.pk-footer small { display: block; margin-top: 0.5rem; font-size: 0.65rem; color: #333; }
+.pk-footer-content { max-width: 1200px; margin: 0 auto; }
+.pk-footer a { color: var(--accent); text-decoration: none; }
+.pk-footer a:hover { text-decoration: underline; }
+.pk-footer-text { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem; }
 
 /* ══════ LOADING & ERROR ══════ */
 #loadingState, #notFoundState { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; }
 .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Print/PDF styles */
+@media print {
+  .pk-header-actions { display: none; }
+  .pk-header { position: static; }
+  .pk-main { padding: 0; }
+}
 </style>
 </head>
 <body>
@@ -151,6 +208,11 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
   </header>
 
   <div class="gen-body">
+
+    <!-- LANGUAGE NOTE -->
+    <div class="language-note">
+      This form supports English, Japanese, and Chinese input. / このフォームは英語・日本語・中国語の入力に対応しています。/ 此表格支持英文、日文和中文输入。
+    </div>
 
     <!-- URL SLUG -->
     <div class="gen-section">
@@ -225,20 +287,127 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
       </div>
     </div>
 
-    <!-- BACKGROUND IMAGE -->
+    <!-- BOOKING AGENCY -->
     <div class="gen-section">
-      <h2>Background Image</h2>
+      <h2>Booking Agency (Optional)</h2>
       <div class="field">
-        <label>Upload your hero background photo</label>
+        <label>Agency Name</label>
+        <input type="text" id="agencyName" placeholder="Agency or management company name">
+      </div>
+      <div class="field">
+        <label>Agency Email</label>
+        <input type="email" id="agencyEmail" placeholder="contact@agency.com">
+      </div>
+      <div class="field">
+        <label>Agency Website</label>
+        <input type="url" id="agencyWebsite" placeholder="https://agency.com">
+      </div>
+    </div>
+
+    <!-- IMAGES -->
+    <div class="gen-section">
+      <h2>Images</h2>
+
+      <div class="field">
+        <label>Artist Logo (optional)</label>
+        <div class="photo-upload-area" onclick="document.getElementById('artistLogoInput').click()">
+          <div class="placeholder" id="artistLogoPlaceholder"><span>+</span>Click to upload logo (recommended: square, max 600px)</div>
+          <img id="artistLogoPreview" style="display:none;">
+        </div>
+        <input type="file" id="artistLogoInput" accept="image/*" style="display:none;" onchange="handleSingleImage(this, 'artistLogo', 600)">
+      </div>
+
+      <div class="field">
+        <label>Profile Photo (optional)</label>
+        <div class="photo-upload-area" onclick="document.getElementById('profilePhotoInput').click()">
+          <div class="placeholder" id="profilePhotoPlaceholder"><span>+</span>Click to upload (recommended: portrait, max 400px width)</div>
+          <img id="profilePhotoPreview" style="display:none;">
+        </div>
+        <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" onchange="handleSingleImage(this, 'profilePhoto', 400)">
+      </div>
+
+      <div class="field">
+        <label>Background Image (optional)</label>
         <div class="photo-upload-area" onclick="document.getElementById('bgImageInput').click()">
           <div class="placeholder" id="bgImagePlaceholder"><span>+</span>Click to upload (recommended: 1920x1080)</div>
           <img id="bgImagePreview" style="display:none;">
         </div>
-        <input type="file" id="bgImageInput" accept="image/*" style="display:none;" onchange="handleBgImage(this)">
+        <input type="file" id="bgImageInput" accept="image/*" style="display:none;" onchange="handleSingleImage(this, 'bgImage', 1200)">
+      </div>
+
+      <div class="field">
+        <label>Press Photos</label>
+        <div class="multi-upload-area" onclick="document.getElementById('pressPhotosInput').click()">
+          <span>+</span> Click to add press photos
+        </div>
+        <div id="pressPhotosGrid" class="image-preview-grid"></div>
+        <input type="file" id="pressPhotosInput" accept="image/*" multiple style="display:none;" onchange="handleMultipleImages(this, 'pressPhotos', 1200)">
+      </div>
+
+      <div class="field">
+        <label>Performance Photos</label>
+        <div class="multi-upload-area" onclick="document.getElementById('perfPhotosInput').click()">
+          <span>+</span> Click to add performance photos
+        </div>
+        <div id="perfPhotosGrid" class="image-preview-grid"></div>
+        <input type="file" id="perfPhotosInput" accept="image/*" multiple style="display:none;" onchange="handleMultipleImages(this, 'perfPhotos', 1200)">
+      </div>
+
+      <div class="field">
+        <label>EP/Release Covers</label>
+        <div class="multi-upload-area" onclick="document.getElementById('epCoversInput').click()">
+          <span>+</span> Click to add EP/release covers
+        </div>
+        <div id="epCoversGrid" class="image-preview-grid"></div>
+        <input type="file" id="epCoversInput" accept="image/*" multiple style="display:none;" onchange="handleMultipleImages(this, 'epCovers', 800)">
+      </div>
+    </div>
+
+    <!-- BIO -->
+    <div class="gen-section">
+      <h2>Biography</h2>
+      <div class="field">
+        <label>Short Bio</label>
+        <textarea id="bio" rows="5" placeholder="Write your artist bio here in 3rd person..."></textarea>
+        <small>Recommended: 80-150 words.</small>
+      </div>
+    </div>
+
+    <!-- CAREER TIMELINE -->
+    <div class="gen-section">
+      <h2>Career Timeline</h2>
+      <div class="dynamic-entries" id="timelineEntries">
+        <div class="dynamic-entry">
+          <input type="text" placeholder="Year" class="tl-year">
+          <input type="text" placeholder="Event description" class="tl-event">
+          <button class="btn-icon" onclick="removeEntry(this)">×</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addTimeline()">+ Add Entry</button>
+    </div>
+
+    <!-- SPOTIFY TRACKS -->
+    <div class="gen-section">
+      <h2>Spotify Tracks</h2>
+      <div id="spotifyTracksContainer">
+        <div class="spotify-entry">
+          <input type="url" placeholder="https://open.spotify.com/track/..." class="spotify-url">
+          <button class="btn-icon" onclick="removeSpotifyTrack(this)">×</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addSpotifyTrack()">+ Add Spotify Track</button>
+    </div>
+
+    <!-- TECH RIDER -->
+    <div class="gen-section">
+      <h2>Technical Requirements</h2>
+      <div class="field">
+        <label>Tech Rider</label>
+        <textarea id="techRider" rows="4" placeholder="e.g. 2x CDJ 3000, 1x DJM-A9, 2x Monitor Speakers..."></textarea>
       </div>
       <div class="field">
-        <label>Or paste image URL</label>
-        <input type="url" id="bgImageUrl" placeholder="https://..." oninput="handleBgUrl(this.value)">
+        <label>Hospitality Rider</label>
+        <textarea id="hospRider" rows="3" placeholder="e.g. 2x Water bottles, Towel, Drink vouchers..."></textarea>
       </div>
     </div>
 
@@ -268,66 +437,6 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
           <button class="font-option" data-font="Rajdhani" onclick="selectFont(this)"><span style="font-family:'Rajdhani';font-weight:700">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Rajdhani — Futuristic & Techy</small></button>
           <button class="font-option" data-font="Permanent Marker" onclick="selectFont(this)"><span style="font-family:'Permanent Marker'">YOUR ARTIST NAME</span><br><small style="color:var(--text-dim)">Permanent Marker — Handwritten</small></button>
         </div>
-      </div>
-    </div>
-
-    <!-- BIO -->
-    <div class="gen-section">
-      <h2>Biography</h2>
-      <div class="field">
-        <label>Short Bio</label>
-        <textarea id="bio" rows="5" placeholder="Write your artist bio here in 3rd person..."></textarea>
-        <small>Recommended: 80-150 words.</small>
-      </div>
-    </div>
-
-    <!-- CAREER TIMELINE -->
-    <div class="gen-section">
-      <h2>Career Timeline</h2>
-      <div class="dynamic-entries" id="timelineEntries">
-        <div class="dynamic-entry">
-          <input type="text" placeholder="Year" class="tl-year">
-          <input type="text" placeholder="Event description" class="tl-event">
-          <button class="btn-icon" onclick="removeEntry(this)">×</button>
-        </div>
-      </div>
-      <button class="btn-add" onclick="addTimeline()">+ Add Entry</button>
-    </div>
-
-    <!-- AWARDS -->
-    <div class="gen-section">
-      <h2>Awards & Achievements</h2>
-      <div id="awardsEntries">
-        <div class="field award-entry">
-          <input type="text" placeholder="Your award or achievement">
-        </div>
-      </div>
-      <button class="btn-add" onclick="addAward()">+ Add Award</button>
-    </div>
-
-    <!-- RELEASES -->
-    <div class="gen-section">
-      <h2>Releases</h2>
-      <div class="dynamic-entries" id="releasesEntries">
-        <div class="dynamic-entry" style="grid-template-columns: 1fr 70px 32px;">
-          <input type="text" placeholder="Track / Release name" class="rel-name">
-          <input type="text" placeholder="Year" class="rel-year">
-          <button class="btn-icon" onclick="removeEntry(this)">×</button>
-        </div>
-      </div>
-      <button class="btn-add" onclick="addRelease()">+ Add Release</button>
-    </div>
-
-    <!-- TECH RIDER -->
-    <div class="gen-section">
-      <h2>Technical Requirements</h2>
-      <div class="field">
-        <label>Tech Rider</label>
-        <textarea id="techRider" rows="4" placeholder="e.g. 2x CDJ 3000, 1x DJM-A9, 2x Monitor Speakers..."></textarea>
-      </div>
-      <div class="field">
-        <label>Hospitality Rider</label>
-        <textarea id="hospRider" rows="3" placeholder="e.g. 2x Water bottles, Towel, Drink vouchers..."></textarea>
       </div>
     </div>
 
@@ -364,7 +473,19 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
     <div class="gen-section gen-submit">
       <h2 style="color:var(--accent);">Submit Your Press Kit</h2>
       <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1rem;">Your press kit will be published at the URL shown above. You can update it anytime by resubmitting with the same slug.</p>
-      <button class="btn-primary" onclick="submitProfile()" style="width:100%; padding:0.8rem;" id="btnSubmit">PUBLISH PRESS KIT</button>
+
+      <div class="consent-group">
+        <div class="consent-item">
+          <input type="checkbox" id="consentMatching">
+          <label for="consentMatching">I agree that my information may be used for client matching purposes (e.g., connecting DJs with event opportunities)</label>
+        </div>
+        <div class="consent-item">
+          <input type="checkbox" id="consentCommunity">
+          <label for="consentCommunity">I agree to receive invitations to the THIRD KAGURA DJ Community</label>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="submitProfile()" style="width:100%; padding:0.8rem; margin-top:1rem;" id="btnSubmit">PUBLISH PRESS KIT</button>
       <div id="submitStatus" style="margin-top:0.6rem; font-size:0.85rem; text-align:center;"></div>
     </div>
 
@@ -375,41 +496,68 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 <!-- ║       VIEW MODE (PRESS KIT PAGE)        ║ -->
 <!-- ╚══════════════════════════════════════════╝ -->
 <div id="viewMode">
-  <!-- Hero -->
-  <section class="pk-hero" id="pkHero">
-    <img class="pk-hero-bg" id="pkHeroBg" src="" alt="">
-    <div class="pk-hero-overlay"></div>
-    <div class="pk-hero-content">
-      <div class="pk-artist-name" id="pkName">ARTIST NAME</div>
-      <div class="pk-tagline" id="pkTagline">GENRE — CITY</div>
-      <div class="pk-hero-actions">
-        <button class="btn-primary" onclick="sharePK()">SHARE</button>
-        <button class="btn-secondary" onclick="scrollToInfo()">VIEW INFO ↓</button>
+  <!-- Header -->
+  <header class="pk-header" id="pkHeader">
+    <div class="pk-header-content">
+      <div class="pk-header-top">
+        <div class="pk-logo-section">
+          <img id="pkLogoImg" class="pk-logo" style="display:none;">
+          <div class="pk-artist-title">
+            <h1 id="pkArtistName">Artist Name</h1>
+            <p id="pkGenreLocation"></p>
+          </div>
+        </div>
+        <div class="pk-header-actions">
+          <button class="btn-secondary" onclick="sharePK()">SHARE</button>
+          <button class="btn-secondary" onclick="exportPDF()">EXPORT PDF</button>
+        </div>
       </div>
     </div>
-  </section>
+  </header>
 
-  <!-- Social bar -->
-  <div class="pk-social-bar" id="pkSocialBar"></div>
+  <!-- Social icons -->
+  <div class="pk-social-row" id="pkSocialRow"></div>
 
-  <!-- Info section -->
-  <div class="pk-info-section" id="pkInfoSection">
-    <div class="pk-info-grid" id="pkInfoGrid"></div>
-  </div>
+  <!-- Main content -->
+  <div class="pk-main" id="pkMainContent">
+    <!-- Three column layout -->
+    <div class="pk-three-col">
+      <div class="pk-left-col">
+        <img id="pkProfilePhoto" class="pk-profile-photo" style="display:none;">
+      </div>
 
-  <!-- Accordion sections -->
-  <div class="pk-accordion" id="pkAccordion"></div>
+      <div class="pk-center-col">
+        <div class="pk-info-card">
+          <h3>Artist Info</h3>
+          <div id="pkArtistInfo"></div>
+        </div>
+      </div>
 
-  <!-- Tech riders -->
-  <div id="pkTechSection" style="display:none;">
-    <div class="pk-tech-grid" id="pkTechGrid"></div>
+      <div class="pk-right-col">
+        <div class="pk-info-card" id="pkAgencyCard" style="display:none;">
+          <h3>Booking Agency</h3>
+          <div id="pkAgencyInfo"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accordion sections -->
+    <div class="pk-accordion" id="pkAccordion"></div>
+
+    <!-- Riders section -->
+    <div id="pkRidersSection" style="display:none;">
+      <div class="pk-riders" id="pkRiders"></div>
+    </div>
   </div>
 
   <!-- Footer -->
-  <div class="pk-footer">
-    <img src="https://lh3.googleusercontent.com/d/1snrBritrC5F_EZrHR0kD4gVsRXBOWnjF" alt="THIRD KAGURA">
-    <small>Powered by THIRD KAGURA</small>
-  </div>
+  <footer class="pk-footer">
+    <div class="pk-footer-content">
+      <div class="pk-footer-text">
+        Powered by <a href="https://thirdkagura.com" target="_blank">THIRD KAGURA</a> • Follow us on <a href="https://www.instagram.com/thirdkagura/" target="_blank">Instagram</a>
+      </div>
+    </div>
+  </footer>
 </div>
 
 <!-- ╔══════════════════════════════════════════╗ -->
@@ -437,7 +585,17 @@ body { font-family: 'Inter', 'Noto Sans JP', sans-serif; background: var(--bg); 
 let selectedGenres = [];
 let selectedColor = '#c4a265';
 let selectedFont = 'Inter';
-let bgImageData = null; // base64 or URL
+let singleImageData = {
+  artistLogo: null,
+  profilePhoto: null,
+  bgImage: null
+};
+let multiImageData = {
+  pressPhotos: [],
+  perfPhotos: [],
+  epCovers: []
+};
+let spotifyTracks = [];
 
 // Google Apps Script Web App URL
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwNci61gkt_prxO2jn_7wQBIddn7HDQAZ5rqB5Q-quSfUQyulaxaX7RUnvRX3Eve8CX/exec';
@@ -497,42 +655,106 @@ function updateSlugPreview() {
 }
 
 // ═══════════════════════════════════════
-//  GENERATOR: Image handling
+//  IMAGE HANDLING
 // ═══════════════════════════════════════
-function handleBgImage(input) {
+function handleSingleImage(input, type, maxWidth) {
   if (!input.files || !input.files[0]) return;
   const file = input.files[0];
   const reader = new FileReader();
   reader.onload = e => {
-    // Resize for storage
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
-      const maxW = 1200;
       let w = img.width, h = img.height;
-      if (w > maxW) { h = h * (maxW / w); w = maxW; }
+      if (w > maxWidth) { h = h * (maxWidth / w); w = maxWidth; }
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      bgImageData = canvas.toDataURL('image/jpeg', 0.8);
-      showBgPreview(bgImageData);
+      singleImageData[type] = canvas.toDataURL('image/jpeg', 0.8);
+      showSingleImagePreview(type, singleImageData[type]);
     };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
 
-function handleBgUrl(url) {
-  if (url.trim()) {
-    bgImageData = url.trim();
-    showBgPreview(url.trim());
+function showSingleImagePreview(type, src) {
+  const previewId = type === 'bgImage' ? 'bgImagePreview' : type === 'profilePhoto' ? 'profilePhotoPreview' : 'artistLogoPreview';
+  const placeholderId = type === 'bgImage' ? 'bgImagePlaceholder' : type === 'profilePhoto' ? 'profilePhotoPlaceholder' : 'artistLogoPlaceholder';
+  const prev = document.getElementById(previewId);
+  const placeholder = document.getElementById(placeholderId);
+  if (prev) {
+    prev.src = src;
+    prev.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
   }
 }
 
-function showBgPreview(src) {
-  const prev = document.getElementById('bgImagePreview');
-  prev.src = src;
-  prev.style.display = 'block';
-  document.getElementById('bgImagePlaceholder').style.display = 'none';
+function handleMultipleImages(input, type, maxWidth) {
+  if (!input.files) return;
+  const files = Array.from(input.files);
+  let processed = 0;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > maxWidth) { h = h * (maxWidth / w); w = maxWidth; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const b64 = canvas.toDataURL('image/jpeg', 0.8);
+        multiImageData[type].push(b64);
+        processed++;
+        if (processed === files.length) {
+          showMultiImagePreview(type);
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function showMultiImagePreview(type) {
+  const gridId = type === 'pressPhotos' ? 'pressPhotosGrid' : type === 'perfPhotos' ? 'perfPhotosGrid' : 'epCoversGrid';
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = '';
+  multiImageData[type].forEach((src, idx) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'preview-thumb';
+    thumb.innerHTML = `<img src="${src}"><button class="btn-remove" onclick="removeMultiImage('${type}', ${idx})">×</button>`;
+    grid.appendChild(thumb);
+  });
+}
+
+function removeMultiImage(type, idx) {
+  multiImageData[type].splice(idx, 1);
+  showMultiImagePreview(type);
+}
+
+// ═══════════════════════════════════════
+//  SPOTIFY TRACKS
+// ═══════════════════════════════════════
+function addSpotifyTrack() {
+  const container = document.getElementById('spotifyTracksContainer');
+  const entry = document.createElement('div');
+  entry.className = 'spotify-entry';
+  entry.innerHTML = `<input type="url" placeholder="https://open.spotify.com/track/..." class="spotify-url"><button class="btn-icon" onclick="removeSpotifyTrack(this)">×</button>`;
+  container.appendChild(entry);
+}
+
+function removeSpotifyTrack(btn) {
+  const container = document.getElementById('spotifyTracksContainer');
+  if (container.children.length > 1) btn.parentElement.remove();
+}
+
+function collectSpotifyTracks() {
+  const tracks = [];
+  document.querySelectorAll('.spotify-url').forEach(input => {
+    if (input.value.trim()) tracks.push(input.value.trim());
+  });
+  return tracks;
 }
 
 // ═══════════════════════════════════════
@@ -545,21 +767,7 @@ function addTimeline() {
   d.innerHTML = `<input type="text" placeholder="Year" class="tl-year"><input type="text" placeholder="Event description" class="tl-event"><button class="btn-icon" onclick="removeEntry(this)">×</button>`;
   c.appendChild(d);
 }
-function addAward() {
-  const c = document.getElementById('awardsEntries');
-  const d = document.createElement('div');
-  d.className = 'field award-entry';
-  d.innerHTML = `<input type="text" placeholder="Your award or achievement">`;
-  c.appendChild(d);
-}
-function addRelease() {
-  const c = document.getElementById('releasesEntries');
-  const d = document.createElement('div');
-  d.className = 'dynamic-entry';
-  d.style.gridTemplateColumns = '1fr 70px 32px';
-  d.innerHTML = `<input type="text" placeholder="Track / Release name" class="rel-name"><input type="text" placeholder="Year" class="rel-year"><button class="btn-icon" onclick="removeEntry(this)">×</button>`;
-  c.appendChild(d);
-}
+
 function removeEntry(btn) {
   const parent = btn.parentElement.parentElement;
   if (parent.children.length > 1) btn.parentElement.remove();
@@ -571,30 +779,39 @@ function removeEntry(btn) {
 function loadSampleData() {
   document.getElementById('slugInput').value = 'sample-dj';
   updateSlugPreview();
-  document.getElementById('artistName').value = 'YOUR ARTIST NAME';
+  document.getElementById('artistName').value = 'Sample DJ';
+  document.getElementById('realName').value = 'Jane Doe';
   document.getElementById('activeSince').value = '2018';
-  document.getElementById('country').value = 'Your Country';
-  document.getElementById('city').value = 'Your City';
-  document.getElementById('bookingEmail').value = 'your-booking@email.com';
-  document.getElementById('bio').value = 'Write your artist biography here in 3rd person. Describe your style, career highlights, where you have performed, and what makes you unique as an artist.';
-  document.getElementById('instagram').value = 'https://instagram.com/yourhandle';
-  document.getElementById('soundcloud').value = 'https://soundcloud.com/yourhandle';
-  document.getElementById('techRider').value = '2x CDJ 3000\n1x DJM-A9\n2x Monitor Speakers';
+  document.getElementById('country').value = 'Japan';
+  document.getElementById('city').value = 'Tokyo';
+  document.getElementById('bookingEmail').value = 'booking@sampledj.com';
+  document.getElementById('mgmtEmail').value = 'management@sampledj.com';
+  document.getElementById('agencyName').value = 'Creative Artists Agency';
+  document.getElementById('agencyEmail').value = 'contact@caa.com';
+  document.getElementById('agencyWebsite').value = 'https://caa.com';
+  document.getElementById('bio').value = 'Sample DJ is an innovative producer and performer known for blending house, techno, and experimental sounds. With performances across Asia and Europe, they have established themselves as a key figure in the underground electronic music scene.';
+  document.getElementById('instagram').value = 'https://instagram.com/sampledj';
+  document.getElementById('soundcloud').value = 'https://soundcloud.com/sampledj';
+  document.getElementById('spotify').value = 'https://open.spotify.com/artist/sampledj';
+  document.getElementById('techRider').value = '2x CDJ 3000\n1x DJM-A9\n2x Monitor Speakers\nMic stand';
   document.getElementById('hospRider').value = '2x Water Bottles\n1x Towel\n3x Drink Vouchers';
 
-  selectedGenres = ['House', 'Hip Hop'];
+  selectedGenres = ['House', 'Techno'];
   document.querySelectorAll('#genreChips .chip').forEach(chip => {
     chip.classList.toggle('active', selectedGenres.includes(chip.dataset.v));
   });
 
   const tlContainer = document.getElementById('timelineEntries');
   tlContainer.innerHTML = '';
-  [['2018','Started DJing'],['2020','First residency'],['2023','International debut']].forEach(([y,e]) => {
+  [['2018','Started DJing'],['2020','First residency in Tokyo'],['2023','International debut in Berlin']].forEach(([y,e]) => {
     const d = document.createElement('div');
     d.className = 'dynamic-entry';
     d.innerHTML = `<input type="text" placeholder="Year" class="tl-year" value="${y}"><input type="text" placeholder="Event" class="tl-event" value="${e}"><button class="btn-icon" onclick="removeEntry(this)">×</button>`;
     tlContainer.appendChild(d);
   });
+
+  document.getElementById('consentMatching').checked = true;
+  document.getElementById('consentCommunity').checked = true;
 }
 
 // ═══════════════════════════════════════
@@ -612,16 +829,6 @@ function collectFormData() {
     if (y || ev) timeline.push({ year: y, event: ev });
   });
 
-  const awards = [];
-  document.querySelectorAll('.award-entry input').forEach(i => { if (i.value.trim()) awards.push(i.value.trim()); });
-
-  const releases = [];
-  document.querySelectorAll('#releasesEntries .dynamic-entry').forEach(e => {
-    const n = e.querySelector('.rel-name')?.value || '';
-    const y = e.querySelector('.rel-year')?.value || '';
-    if (n) releases.push({ name: n, year: y });
-  });
-
   return {
     slug: document.getElementById('slugInput').value.trim(),
     artistName: document.getElementById('artistName').value.trim(),
@@ -634,12 +841,16 @@ function collectFormData() {
     mgmtEmail: document.getElementById('mgmtEmail')?.value?.trim() || '',
     bookingFee: document.getElementById('bookingFee')?.value?.trim() || '',
     bio: document.getElementById('bio')?.value?.trim() || '',
-    bgImage: bgImageData || '',
+    artistLogo: singleImageData.artistLogo || '',
+    profilePhoto: singleImageData.profilePhoto || '',
+    bgImage: singleImageData.bgImage || '',
+    pressPhotos: JSON.stringify(multiImageData.pressPhotos),
+    perfPhotos: JSON.stringify(multiImageData.perfPhotos),
+    epCovers: JSON.stringify(multiImageData.epCovers),
+    spotifyTracks: JSON.stringify(collectSpotifyTracks()),
     font: selectedFont,
     accentColor: selectedColor,
     timeline: JSON.stringify(timeline),
-    awards: JSON.stringify(awards),
-    releases: JSON.stringify(releases),
     techRider: document.getElementById('techRider')?.value?.trim() || '',
     hospRider: document.getElementById('hospRider')?.value?.trim() || '',
     instagram: document.getElementById('instagram')?.value?.trim() || '',
@@ -648,6 +859,11 @@ function collectFormData() {
     bandcamp: document.getElementById('bandcamp')?.value?.trim() || '',
     website: document.getElementById('website')?.value?.trim() || '',
     facebook: document.getElementById('facebook')?.value?.trim() || '',
+    agencyName: document.getElementById('agencyName')?.value?.trim() || '',
+    agencyEmail: document.getElementById('agencyEmail')?.value?.trim() || '',
+    agencyWebsite: document.getElementById('agencyWebsite')?.value?.trim() || '',
+    consentMatching: document.getElementById('consentMatching').checked ? 'true' : 'false',
+    consentCommunity: document.getElementById('consentCommunity').checked ? 'true' : 'false',
     timestamp: new Date().toISOString()
   };
 }
@@ -660,6 +876,9 @@ async function submitProfile() {
   if (!data.slug) { status.style.color = '#e54'; status.textContent = 'Please choose a URL slug.'; return; }
   if (!data.artistName) { status.style.color = '#e54'; status.textContent = 'Please enter an artist name.'; return; }
   if (!data.bookingEmail) { status.style.color = '#e54'; status.textContent = 'Please enter a booking email.'; return; }
+  if (!document.getElementById('consentMatching').checked || !document.getElementById('consentCommunity').checked) {
+    status.style.color = '#e54'; status.textContent = 'Please agree to both consent items to submit.'; return;
+  }
 
   btn.disabled = true;
   btn.textContent = 'PUBLISHING...';
@@ -667,13 +886,12 @@ async function submitProfile() {
   status.textContent = 'Saving your press kit...';
 
   if (!SHEETS_URL) {
-    // No backend configured — save as JSON
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url; a.download = `${data.slug}_presskit.json`; a.click();
     URL.revokeObjectURL(url);
     status.style.color = '#4a4';
-    status.textContent = 'Saved as JSON (Google Sheets not configured yet). Your press kit URL will be: thirdkagura.github.io/pk-generator/?id=' + data.slug;
+    status.textContent = 'Saved as JSON. Your press kit URL will be: ' + window.location.pathname + '?id=' + data.slug;
     btn.disabled = false; btn.textContent = 'PUBLISH PRESS KIT';
     return;
   }
@@ -696,7 +914,6 @@ async function loadPressKit(slug) {
   document.getElementById('loadingState').style.display = 'flex';
 
   if (!SHEETS_URL) {
-    // Demo mode: show not found or demo data
     document.getElementById('loadingState').style.display = 'none';
     if (slug === 'sample-dj') {
       renderPressKit(getDemoData());
@@ -723,19 +940,41 @@ async function loadPressKit(slug) {
 
 function getDemoData() {
   return {
-    slug: 'sample-dj', artistName: 'YOUR ARTIST NAME', realName: '', activeSince: '2018',
-    country: 'Your Country', city: 'Your City', genres: 'House, Hip Hop',
-    bookingEmail: 'your-booking@email.com', mgmtEmail: 'your-management@email.com',
-    bio: 'Write your artist biography here in 3rd person. Describe your style, career highlights, where you have performed, and what makes you unique as an artist. This text will appear as your official bio on your press kit page.',
-    bgImage: '', font: 'Inter', accentColor: '#c4a265',
-    timeline: JSON.stringify([{year:'2018',event:'Started DJing'},{year:'2020',event:'First residency'},{year:'2023',event:'International debut'}]),
-    awards: JSON.stringify(['Your first award or achievement']),
-    releases: JSON.stringify([{name:'Your track name',year:'2024'}]),
+    slug: 'sample-dj',
+    artistName: 'Sample DJ',
+    realName: 'Jane Doe',
+    activeSince: '2018',
+    country: 'Japan',
+    city: 'Tokyo',
+    genres: 'House, Techno',
+    bookingEmail: 'booking@sampledj.com',
+    mgmtEmail: 'management@sampledj.com',
+    bio: 'Sample DJ is an innovative producer and performer known for blending house, techno, and experimental sounds. With performances across Asia and Europe, they have established themselves as a key figure in the underground electronic music scene.',
+    font: 'Inter',
+    accentColor: '#c4a265',
+    timeline: JSON.stringify([
+      {year:'2018',event:'Started DJing'},
+      {year:'2020',event:'First residency in Tokyo'},
+      {year:'2023',event:'International debut in Berlin'}
+    ]),
     techRider: '2x CDJ 3000\n1x DJM-A9\n2x Monitor Speakers',
     hospRider: '2x Water Bottles\n1x Towel\n3x Drink Vouchers',
-    instagram: 'https://instagram.com/yourhandle',
-    soundcloud: 'https://soundcloud.com/yourhandle',
-    spotify: '', bandcamp: '', website: '', facebook: ''
+    instagram: 'https://instagram.com/sampledj',
+    soundcloud: 'https://soundcloud.com/sampledj',
+    spotify: 'https://open.spotify.com/artist/sampledj',
+    bandcamp: '',
+    website: '',
+    facebook: '',
+    agencyName: 'Creative Artists Agency',
+    agencyEmail: 'contact@caa.com',
+    agencyWebsite: 'https://caa.com',
+    artistLogo: '',
+    profilePhoto: '',
+    bgImage: '',
+    pressPhotos: '[]',
+    perfPhotos: '[]',
+    epCovers: '[]',
+    spotifyTracks: '[]'
   };
 }
 
@@ -746,117 +985,159 @@ function renderPressKit(d) {
   // Apply custom accent color
   const accent = d.accentColor || '#c4a265';
   document.documentElement.style.setProperty('--accent', accent);
-
-  // Title
   document.title = `${d.artistName} — Press Kit`;
 
-  // Hero
-  const heroBg = document.getElementById('pkHeroBg');
-  if (d.bgImage) {
-    heroBg.src = d.bgImage;
-    heroBg.style.display = 'block';
+  // Header
+  const logoImg = document.getElementById('pkLogoImg');
+  if (d.artistLogo) {
+    logoImg.src = d.artistLogo;
+    logoImg.style.display = 'block';
   } else {
-    heroBg.style.display = 'none';
-    document.getElementById('pkHero').style.background = 'linear-gradient(135deg, #1a1a1a, #0a0a0a)';
+    logoImg.style.display = 'none';
   }
 
-  // Artist name with custom font
-  const nameEl = document.getElementById('pkName');
-  nameEl.textContent = d.artistName.toUpperCase();
-  nameEl.style.fontFamily = `'${d.font || 'Inter'}', sans-serif`;
+  document.getElementById('pkArtistName').textContent = d.artistName.toUpperCase();
+  document.getElementById('pkArtistName').style.fontFamily = `'${d.font || 'Inter'}', sans-serif`;
 
-  // Tagline
-  const tagParts = [];
-  if (d.genres) tagParts.push(d.genres.toUpperCase());
-  const loc = [d.city, d.country].filter(Boolean).join(', ');
-  if (loc) tagParts.push(loc.toUpperCase());
-  document.getElementById('pkTagline').textContent = tagParts.join(' — ') || '';
-  document.getElementById('pkTagline').style.color = accent;
+  const genreLoc = [d.genres, [d.city, d.country].filter(Boolean).join(', ')].filter(Boolean).join(' • ');
+  document.getElementById('pkGenreLocation').textContent = genreLoc;
+  document.getElementById('pkGenreLocation').style.color = accent;
 
-  // Social bar
+  // Profile photo
+  const profileImg = document.getElementById('pkProfilePhoto');
+  if (d.profilePhoto) {
+    profileImg.src = d.profilePhoto;
+    profileImg.style.display = 'block';
+  } else {
+    profileImg.style.display = 'none';
+  }
+
+  // Artist info
+  let artistInfoHtml = '';
+  if (d.realName) artistInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Name</div><div class="pk-info-value">${d.realName}</div></div>`;
+  artistInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Booking</div><div class="pk-info-value"><a href="mailto:${d.bookingEmail}">${d.bookingEmail}</a></div></div>`;
+  if (d.city || d.country) artistInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Location</div><div class="pk-info-value">${[d.city, d.country].filter(Boolean).join(', ')}</div></div>`;
+  if (d.genres) artistInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Genres</div><div class="pk-info-value">${d.genres}</div></div>`;
+  if (d.activeSince) artistInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Active Since</div><div class="pk-info-value">${d.activeSince}</div></div>`;
+  document.getElementById('pkArtistInfo').innerHTML = artistInfoHtml;
+
+  // Agency info
+  if (d.agencyName || d.agencyEmail || d.agencyWebsite) {
+    document.getElementById('pkAgencyCard').style.display = 'block';
+    let agencyInfoHtml = '';
+    if (d.agencyName) agencyInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Agency</div><div class="pk-info-value">${d.agencyName}</div></div>`;
+    if (d.agencyEmail) agencyInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Email</div><div class="pk-info-value"><a href="mailto:${d.agencyEmail}">${d.agencyEmail}</a></div></div>`;
+    if (d.agencyWebsite) agencyInfoHtml += `<div class="pk-info-item"><div class="pk-info-label">Website</div><div class="pk-info-value"><a href="${d.agencyWebsite}" target="_blank">${d.agencyWebsite}</a></div></div>`;
+    document.getElementById('pkAgencyInfo').innerHTML = agencyInfoHtml;
+  }
+
+  // Social icons
   const socials = [];
-  if (d.instagram) socials.push({ label: 'IG', url: d.instagram });
-  if (d.soundcloud) socials.push({ label: 'SC', url: d.soundcloud });
-  if (d.spotify) socials.push({ label: 'SP', url: d.spotify });
-  if (d.bandcamp) socials.push({ label: 'BC', url: d.bandcamp });
-  if (d.facebook) socials.push({ label: 'FB', url: d.facebook });
-  if (d.website) socials.push({ label: 'WEB', url: d.website });
-  document.getElementById('pkSocialBar').innerHTML = socials.map(s =>
-    `<a href="${s.url}" target="_blank" class="pk-social-link">${s.label}</a>`
-  ).join('');
+  if (d.instagram) socials.push({ icon: 'instagram', url: d.instagram });
+  if (d.soundcloud) socials.push({ icon: 'soundcloud', url: d.soundcloud });
+  if (d.spotify) socials.push({ icon: 'spotify', url: d.spotify });
+  if (d.bandcamp) socials.push({ icon: 'bandcamp', url: d.bandcamp });
+  if (d.facebook) socials.push({ icon: 'facebook', url: d.facebook });
+  if (d.website) socials.push({ icon: 'globe', url: d.website });
 
-  // Info cards
-  let infoHtml = '<div class="pk-info-card"><h3 style="color:' + accent + '">Artist Info</h3>';
-  if (d.realName) infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Name</div><div class="pk-info-value">${d.realName}</div></div>`;
-  infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Email</div><div class="pk-info-value"><a href="mailto:${d.bookingEmail}">${d.bookingEmail}</a></div></div>`;
-  if (d.city || d.country) infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Location</div><div class="pk-info-value">${[d.city, d.country].filter(Boolean).join(', ')}</div></div>`;
-  if (d.genres) infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Genres</div><div class="pk-info-value">${d.genres}</div></div>`;
-  if (d.activeSince) infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Active Since</div><div class="pk-info-value">${d.activeSince}</div></div>`;
-  infoHtml += '</div>';
-
-  if (d.mgmtEmail) {
-    infoHtml += '<div class="pk-info-card"><h3 style="color:' + accent + '">Management</h3>';
-    infoHtml += `<div class="pk-info-item"><div class="pk-info-label">Email</div><div class="pk-info-value"><a href="mailto:${d.mgmtEmail}">${d.mgmtEmail}</a></div></div>`;
-    infoHtml += '</div>';
-  }
-  document.getElementById('pkInfoGrid').innerHTML = infoHtml;
+  const socialRow = document.getElementById('pkSocialRow');
+  socialRow.innerHTML = socials.map(s => `
+    <a href="${s.url}" target="_blank" class="pk-social-icon" title="${s.icon}">
+      ${getSocialSVG(s.icon)}
+    </a>
+  `).join('');
 
   // Accordion sections
   let accHtml = '';
 
   // Bio
   if (d.bio) {
-    accHtml += makeAccordion('BIO', `<p>${d.bio.replace(/\n/g, '<br>')}</p>`, true);
+    accHtml += makeAccordion('BIO', `<p>${d.bio.replace(/\n/g, '<br>')}</p>`, true, null);
+  }
+
+  // Press photos
+  let pressPhotos = [];
+  try { pressPhotos = JSON.parse(d.pressPhotos || '[]'); } catch(e) {}
+  if (pressPhotos.length > 0) {
+    const gallery = pressPhotos.map(src => `<img src="${src}" alt="Press photo">`).join('');
+    accHtml += makeAccordion('PRESS PHOTOS', `<div class="pk-gallery">${gallery}</div>`, false, 'images');
+  }
+
+  // Performance photos
+  let perfPhotos = [];
+  try { perfPhotos = JSON.parse(d.perfPhotos || '[]'); } catch(e) {}
+  if (perfPhotos.length > 0) {
+    const gallery = perfPhotos.map(src => `<img src="${src}" alt="Performance photo">`).join('');
+    accHtml += makeAccordion('PERFORMANCE PHOTOS', `<div class="pk-gallery">${gallery}</div>`, false, 'images');
+  }
+
+  // Spotify tracks
+  let spotifyTracks = [];
+  try { spotifyTracks = JSON.parse(d.spotifyTracks || '[]'); } catch(e) {}
+  if (spotifyTracks.length > 0) {
+    const trackList = spotifyTracks.map(url => `<div style="margin-bottom:0.8rem;"><a href="${url}" target="_blank" style="color:var(--accent); text-decoration:none;">Listen on Spotify →</a></div>`).join('');
+    accHtml += makeAccordion('SPOTIFY TRACKS', trackList, false, null);
+  }
+
+  // EP covers
+  let epCovers = [];
+  try { epCovers = JSON.parse(d.epCovers || '[]'); } catch(e) {}
+  if (epCovers.length > 0) {
+    const gallery = epCovers.map(src => `<img src="${src}" alt="EP cover">`).join('');
+    accHtml += makeAccordion('EP COVERS', `<div class="pk-gallery">${gallery}</div>`, false, 'images');
   }
 
   // Timeline
   let timeline = [];
   try { timeline = JSON.parse(d.timeline || '[]'); } catch(e) {}
   if (timeline.length > 0) {
-    const tlContent = timeline.map(t =>
-      `<div style="display:grid;grid-template-columns:60px 1fr;gap:0.6rem;margin-bottom:0.4rem;"><span style="font-weight:700;color:${accent}">${t.year}</span><span>${t.event}</span></div>`
-    ).join('');
-    accHtml += makeAccordion('CAREER', tlContent);
-  }
-
-  // Awards
-  let awards = [];
-  try { awards = JSON.parse(d.awards || '[]'); } catch(e) {}
-  if (awards.length > 0) {
-    const awContent = awards.map(a => `<div style="padding:0.3rem 0;border-bottom:1px solid var(--border);">${a}</div>`).join('');
-    accHtml += makeAccordion('AWARDS & ACHIEVEMENTS', awContent);
-  }
-
-  // Releases
-  let releases = [];
-  try { releases = JSON.parse(d.releases || '[]'); } catch(e) {}
-  if (releases.length > 0) {
-    const relContent = releases.map(r => `<div style="padding:0.3rem 0;">${r.name}${r.year ? ' (' + r.year + ')' : ''}</div>`).join('');
-    accHtml += makeAccordion('RELEASES', relContent);
+    const tlContent = timeline.map(t => `
+      <div class="pk-timeline-item">
+        <div class="pk-timeline-year">${t.year}</div>
+        <div class="pk-timeline-event">${t.event}</div>
+      </div>
+    `).join('');
+    accHtml += makeAccordion('CAREER TIMELINE', `<div class="pk-timeline">${tlContent}</div>`, false, null);
   }
 
   document.getElementById('pkAccordion').innerHTML = accHtml;
 
   // Tech riders
   if (d.techRider || d.hospRider) {
-    document.getElementById('pkTechSection').style.display = 'block';
-    let techHtml = '';
-    if (d.techRider) techHtml += `<div class="pk-tech-card"><h3 style="color:${accent}">Tech Rider</h3><pre>${d.techRider}</pre></div>`;
-    if (d.hospRider) techHtml += `<div class="pk-tech-card"><h3 style="color:${accent}">Hospitality Rider</h3><pre>${d.hospRider}</pre></div>`;
-    document.getElementById('pkTechGrid').innerHTML = techHtml;
+    document.getElementById('pkRidersSection').style.display = 'block';
+    let ridersHtml = '';
+    if (d.techRider) ridersHtml += `<div class="pk-rider-card"><h3 style="color:${accent}">Tech Rider</h3><pre>${d.techRider}</pre></div>`;
+    if (d.hospRider) ridersHtml += `<div class="pk-rider-card"><h3 style="color:${accent}">Hospitality Rider</h3><pre>${d.hospRider}</pre></div>`;
+    document.getElementById('pkRiders').innerHTML = ridersHtml;
   }
 
   // Show view mode
   document.getElementById('viewMode').style.display = 'block';
 }
 
-function makeAccordion(title, content, openByDefault = false) {
+function makeAccordion(title, content, openByDefault = false, icon = null) {
+  const iconSpan = icon === 'images' ? '📸' : icon === 'download' ? '⬇️' : '';
   return `<div class="pk-acc-item${openByDefault ? ' open' : ''}">
     <button class="pk-acc-header" onclick="this.parentElement.classList.toggle('open')">
-      <span>${title}</span><span class="pk-acc-arrow">▼</span>
+      <span>${title} ${iconSpan}</span><span class="pk-acc-arrow">▼</span>
     </button>
     <div class="pk-acc-body"><div class="pk-acc-content">${content}</div></div>
   </div>`;
+}
+
+// ═══════════════════════════════════════
+//  SVG SOCIAL ICONS
+// ═══════════════════════════════════════
+function getSocialSVG(icon) {
+  const icons = {
+    instagram: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.057-1.645.069-4.849.069-3.203 0-3.584-.012-4.849-.069-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.322a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z"/></svg>',
+    soundcloud: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.5 10.5a1.5 1.5 0 113 0v8.25a1.5 1.5 0 11-3 0v-8.25zm4.5 0a1.5 1.5 0 113 0v10.5a1.5 1.5 0 11-3 0v-10.5zm4.5.75a1.5 1.5 0 113 0v9a1.5 1.5 0 11-3 0v-9zm4.5-1.5a1.5 1.5 0 113 0v12a1.5 1.5 0 11-3 0v-12zm4.5 2.25a1.5 1.5 0 113 0v7.5a1.5 1.5 0 11-3 0v-7.5z"/></svg>',
+    spotify: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.6 17.5c-.3.5-1 .7-1.5.4-4.1-2.5-9.3-3.1-15.4-1.7-.6.1-1.2-.3-1.3-.9-.1-.6.3-1.2.9-1.3 6.5-1.5 12.2-.8 16.7 2 .5.3.7 1 .4 1.5zm1.5-3.3c-.4.6-1.3.8-1.9.4-4.7-2.9-11.8-3.8-17.3-2.1-.7.2-1.4-.2-1.6-.9-.2-.7.2-1.4.9-1.6 6.3-1.9 14.1-.9 19.5 2.4.6.4.8 1.3.4 1.9zm.1-3.4c-5.6-3.3-14.8-3.6-20.1-2-.8.2-1.6-.3-1.8-1.1-.2-.8.3-1.6 1.1-1.8 5.9-1.8 15.7-1.4 22 2.3.7.4 1 1.3.6 2-.4.7-1.3 1-2 .6z"/></svg>',
+    bandcamp: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.27 2H8.73L2 13.73h6.54L15.27 22h6.54L21.81 13.73h-6.54L15.27 2z"/></svg>',
+    facebook: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>',
+    globe: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>'
+  };
+  return icons[icon] || '';
 }
 
 // ═══════════════════════════════════════
@@ -872,8 +1153,16 @@ function sharePK() {
   }
 }
 
-function scrollToInfo() {
-  document.getElementById('pkInfoSection').scrollIntoView({ behavior: 'smooth' });
+function exportPDF() {
+  const element = document.getElementById('viewMode');
+  const opt = {
+    margin: 10,
+    filename: document.getElementById('pkArtistName').textContent + '_presskit.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+  };
+  html2pdf().set(opt).from(element).save();
 }
 </script>
 </body>
