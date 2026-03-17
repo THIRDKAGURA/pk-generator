@@ -501,7 +501,6 @@ function renderPK(d) {
   let mediaItems = [];
   if (isImg(d.artistLogo)) mediaItems.push('<div class="pk-media-item logo-item"><img src="' + d.artistLogo + '" alt="Logo"><div class="pk-media-item-label">Logo</div></div>');
   if (isImg(d.profilePhoto)) mediaItems.push('<div class="pk-media-item portrait"><img src="' + d.profilePhoto + '" alt="Artist Photo"><div class="pk-media-item-label">Artist Photo</div></div>');
-  if (perfSrc) mediaItems.push('<div class="pk-media-item landscape"><img src="' + perfSrc + '" alt="Performance"><div class="pk-media-item-label">Performance</div></div>');
   const hasMedia = mediaItems.length > 0;
   show(document.getElementById('pkMediaSection'), hasMedia);
   show(document.getElementById('pkDivMedia'), hasMedia);
