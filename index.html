@@ -484,7 +484,8 @@ function renderPK(d) {
   show(document.getElementById('pkDivListen'), hasListen);
   if (hasListen) {
     document.getElementById('pkSpotifyEmbeds').innerHTML = tracks.map(url => {
-      const eu = url.replace('open.spotify.com/', 'open.spotify.com/embed/');
+      let eu = url.split('?')[0].replace(/\/intl-[a-z]{2}\//i, '/');
+      if (eu.includes('open.spotify.com/') && !eu.includes('/embed/')) eu = eu.replace('open.spotify.com/', 'open.spotify.com/embed/');
       return '<div class="pk-spotify-embed"><iframe src="' + eu + '" width="100%" height="80" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border-radius:12px"></iframe></div>';
     }).join('');
   }
