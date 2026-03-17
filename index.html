@@ -101,6 +101,16 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .pk-spotify-embed { border-radius: 12px; overflow: hidden; margin-bottom: 0.8rem; }
 .pk-perf-section { padding: 0 2rem 1.5rem; }
 .pk-perf-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 4px; display: block; }
+.pk-media-section { padding: 1.5rem 2rem; }
+.pk-media-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.pk-media-item { position: relative; overflow: hidden; border-radius: 4px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; transition: border-color 0.2s; }
+.pk-media-item:hover { border-color: var(--accent); }
+.pk-media-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pk-media-item.logo-item { display: flex; align-items: center; justify-content: center; aspect-ratio: 1; padding: 1.5rem; background: #0d0d0d; }
+.pk-media-item.logo-item img { width: auto; height: auto; max-width: 85%; max-height: 85%; object-fit: contain; opacity: 0.85; }
+.pk-media-item.portrait { aspect-ratio: 3/4; }
+.pk-media-item.landscape { aspect-ratio: 16/9; grid-column: 1 / -1; }
+.pk-media-item-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 0.4rem 0.6rem; background: linear-gradient(transparent, rgba(0,0,0,0.8)); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.7); }
 .pk-footer { padding: 1.5rem 2rem 2rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
 .pk-footer span, .pk-footer a { font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; }
 .pk-footer a:hover { color: var(--accent); }
@@ -108,7 +118,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .pk-share-btn:hover { transform: scale(1.1); }
 @media (min-width: 768px) {
   .pk-hero { max-height: 75vh; }
-  .pk-info, .pk-bio-section, .pk-riders-section, .pk-listen-section, .pk-perf-section { padding-left: 3rem; padding-right: 3rem; }
+  .pk-info, .pk-bio-section, .pk-riders-section, .pk-listen-section, .pk-perf-section, .pk-media-section { padding-left: 3rem; padding-right: 3rem; }
   .pk-divider { margin: 0 3rem; }
   .pk-footer { padding: 1.5rem 3rem 2rem; }
 }
@@ -276,6 +286,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
   <div class="pk-divider" id="pkDivListen"></div>
   <div class="pk-listen-section" id="pkListenSection"><div class="pk-section-label">LISTEN</div><div id="pkSpotifyEmbeds"></div></div>
   <div class="pk-perf-section" id="pkPerfSection"><img class="pk-perf-img" id="pkPerfImg" alt=""></div>
+  <div class="pk-divider" id="pkDivMedia"></div>
+  <div class="pk-media-section" id="pkMediaSection"><div class="pk-section-label">MEDIA</div><div class="pk-media-grid" id="pkMediaGrid"></div></div>
   <div class="pk-footer"><div><span>Powered by </span><a href="https://thirdkagura.com" target="_blank" style="color:var(--accent)">THIRD KAGURA</a></div><a href="https://instagram.com/thirdkagura" target="_blank">Follow us on Instagram</a></div>
   <button class="pk-share-btn" onclick="sharePK()" title="Share"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
 </div>
@@ -444,7 +456,6 @@ function renderPK(d) {
   if (d.facebook) sns.push({ k:'facebook', u:d.facebook });
   if (d.website) sns.push({ k:'globe', u:d.website });
   if (sns.length) metaHtml += '<div class="pk-sns">' + sns.map(s => '<a href="' + s.u + '" target="_blank" title="' + s.k + '">' + si(s.k) + '</a>').join('') + '</div>';
-  if (isImg(d.artistLogo)) metaHtml += '<div style="margin-top:1.2rem"><img src="' + d.artistLogo + '" style="height:28px;width:auto;opacity:.6" alt="logo"></div>';
   const infoEl = document.getElementById('pkInfo');
   show(infoEl, metaHtml); if (metaHtml) infoEl.innerHTML = metaHtml;
 
@@ -485,6 +496,16 @@ function renderPK(d) {
   else { try { const pp = JSON.parse(d.perfPhotos || '[]'); if (pp.length && isImg(pp[0])) perfSrc = pp[0]; } catch(e) {} }
   show(document.getElementById('pkPerfSection'), perfSrc);
   if (perfSrc) document.getElementById('pkPerfImg').src = perfSrc;
+
+  // ── MEDIA (logo + artist photo + perf photo) — hide if none available ──
+  let mediaItems = [];
+  if (isImg(d.artistLogo)) mediaItems.push('<div class="pk-media-item logo-item"><img src="' + d.artistLogo + '" alt="Logo"><div class="pk-media-item-label">Logo</div></div>');
+  if (isImg(d.profilePhoto)) mediaItems.push('<div class="pk-media-item portrait"><img src="' + d.profilePhoto + '" alt="Artist Photo"><div class="pk-media-item-label">Artist Photo</div></div>');
+  if (perfSrc) mediaItems.push('<div class="pk-media-item landscape"><img src="' + perfSrc + '" alt="Performance"><div class="pk-media-item-label">Performance</div></div>');
+  const hasMedia = mediaItems.length > 0;
+  show(document.getElementById('pkMediaSection'), hasMedia);
+  show(document.getElementById('pkDivMedia'), hasMedia);
+  if (hasMedia) document.getElementById('pkMediaGrid').innerHTML = mediaItems.join('');
 }
 
 // ── Helpers ──
