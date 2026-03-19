@@ -966,11 +966,7 @@ async function submitForm() {
       updatedAt: new Date().toISOString()
     };
 
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify(payload)
-    });
+    await postViaIframe(GAS_URL, payload);
 
     showToast('Press kit created!', 'success');
   } catch (err) {
@@ -985,6 +981,46 @@ document.getElementById('pkForm').addEventListener('submit', (e) => {
   e.preventDefault();
   submitForm();
 });
+
+
+// ═══ IFRAME POST (GAS workaround for CORS) ═══
+// Creates a hidden form + iframe, submits the JSON payload as a form field.
+// GAS receives it in e.postData.contents reliably this way.
+
+function postViaIframe(url, payload) {
+  return new Promise((resolve) => {
+    const iframeName = 'pkSubmitFrame_' + Date.now();
+    const iframe = document.createElement('iframe');
+    iframe.name = iframeName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.target = iframeName;
+    form.style.display = 'none';
+
+    // GAS reads e.postData.contents from the raw body.
+    // When submitting via form, we put JSON in a hidden field.
+    // GAS will receive it as e.parameter or e.postData.contents.
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'payload';
+    input.value = JSON.stringify(payload);
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+    form.submit();
+
+    // Clean up after a delay (GAS takes a few seconds)
+    setTimeout(() => {
+      form.remove();
+      iframe.remove();
+      resolve();
+    }, 5000);
+  });
+}
 
 
 // ═══ TOAST ═══
