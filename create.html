@@ -967,8 +967,7 @@ async function submitForm() {
     };
 
     await fetch(GAS_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
       body: JSON.stringify(payload)
     });
 
