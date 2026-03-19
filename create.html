@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Your Press Kit — PK Generator V2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-hover: #1a1a1a;
+      --border: #2a2a2a;
+      --border-focus: #c4a265;
+      --gold: #c4a265;
+      --gold-dim: rgba(196, 162, 101, 0.15);
+      --text: #f0f0f0;
+      --text-dim: #888;
+      --text-muted: #555;
+      --error: #e74c3c;
+      --error-bg: rgba(231, 76, 60, 0.1);
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --transition: 0.2s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ─── Layout ─── */
+    .page-header {
+      text-align: center;
+      padding: 48px 24px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .page-header p { color: var(--text-dim); font-size: 14px; }
+
+    .form-container { max-width: 720px; margin: 0 auto; padding: 32px 24px 64px; }
+
+    /* ─── Steps ─── */
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px 0;
+      margin-bottom: 8px;
+    }
+    .step-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background var(--transition);
+    }
+    .step-dot.active { background: var(--gold); }
+    .step-dot.done { background: var(--success); }
+
+    .step-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .step-header h2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .step-header p { font-size: 13px; color: var(--text-dim); }
+
+    /* ─── Sections ─── */
+    .form-section { margin-bottom: 28px; }
+    .form-section h3 {
+      font-size: 13px; font-weight: 600; color: var(--gold);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 16px; padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── Fields ─── */
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block; font-size: 13px; font-weight: 500;
+      color: var(--text-dim); margin-bottom: 5px;
+    }
+    .field label .req { color: var(--error); margin-left: 2px; }
+    .field .hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+    input[type="text"], input[type="email"], input[type="url"],
+    input[type="color"], select, textarea {
+      width: 100%; padding: 10px 14px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text);
+      font-family: inherit; font-size: 14px;
+      transition: border-color var(--transition); outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--border-focus); }
+    input.error, select.error, textarea.error { border-color: var(--error); background: var(--error-bg); }
+    textarea { resize: vertical; min-height: 100px; }
+
+    select {
+      appearance: none; cursor: pointer; padding-right: 36px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+
+    .error-msg { display: none; font-size: 12px; color: var(--error); margin-top: 4px; }
+    .error-msg.visible { display: block; }
+
+    .bio-counter { font-size: 12px; margin-top: 4px; text-align: right; }
+    .bio-counter.under { color: var(--error); }
+    .bio-counter.ok { color: var(--success); }
+    .bio-counter.over { color: var(--warning); }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 540px) { .field-row { grid-template-columns: 1fr; } }
+
+    /* ─── Genre multi-select ─── */
+    .genre-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .genre-chip {
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all var(--transition);
+      user-select: none;
+    }
+    .genre-chip:hover { border-color: var(--text-muted); color: var(--text); }
+    .genre-chip.selected {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+      color: var(--gold);
+    }
+
+    /* ─── Image Upload ─── */
+    .image-upload {
+      position: relative;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
+    }
+    .image-upload:hover { border-color: var(--text-muted); background: var(--surface); }
+    .image-upload.has-image { border-style: solid; border-color: var(--gold); padding: 8px; }
+    .image-upload.error-border { border-color: var(--error); }
+    .image-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .image-upload .upload-label { color: var(--text-dim); font-size: 13px; }
+    .image-upload .upload-label strong { color: var(--gold); display: block; margin-bottom: 4px; font-size: 14px; }
+    .image-upload .preview-img {
+      max-width: 100%; max-height: 280px; border-radius: var(--radius);
+      object-fit: contain; display: none;
+    }
+    .image-upload.has-image .upload-label { display: none; }
+    .image-upload.has-image .preview-img { display: block; margin: 0 auto; }
+    .image-upload .remove-btn {
+      display: none; position: absolute; top: 8px; right: 8px;
+      background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%;
+      width: 28px; height: 28px; cursor: pointer; font-size: 16px; line-height: 28px;
+    }
+    .image-upload.has-image .remove-btn { display: block; }
+
+    /* ─── Consent ─── */
+    .consent-field { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+    .consent-field input[type="checkbox"] {
+      width: 18px; height: 18px; margin-top: 2px;
+      accent-color: var(--gold); cursor: pointer; flex-shrink: 0;
+    }
+    .consent-field label { font-size: 13px; color: var(--text-dim); cursor: pointer; margin-bottom: 0; }
+
+    /* ─── Gig / Link Entries ─── */
+    .entry-row {
+      display: grid; gap: 10px; align-items: end;
+      margin-bottom: 10px; padding: 14px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .entry-row .field { margin-bottom: 0; }
+    .entry-row label { font-size: 12px; }
+    .gig-grid { grid-template-columns: 1fr auto auto 1fr auto; }
+    .link-grid { grid-template-columns: 140px 1fr auto; }
+    @media (max-width: 640px) { .gig-grid, .link-grid { grid-template-columns: 1fr; } }
+    .remove-entry {
+      background: none; border: 1px solid var(--border); color: var(--text-muted);
+      border-radius: var(--radius); width: 36px; height: 36px;
+      cursor: pointer; font-size: 16px;
+      transition: border-color var(--transition), color var(--transition);
+    }
+    .remove-entry:hover { border-color: var(--error); color: var(--error); }
+    .add-entry-btn {
+      display: inline-block; padding: 8px 20px;
+      background: transparent; border: 1px dashed var(--border);
+      border-radius: var(--radius); color: var(--gold);
+      font-family: inherit; font-size: 13px; cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .add-entry-btn:hover { border-color: var(--gold); }
+
+    /* ─── Buttons ─── */
+    .btn-row { display: flex; gap: 12px; justify-content: center; padding-top: 16px; }
+    .btn {
+      display: inline-block; padding: 12px 40px;
+      border: none; border-radius: var(--radius);
+      font-family: inherit; font-size: 14px; font-weight: 600;
+      letter-spacing: 0.5px; cursor: pointer; transition: opacity var(--transition);
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: var(--gold); color: #000; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+    .btn.loading .spinner { display: inline-block; }
+    .btn.loading .btn-text { display: none; }
+
+    .spinner {
+      display: none; width: 18px; height: 18px;
+      border: 2px solid transparent; border-top-color: #000;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Validation Summary ─── */
+    .validation-summary {
+      display: none; background: var(--error-bg); border: 1px solid var(--error);
+      border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px;
+    }
+    .validation-summary.visible { display: block; }
+    .validation-summary h3 { font-size: 13px; color: var(--error); margin-bottom: 6px; }
+    .validation-summary ul { list-style: none; }
+    .validation-summary li {
+      font-size: 12px; color: var(--error); padding: 2px 0; cursor: pointer;
+    }
+    .validation-summary li:hover { text-decoration: underline; }
+    .validation-summary li::before { content: "× "; font-weight: 700; }
+
+    /* ─── Toast ─── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 12px 24px; border-radius: var(--radius);
+      font-size: 14px; font-weight: 500; opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease; z-index: 9999;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast.success { background: var(--success); color: #000; }
+    .toast.error { background: var(--error); color: #fff; }
+
+    /* ─── Skip link ─── */
+    .skip-link {
+      font-size: 13px; color: var(--text-muted); text-align: center;
+      margin-top: 12px; cursor: pointer;
+    }
+    .skip-link:hover { color: var(--gold); text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>Create Your Press Kit</h1>
+  <p>Takes about 30 seconds. You can add more details anytime later.</p>
+</header>
+
+<main class="form-container">
+  <div class="step-indicator">
+    <div class="step-dot active" id="dot-1"></div>
+    <div class="step-dot" id="dot-2"></div>
+  </div>
+
+  <form id="pkForm" novalidate>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- STEP 1: Essentials (required only)     -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="step active" id="step1">
+      <div class="step-header">
+        <h2>Step 1: The basics</h2>
+        <p>Just enough to get your profile live.</p>
+      </div>
+
+      <div class="validation-summary" id="validationSummary1">
+        <h3>Please fix the following:</h3>
+        <ul id="errorList1"></ul>
+      </div>
+
+      <div class="field">
+        <label for="artistName">Artist / DJ Name <span class="req">*</span></label>
+        <input type="text" id="artistName" name="artistName" required maxlength="80" placeholder="Your artist name">
+        <div class="error-msg" id="err-artistName">Artist name is required</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="location">Country <span class="req">*</span></label>
+          <select id="location" name="location" required>
+            <option value="">Select country</option>
+          </select>
+          <div class="error-msg" id="err-location">Country is required</div>
+        </div>
+        <div class="field">
+          <label>Genre <span class="req">*</span></label>
+          <div class="genre-grid" id="genreGrid"></div>
+          <div class="error-msg" id="err-genre">Pick at least one genre</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="primarySoundLink">Primary Sound Link <span class="req">*</span></label>
+        <input type="url" id="primarySoundLink" name="primarySoundLink" required placeholder="https://soundcloud.com/... or any music link">
+        <div class="hint">Your best mix or track — any platform.</div>
+        <div class="error-msg" id="err-primarySoundLink">A sound link is required</div>
+      </div>
+
+      <div class="field">
+        <label for="instagram">Instagram <span class="req">*</span></label>
+        <input type="url" id="instagram" name="instagram" required placeholder="https://instagram.com/...">
+        <div class="error-msg" id="err-instagram">Instagram is required</div>
+      </div>
+
+      <div class="field">
+        <label for="bio">Bio <span class="req">*</span></label>
+        <textarea id="bio" name="bio" required maxlength="350" placeholder="Tell us about yourself and your sound (100–300 characters)"></textarea>
+        <div class="bio-counter" id="bioCounter">0 / 300</div>
+        <div class="error-msg" id="err-bio">Bio must be at least 100 characters</div>
+      </div>
+
+      <div class="field">
+        <label>Profile Photo <span class="req">*</span></label>
+        <div class="image-upload" id="drop-profilePhoto">
+          <input type="file" accept="image/*" data-field="profilePhoto">
+          <div class="upload-label">
+            <strong>Click or drag to upload</strong>
+            Portrait recommended
+          </div>
+          <img class="preview-img" id="preview-profilePhoto" alt="Profile preview">
+          <button type="button" class="remove-btn" data-field="profilePhoto">×</button>
+        </div>
+        <div class="error-msg" id="err-profilePhoto">Profile photo is required</div>
+      </div>
+
+      <!-- Consent (split by purpose) -->
+      <div class="form-section" style="margin-top:24px">
+        <h3>Consent</h3>
+
+        <div class="consent-field">
+          <input type="checkbox" id="consentDatabase" name="consentDatabase" required>
+          <label for="consentDatabase">I agree to have my profile included in THIRD KAGURA's artist database. <span class="req">*</span></label>
+        </div>
+        <div class="error-msg" id="err-consentDatabase">Required to proceed</div>
+
+        <div class="consent-field" style="margin-top:8px">
+          <input type="checkbox" id="consentScouting" name="consentScouting" required>
+          <label for="consentScouting">I agree to be considered for artist scouting and event opportunities. <span class="req">*</span></label>
+        </div>
+        <div class="error-msg" id="err-consentScouting">Required to proceed</div>
+
+        <div class="consent-field" style="margin-top:8px">
+          <input type="checkbox" id="consentPromo" name="consentPromo">
+          <label for="consentPromo">I agree to have my profile, images, and content used for promotional purposes (website, social media, advertising). <span style="font-size:11px;color:var(--text-muted)">(Optional)</span></label>
+        </div>
+
+        <div class="consent-field" style="margin-top:8px">
+          <input type="checkbox" id="consentFeatured" name="consentFeatured">
+          <label for="consentFeatured">I agree to be featured as a highlighted artist by THIRD KAGURA. <span style="font-size:11px;color:var(--text-muted)">(Optional)</span></label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn btn-primary" id="toStep2Btn">
+          <span class="btn-text">CONTINUE</span>
+        </button>
+      </div>
+      <div class="skip-link" id="skipToSubmit">Skip details &amp; create now</div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- STEP 2: Details (all optional)         -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="step" id="step2">
+      <div class="step-header">
+        <h2>Step 2: Add more details</h2>
+        <p>All optional — you can always come back and edit later.</p>
+      </div>
+
+      <!-- Images -->
+      <section class="form-section">
+        <h3>More Images</h3>
+        <div class="field-row">
+          <div class="field">
+            <label>Performance Photo</label>
+            <div class="image-upload" id="drop-perfPhoto">
+              <input type="file" accept="image/*" data-field="perfPhoto">
+              <div class="upload-label"><strong>Upload</strong>Landscape 16:9</div>
+              <img class="preview-img" id="preview-perfPhoto" alt="Performance preview">
+              <button type="button" class="remove-btn" data-field="perfPhoto">×</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Artist Logo</label>
+            <div class="image-upload" id="drop-artistLogo">
+              <input type="file" accept="image/*" data-field="artistLogo">
+              <div class="upload-label"><strong>Upload</strong>Square 1:1</div>
+              <img class="preview-img" id="preview-artistLogo" alt="Logo preview">
+              <button type="button" class="remove-btn" data-field="artistLogo">×</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gigs -->
+      <section class="form-section">
+        <h3>Gigs / Residencies</h3>
+        <div id="gigsContainer"></div>
+        <button type="button" class="add-entry-btn" id="addGigBtn">+ Add a gig</button>
+        <div class="hint" style="margin-top:6px">Leave empty if you're just starting out.</div>
+      </section>
+
+      <!-- Links -->
+      <section class="form-section">
+        <h3>Links</h3>
+        <div id="linksContainer"></div>
+        <button type="button" class="add-entry-btn" id="addLinkBtn">+ Add a link</button>
+        <div class="hint" style="margin-top:6px">SoundCloud, Spotify, website, or anything else.</div>
+      </section>
+
+      <!-- Fees -->
+      <section class="form-section">
+        <h3>Fees <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private — never shown publicly)</span></h3>
+        <div class="field-row">
+          <div class="field">
+            <label for="localFee">Local Fee</label>
+            <input type="text" id="localFee" name="localFee" placeholder="Enter range (AUD)">
+          </div>
+          <div class="field">
+            <label for="clubFee">Club Fee</label>
+            <input type="text" id="clubFee" name="clubFee" placeholder="Enter range (AUD)">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="festivalFee">Festival Fee</label>
+            <input type="text" id="festivalFee" name="festivalFee" placeholder="Enter range (AUD)">
+          </div>
+          <div class="field">
+            <label for="minimumFee">Minimum Fee</label>
+            <input type="text" id="minimumFee" name="minimumFee" placeholder="Enter amount (AUD)">
+          </div>
+        </div>
+      </section>
+
+      <!-- Riders -->
+      <section class="form-section">
+        <h3>Riders</h3>
+        <div class="field">
+          <label for="techRider">Tech Rider</label>
+          <textarea id="techRider" name="techRider" placeholder="Equipment requirements, setup preferences..."></textarea>
+        </div>
+        <div class="field">
+          <label for="hospRider">Hospitality Rider</label>
+          <textarea id="hospRider" name="hospRider" placeholder="Drinks, food, travel requirements..."></textarea>
+        </div>
+      </section>
+
+      <!-- Contact -->
+      <section class="form-section">
+        <h3>Contact <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private)</span></h3>
+        <div class="field-row">
+          <div class="field">
+            <label for="bookingEmail">Booking Email</label>
+            <input type="email" id="bookingEmail" name="bookingEmail" placeholder="booking@example.com">
+          </div>
+          <div class="field">
+            <label for="mgmtEmail">Management Email</label>
+            <input type="email" id="mgmtEmail" name="mgmtEmail" placeholder="mgmt@example.com">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="agencyName">Agency Name</label>
+            <input type="text" id="agencyName" name="agencyName" placeholder="Agency name">
+          </div>
+          <div class="field">
+            <label for="agencyEmail">Agency Email</label>
+            <input type="email" id="agencyEmail" name="agencyEmail" placeholder="info@agency.com">
+          </div>
+        </div>
+        <div class="field">
+          <label for="agencyWebsite">Agency Website</label>
+          <input type="url" id="agencyWebsite" name="agencyWebsite" placeholder="https://agency.com">
+        </div>
+      </section>
+
+      <!-- Customization -->
+      <section class="form-section">
+        <h3>Customization</h3>
+        <div class="field-row">
+          <div class="field">
+            <label for="accentColor">Accent Color</label>
+            <div style="display:flex;gap:10px;align-items:center">
+              <input type="color" id="accentColor" name="accentColor" value="#c4a265" style="width:48px;height:38px;padding:2px;cursor:pointer">
+              <input type="text" id="accentColorHex" value="#c4a265" maxlength="7" style="width:100px;text-align:center;font-family:monospace" placeholder="#c4a265">
+            </div>
+          </div>
+          <div class="field">
+            <label for="font">Font</label>
+            <select id="font" name="font">
+              <option value="Inter">Inter (Default)</option>
+              <option value="Oswald">Oswald</option>
+              <option value="Rajdhani">Rajdhani</option>
+              <option value="Space Grotesk">Space Grotesk</option>
+              <option value="DM Sans">DM Sans</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <div class="btn-row">
+        <button type="button" class="btn btn-secondary" id="backBtn">BACK</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          <span class="btn-text">CREATE PRESS KIT</span>
+          <span class="spinner"></span>
+        </button>
+      </div>
+    </div>
+
+  </form>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// PK Generator V2 — Creator Page
+// Step 1: Essentials / Step 2: Optional details
+// ═══════════════════════════════════════════════════════════
+
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxnbN1GV9QYwsya8E_Q1mYU_ZpIauhikkcmAcAgJWn7QHTrJgcXk-HKyW7BS3fDWz5b/exec';
+
+// ─── Country List ───
+const COUNTRIES_BY_REGION = {
+  'Oceania': [
+    'Australia','Fiji','Kiribati','Marshall Islands','Micronesia','Nauru',
+    'New Zealand','Palau','Papua New Guinea','Samoa','Solomon Islands',
+    'Tonga','Tuvalu','Vanuatu'
+  ],
+  'Asia': [
+    'Afghanistan','Armenia','Azerbaijan','Bahrain','Bangladesh','Bhutan','Brunei',
+    'Cambodia','China','Georgia','Hong Kong','India','Indonesia','Iran','Iraq',
+    'Israel','Japan','Jordan','Kazakhstan','Kuwait','Kyrgyzstan','Laos','Lebanon',
+    'Macau','Malaysia','Maldives','Mongolia','Myanmar','Nepal','North Korea',
+    'Oman','Pakistan','Palestine','Philippines','Qatar','Saudi Arabia','Singapore',
+    'South Korea','Sri Lanka','Syria','Taiwan','Tajikistan','Thailand',
+    'Timor-Leste','Turkey','Turkmenistan','United Arab Emirates','Uzbekistan',
+    'Vietnam','Yemen'
+  ],
+  'Europe': [
+    'Albania','Andorra','Austria','Belarus','Belgium','Bosnia and Herzegovina',
+    'Bulgaria','Croatia','Cyprus','Czech Republic','Denmark','Estonia','Finland',
+    'France','Germany','Greece','Hungary','Iceland','Ireland','Italy','Kosovo',
+    'Latvia','Liechtenstein','Lithuania','Luxembourg','Malta','Moldova','Monaco',
+    'Montenegro','Netherlands','North Macedonia','Norway','Poland','Portugal',
+    'Romania','Russia','San Marino','Serbia','Slovakia','Slovenia','Spain',
+    'Sweden','Switzerland','Ukraine','United Kingdom','Vatican City'
+  ],
+  'North America': [
+    'Antigua and Barbuda','Bahamas','Barbados','Belize','Canada','Costa Rica',
+    'Cuba','Dominica','Dominican Republic','El Salvador','Grenada','Guatemala',
+    'Haiti','Honduras','Jamaica','Mexico','Nicaragua','Panama',
+    'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines',
+    'Trinidad and Tobago','United States'
+  ],
+  'South America': [
+    'Argentina','Bolivia','Brazil','Chile','Colombia','Ecuador','Guyana',
+    'Paraguay','Peru','Suriname','Uruguay','Venezuela'
+  ],
+  'Africa': [
+    'Algeria','Angola','Benin','Botswana','Burkina Faso','Burundi','Cabo Verde',
+    'Cameroon','Central African Republic','Chad','Comoros','Congo','Congo (DRC)',
+    'Djibouti','Egypt','Equatorial Guinea','Eritrea','Eswatini','Ethiopia',
+    'Gabon','Gambia','Ghana','Guinea','Guinea-Bissau','Ivory Coast','Kenya',
+    'Lesotho','Liberia','Libya','Madagascar','Malawi','Mali','Mauritania',
+    'Mauritius','Morocco','Mozambique','Namibia','Niger','Nigeria','Rwanda',
+    'Sao Tome and Principe','Senegal','Seychelles','Sierra Leone','Somalia',
+    'South Africa','South Sudan','Sudan','Tanzania','Togo','Tunisia','Uganda',
+    'Zambia','Zimbabwe'
+  ]
+};
+
+(function populateCountries() {
+  const sel = document.getElementById('location');
+  Object.entries(COUNTRIES_BY_REGION).forEach(([region, countries]) => {
+    const group = document.createElement('optgroup');
+    group.label = region;
+    countries.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      group.appendChild(opt);
+    });
+    sel.appendChild(group);
+  });
+})();
+
+// ─── Genre (multi-select chips) ───
+const GENRE_LIST = [
+  'Afro House', 'Amapiano', 'Dance', 'Drum & Bass', 'Hardcore / Uptempo',
+  'Hard Techno', 'Hardstyle', 'Hip Hop', 'House', 'Melodic Techno',
+  'Minimal / Deep Tech', 'Open Format', 'Psytrance', 'Techno', 'Trance',
+  'UK Garage'
+];
+
+const selectedGenres = new Set();
+
+(function buildGenreChips() {
+  const grid = document.getElementById('genreGrid');
+  GENRE_LIST.forEach(g => {
+    const chip = document.createElement('div');
+    chip.className = 'genre-chip';
+    chip.textContent = g;
+    chip.addEventListener('click', () => {
+      if (selectedGenres.has(g)) {
+        selectedGenres.delete(g);
+        chip.classList.remove('selected');
+      } else {
+        selectedGenres.add(g);
+        chip.classList.add('selected');
+      }
+      // Clear error if valid
+      if (selectedGenres.size > 0) {
+        document.getElementById('err-genre').classList.remove('visible');
+      }
+    });
+    grid.appendChild(chip);
+  });
+})();
+
+// ─── Image Processing ───
+const IMAGE_SPECS = {
+  profilePhoto: { maxWidth: 1200, quality: 0.85, aspect: 3/4 },
+  perfPhoto:    { maxWidth: 1920, quality: 0.85, aspect: 16/9 },
+  artistLogo:   { maxWidth: 200,  quality: 0.8,  aspect: 1/1 }
+};
+
+const imageData = { profilePhoto: null, perfPhoto: null, artistLogo: null };
+let isSubmitting = false;
+
+function processImage(file, spec) {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) return reject(new Error('Not an image'));
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        let srcX = 0, srcY = 0, srcW = img.width, srcH = img.height;
+        if (spec.aspect) {
+          const target = spec.aspect, current = img.width / img.height;
+          if (current > target) { srcW = img.height * target; srcX = (img.width - srcW) / 2; }
+          else { srcH = img.width / target; srcY = (img.height - srcH) / 2; }
+        }
+        let outW = srcW, outH = srcH;
+        if (outW > spec.maxWidth) { outH = (spec.maxWidth / outW) * outH; outW = spec.maxWidth; }
+        canvas.width = Math.round(outW); canvas.height = Math.round(outH);
+        ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', spec.quality));
+      };
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Failed to read file'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// Setup image uploads
+Object.keys(IMAGE_SPECS).forEach(field => {
+  const drop = document.getElementById('drop-' + field);
+  if (!drop) return;
+  const fileInput = drop.querySelector('input[type="file"]');
+  const preview = document.getElementById('preview-' + field);
+  const removeBtn = drop.querySelector('.remove-btn');
+
+  fileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const base64 = await processImage(file, IMAGE_SPECS[field]);
+      imageData[field] = base64;
+      preview.src = base64;
+      drop.classList.add('has-image');
+      drop.classList.remove('error-border');
+      document.getElementById('err-' + field)?.classList.remove('visible');
+    } catch (err) { showToast('Image error: ' + err.message, 'error'); }
+  });
+
+  removeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    imageData[field] = null; preview.src = ''; fileInput.value = '';
+    drop.classList.remove('has-image');
+  });
+
+  ['dragenter','dragover'].forEach(evt => {
+    drop.addEventListener(evt, (e) => { e.preventDefault(); drop.style.borderColor = 'var(--gold)'; });
+  });
+  ['dragleave','drop'].forEach(evt => {
+    drop.addEventListener(evt, (e) => { e.preventDefault(); drop.style.borderColor = ''; });
+  });
+  drop.addEventListener('drop', (e) => {
+    const file = e.dataTransfer.files[0];
+    if (file) { const dt = new DataTransfer(); dt.items.add(file); fileInput.files = dt.files; fileInput.dispatchEvent(new Event('change')); }
+  });
+});
+
+
+// ═══ BIO COUNTER ═══
+const bioEl = document.getElementById('bio');
+const bioCounter = document.getElementById('bioCounter');
+bioEl.addEventListener('input', () => {
+  const len = bioEl.value.length;
+  bioCounter.textContent = `${len} / 300`;
+  bioCounter.className = 'bio-counter ' + (len < 100 ? 'under' : len <= 300 ? 'ok' : 'over');
+  if (len >= 100) { document.getElementById('err-bio').classList.remove('visible'); bioEl.classList.remove('error'); }
+});
+
+
+// ═══ COLOR PICKER SYNC ═══
+const colorPicker = document.getElementById('accentColor');
+const colorHex = document.getElementById('accentColorHex');
+colorPicker.addEventListener('input', () => { colorHex.value = colorPicker.value; });
+colorHex.addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(colorHex.value)) colorPicker.value = colorHex.value; });
+
+
+// ═══ GIGS ═══
+const GIG_ROLES = ['Resident', 'Organiser', 'Spot / Guest'];
+const GIG_FREQUENCIES = ['Weekly', 'Fortnightly', 'Monthly', 'Irregular / One-off'];
+let gigCounter = 0;
+
+function addGigEntry() {
+  gigCounter++;
+  const id = gigCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row gig-grid'; div.id = 'gig-' + id;
+  div.innerHTML = `
+    <div class="field"><label>Party / Event</label><input type="text" data-gig="${id}" data-gig-field="name" placeholder="e.g. Techno Tuesday"></div>
+    <div class="field"><label>Role</label><select data-gig="${id}" data-gig-field="role">${GIG_ROLES.map(r => `<option value="${r}">${r}</option>`).join('')}</select></div>
+    <div class="field"><label>Frequency</label><select data-gig="${id}" data-gig-field="frequency">${GIG_FREQUENCIES.map(f => `<option value="${f}">${f}</option>`).join('')}</select></div>
+    <div class="field"><label>Ticket URL</label><input type="url" data-gig="${id}" data-gig-field="ticketUrl" placeholder="https://..."></div>
+    <button type="button" class="remove-entry" onclick="document.getElementById('gig-${id}')?.remove()">×</button>
+  `;
+  document.getElementById('gigsContainer').appendChild(div);
+}
+
+function collectGigs() {
+  const gigs = [];
+  document.querySelectorAll('#gigsContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-gig-field="name"]').value.trim();
+    const role = entry.querySelector('[data-gig-field="role"]').value;
+    const frequency = entry.querySelector('[data-gig-field="frequency"]').value;
+    const ticketUrl = entry.querySelector('[data-gig-field="ticketUrl"]').value.trim();
+    if (name) gigs.push({ name, role, frequency, ticketUrl });
+  });
+  return gigs;
+}
+document.getElementById('addGigBtn').addEventListener('click', addGigEntry);
+
+
+// ═══ LINKS ═══
+let linkCounter = 0;
+
+function addLinkEntry() {
+  linkCounter++;
+  const id = linkCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row link-grid'; div.id = 'link-' + id;
+  div.innerHTML = `
+    <div class="field"><label>Label</label><input type="text" data-link="${id}" data-link-field="label" placeholder="e.g. SoundCloud"></div>
+    <div class="field"><label>URL</label><input type="url" data-link="${id}" data-link-field="url" placeholder="https://..."></div>
+    <button type="button" class="remove-entry" onclick="document.getElementById('link-${id}')?.remove()">×</button>
+  `;
+  document.getElementById('linksContainer').appendChild(div);
+}
+
+function collectLinks() {
+  const links = [];
+  document.querySelectorAll('#linksContainer .entry-row').forEach(entry => {
+    const label = entry.querySelector('[data-link-field="label"]').value.trim();
+    const url = entry.querySelector('[data-link-field="url"]').value.trim();
+    if (label && url) links.push({ label, url });
+  });
+  return links;
+}
+document.getElementById('addLinkBtn').addEventListener('click', addLinkEntry);
+
+
+// ═══ VALIDATION (Step 1 only) ═══
+
+function isValidUrl(str) {
+  try { const u = new URL(str); return u.protocol === 'http:' || u.protocol === 'https:'; }
+  catch { return false; }
+}
+
+const STEP1_RULES = [
+  { field: 'artistName', test: () => document.getElementById('artistName').value.trim().length > 0, message: 'Artist name is required' },
+  { field: 'location', test: () => document.getElementById('location').value !== '', message: 'Country is required' },
+  { field: 'genre', test: () => selectedGenres.size > 0, message: 'Pick at least one genre' },
+  { field: 'primarySoundLink', test: () => { const v = document.getElementById('primarySoundLink').value.trim(); return v.length > 0 && isValidUrl(v); }, message: 'A valid sound link is required' },
+  { field: 'instagram', test: () => { const v = document.getElementById('instagram').value.trim(); return v.length > 0 && isValidUrl(v); }, message: 'Instagram link is required' },
+  { field: 'bio', test: () => document.getElementById('bio').value.trim().length >= 100, message: 'Bio must be at least 100 characters' },
+  { field: 'profilePhoto', test: () => imageData.profilePhoto !== null, message: 'Profile photo is required' },
+  { field: 'consentDatabase', test: () => document.getElementById('consentDatabase').checked, message: 'Database consent is required' },
+  { field: 'consentScouting', test: () => document.getElementById('consentScouting').checked, message: 'Scouting consent is required' },
+];
+
+function validateStep1() {
+  const errors = [];
+  STEP1_RULES.forEach(rule => {
+    const errEl = document.getElementById('err-' + rule.field);
+    const input = document.getElementById(rule.field);
+    if (!rule.test()) {
+      errors.push(rule);
+      errEl?.classList.add('visible');
+      if (input) input.classList.add('error');
+      if (rule.field === 'profilePhoto') document.getElementById('drop-profilePhoto').classList.add('error-border');
+    } else {
+      errEl?.classList.remove('visible');
+      if (input) input.classList.remove('error');
+      if (rule.field === 'profilePhoto') document.getElementById('drop-profilePhoto').classList.remove('error-border');
+    }
+  });
+  return errors;
+}
+
+function showErrors(errors, listEl, summaryEl) {
+  listEl.innerHTML = '';
+  if (errors.length === 0) { summaryEl.classList.remove('visible'); return; }
+  errors.forEach(err => {
+    const li = document.createElement('li');
+    li.textContent = err.message;
+    li.addEventListener('click', () => {
+      const t = document.getElementById(err.field) || document.getElementById('drop-' + err.field);
+      t?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    listEl.appendChild(li);
+  });
+  summaryEl.classList.add('visible');
+  summaryEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Inline validation on blur
+STEP1_RULES.forEach(rule => {
+  const el = document.getElementById(rule.field);
+  if (el && el.tagName) {
+    const evts = el.type === 'checkbox' ? ['change'] : ['blur'];
+    evts.forEach(evt => {
+      el.addEventListener(evt, () => {
+        const errEl = document.getElementById('err-' + rule.field);
+        if (rule.test()) { errEl?.classList.remove('visible'); el.classList.remove('error'); }
+        else if (el.value !== '' || el.type === 'checkbox') { errEl?.classList.add('visible'); el.classList.add('error'); }
+      });
+    });
+  }
+});
+
+
+// ═══ STEP NAVIGATION ═══
+
+function goToStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  document.querySelectorAll('.step-dot').forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i + 1 === n) d.classList.add('active');
+    else if (i + 1 < n) d.classList.add('done');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('toStep2Btn').addEventListener('click', () => {
+  const errors = validateStep1();
+  if (errors.length > 0) {
+    showErrors(errors, document.getElementById('errorList1'), document.getElementById('validationSummary1'));
+    return;
+  }
+  document.getElementById('validationSummary1').classList.remove('visible');
+  goToStep(2);
+});
+
+document.getElementById('backBtn').addEventListener('click', () => goToStep(1));
+
+// Skip → submit directly from step 1
+document.getElementById('skipToSubmit').addEventListener('click', () => {
+  const errors = validateStep1();
+  if (errors.length > 0) {
+    showErrors(errors, document.getElementById('errorList1'), document.getElementById('validationSummary1'));
+    return;
+  }
+  document.getElementById('validationSummary1').classList.remove('visible');
+  submitForm();
+});
+
+
+// ═══ SLUG ═══
+function generateSlug(name) {
+  return name.trim().toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
+
+// ═══ SUBMIT ═══
+
+async function submitForm() {
+  if (isSubmitting) return;
+
+  // Bio truncation warning
+  const bioLen = bioEl.value.length;
+  if (bioLen > 300 && !confirm(`Your bio is ${bioLen} characters. It will be truncated to 300. Continue?`)) return;
+
+  isSubmitting = true;
+  const btn = document.getElementById('submitBtn') || document.getElementById('toStep2Btn');
+  btn.classList.add('loading'); btn.disabled = true;
+
+  try {
+    const slug = generateSlug(document.getElementById('artistName').value);
+    const payload = {
+      slug,
+      artistName: document.getElementById('artistName').value.trim(),
+      location: document.getElementById('location').value,
+      genre: JSON.stringify([...selectedGenres]),
+      primarySoundLink: document.getElementById('primarySoundLink').value.trim(),
+      instagram: document.getElementById('instagram').value.trim(),
+      bio: bioEl.value.trim().substring(0, 300),
+      profilePhoto: imageData.profilePhoto || '',
+      perfPhoto: imageData.perfPhoto || '',
+      artistLogo: imageData.artistLogo || '',
+      accentColor: colorPicker.value,
+      font: document.getElementById('font').value,
+      localFee: document.getElementById('localFee')?.value.trim() || '',
+      clubFee: document.getElementById('clubFee')?.value.trim() || '',
+      festivalFee: document.getElementById('festivalFee')?.value.trim() || '',
+      minimumFee: document.getElementById('minimumFee')?.value.trim() || '',
+      techRider: document.getElementById('techRider')?.value.trim() || '',
+      hospRider: document.getElementById('hospRider')?.value.trim() || '',
+      links: JSON.stringify(collectLinks()),
+      bookingEmail: document.getElementById('bookingEmail')?.value.trim() || '',
+      mgmtEmail: document.getElementById('mgmtEmail')?.value.trim() || '',
+      agencyName: document.getElementById('agencyName')?.value.trim() || '',
+      agencyEmail: document.getElementById('agencyEmail')?.value.trim() || '',
+      agencyWebsite: document.getElementById('agencyWebsite')?.value.trim() || '',
+      gigs: JSON.stringify(collectGigs()),
+      consentDatabase: document.getElementById('consentDatabase').checked,
+      consentScouting: document.getElementById('consentScouting').checked,
+      consentPromo: document.getElementById('consentPromo').checked,
+      consentFeatured: document.getElementById('consentFeatured').checked,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    await fetch(GAS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    showToast('Press kit created!', 'success');
+  } catch (err) {
+    showToast('Error: ' + err.message, 'error');
+  } finally {
+    isSubmitting = false;
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+}
+
+document.getElementById('pkForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  submitForm();
+});
+
+
+// ═══ TOAST ═══
+function showToast(message, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = message; t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+</script>
+</body>
+</html>

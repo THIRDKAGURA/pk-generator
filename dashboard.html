@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Your Press Kit — THIRD KAGURA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#0a0a0a; --surface:#141414; --border:#2a2a2a; --border-focus:#c4a265;
+      --gold:#c4a265; --gold-dim:rgba(196,162,101,0.15);
+      --text:#f0f0f0; --text-dim:#888; --text-muted:#555;
+      --error:#e74c3c; --error-bg:rgba(231,76,60,0.1);
+      --success:#2ecc71; --radius:8px; --transition:0.2s ease;
+    }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; }
+
+    .page-header { text-align:center; padding:48px 24px 24px; border-bottom:1px solid var(--border); }
+    .page-header h1 { font-size:24px; font-weight:700; margin-bottom:6px; }
+    .page-header p { color:var(--text-dim); font-size:14px; }
+
+    .container { max-width:720px; margin:0 auto; padding:32px 24px 64px; }
+
+    /* Views */
+    .view { display:none; }
+    .view.active { display:block; }
+
+    /* Fields */
+    .field { margin-bottom:18px; }
+    .field label { display:block; font-size:13px; font-weight:500; color:var(--text-dim); margin-bottom:5px; }
+    .field .hint { font-size:12px; color:var(--text-muted); margin-top:4px; }
+    .form-section { margin-bottom:28px; }
+    .form-section h3 {
+      font-size:13px; font-weight:600; color:var(--gold);
+      text-transform:uppercase; letter-spacing:1px;
+      margin-bottom:16px; padding-bottom:6px; border-bottom:1px solid var(--border);
+    }
+
+    input[type="text"],input[type="email"],input[type="url"],select,textarea {
+      width:100%; padding:10px 14px; background:var(--surface);
+      border:1px solid var(--border); border-radius:var(--radius);
+      color:var(--text); font-family:inherit; font-size:14px;
+      transition:border-color var(--transition); outline:none;
+    }
+    input:focus,select:focus,textarea:focus { border-color:var(--border-focus); }
+    textarea { resize:vertical; min-height:100px; }
+    select {
+      appearance:none; cursor:pointer; padding-right:36px;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 12px center;
+    }
+
+    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    @media (max-width:540px) { .field-row { grid-template-columns:1fr; } }
+
+    .bio-counter { font-size:12px; margin-top:4px; text-align:right; }
+    .bio-counter.under { color:var(--error); }
+    .bio-counter.ok { color:var(--success); }
+
+    /* Genre chips */
+    .genre-grid { display:flex; flex-wrap:wrap; gap:8px; }
+    .genre-chip {
+      padding:6px 14px; border:1px solid var(--border); border-radius:20px;
+      font-size:13px; color:var(--text-dim); cursor:pointer;
+      transition:all var(--transition); user-select:none;
+    }
+    .genre-chip:hover { border-color:var(--text-muted); color:var(--text); }
+    .genre-chip.selected { border-color:var(--gold); background:var(--gold-dim); color:var(--gold); }
+
+    /* Image upload */
+    .image-upload {
+      position:relative; border:2px dashed var(--border); border-radius:12px;
+      padding:32px 24px; text-align:center; cursor:pointer;
+      transition:border-color var(--transition),background var(--transition);
+    }
+    .image-upload:hover { border-color:var(--text-muted); background:var(--surface); }
+    .image-upload.has-image { border-style:solid; border-color:var(--gold); padding:8px; }
+    .image-upload input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+    .image-upload .upload-label { color:var(--text-dim); font-size:13px; }
+    .image-upload .upload-label strong { color:var(--gold); display:block; margin-bottom:4px; }
+    .image-upload .preview-img { max-width:100%; max-height:280px; border-radius:var(--radius); object-fit:contain; display:none; }
+    .image-upload.has-image .upload-label { display:none; }
+    .image-upload.has-image .preview-img { display:block; margin:0 auto; }
+    .image-upload .remove-btn {
+      display:none; position:absolute; top:8px; right:8px;
+      background:rgba(0,0,0,0.7); color:#fff; border:none; border-radius:50%;
+      width:28px; height:28px; cursor:pointer; font-size:16px; line-height:28px;
+    }
+    .image-upload.has-image .remove-btn { display:block; }
+
+    /* Entries */
+    .entry-row {
+      display:grid; gap:10px; align-items:end; margin-bottom:10px;
+      padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    }
+    .entry-row .field { margin-bottom:0; }
+    .entry-row label { font-size:12px; }
+    .gig-grid { grid-template-columns:1fr auto auto 1fr auto; }
+    .link-grid { grid-template-columns:140px 1fr auto; }
+    @media (max-width:640px) { .gig-grid,.link-grid { grid-template-columns:1fr; } }
+    .remove-entry {
+      background:none; border:1px solid var(--border); color:var(--text-muted);
+      border-radius:var(--radius); width:36px; height:36px; cursor:pointer; font-size:16px;
+    }
+    .remove-entry:hover { border-color:var(--error); color:var(--error); }
+    .add-entry-btn {
+      display:inline-block; padding:8px 20px; background:transparent;
+      border:1px dashed var(--border); border-radius:var(--radius);
+      color:var(--gold); font-family:inherit; font-size:13px; cursor:pointer;
+    }
+    .add-entry-btn:hover { border-color:var(--gold); }
+
+    /* Buttons */
+    .btn {
+      display:inline-block; padding:12px 40px; border:none; border-radius:var(--radius);
+      font-family:inherit; font-size:14px; font-weight:600; cursor:pointer;
+      transition:opacity var(--transition);
+    }
+    .btn:hover { opacity:0.9; }
+    .btn:disabled { opacity:0.4; cursor:not-allowed; }
+    .btn-primary { background:var(--gold); color:#000; }
+    .btn-secondary { background:transparent; border:1px solid var(--border); color:var(--text-dim); }
+    .btn-row { display:flex; gap:12px; justify-content:center; padding-top:16px; }
+    .spinner { display:none; width:18px; height:18px; border:2px solid transparent; border-top-color:#000; border-radius:50%; animation:spin 0.6s linear infinite; }
+    .btn.loading .spinner { display:inline-block; }
+    .btn.loading .btn-text { display:none; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* Toast */
+    .toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px);
+      padding:12px 24px; border-radius:var(--radius); font-size:14px; font-weight:500;
+      opacity:0; transition:transform 0.3s ease,opacity 0.3s ease; z-index:9999;
+    }
+    .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+    .toast.success { background:var(--success); color:#000; }
+    .toast.error { background:var(--error); color:#fff; }
+
+    /* Auth view */
+    .auth-box { max-width:400px; margin:60px auto; text-align:center; }
+    .auth-box h2 { font-size:20px; margin-bottom:8px; }
+    .auth-box p { color:var(--text-dim); font-size:14px; margin-bottom:24px; }
+    .auth-box input { margin-bottom:16px; }
+    .auth-sent { color:var(--success); font-size:14px; margin-top:12px; }
+
+    /* Loading */
+    .loading-view { text-align:center; padding:80px 24px; color:var(--text-dim); }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>Edit Your Press Kit</h1>
+  <p id="headerSubtitle">Enter your email to receive an edit link.</p>
+</header>
+
+<main class="container">
+
+  <!-- ═══ AUTH VIEW ═══ -->
+  <div class="view active" id="authView">
+    <div class="auth-box">
+      <h2>Sign in to edit</h2>
+      <p>We'll send a one-time link to your registered email.</p>
+      <div class="field">
+        <input type="email" id="authEmail" placeholder="Your booking or management email">
+      </div>
+      <button class="btn btn-primary" id="authBtn" style="width:100%">
+        <span class="btn-text">SEND EDIT LINK</span>
+        <span class="spinner"></span>
+      </button>
+      <div class="auth-sent" id="authSent" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ═══ LOADING VIEW ═══ -->
+  <div class="view" id="loadingView">
+    <div class="loading-view">Loading your press kit...</div>
+  </div>
+
+  <!-- ═══ EDIT VIEW ═══ -->
+  <div class="view" id="editView">
+
+    <!-- Profile Photo -->
+    <section class="form-section">
+      <h3>Profile Photo</h3>
+      <div class="field">
+        <div class="image-upload" id="drop-profilePhoto">
+          <input type="file" accept="image/*" data-field="profilePhoto">
+          <div class="upload-label"><strong>Click or drag to upload</strong>Portrait recommended</div>
+          <img class="preview-img" id="preview-profilePhoto" alt="Profile preview">
+          <button type="button" class="remove-btn" data-field="profilePhoto">×</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Basic Info -->
+    <section class="form-section">
+      <h3>Basic Info</h3>
+      <div class="field">
+        <label for="e-artistName">Artist Name</label>
+        <input type="text" id="e-artistName" maxlength="80">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="e-location">Country</label>
+          <select id="e-location"></select>
+        </div>
+        <div class="field">
+          <label>Genre</label>
+          <div class="genre-grid" id="e-genreGrid"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="e-primarySoundLink">Primary Sound Link</label>
+        <input type="url" id="e-primarySoundLink" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label for="e-instagram">Instagram</label>
+        <input type="url" id="e-instagram" placeholder="https://instagram.com/...">
+      </div>
+      <div class="field">
+        <label for="e-bio">Bio</label>
+        <textarea id="e-bio" maxlength="350"></textarea>
+        <div class="bio-counter" id="e-bioCounter">0 / 300</div>
+      </div>
+    </section>
+
+    <!-- Images -->
+    <section class="form-section">
+      <h3>More Images</h3>
+      <div class="field-row">
+        <div class="field">
+          <label>Performance Photo</label>
+          <div class="image-upload" id="drop-perfPhoto">
+            <input type="file" accept="image/*" data-field="perfPhoto">
+            <div class="upload-label"><strong>Upload</strong>Landscape 16:9</div>
+            <img class="preview-img" id="preview-perfPhoto" alt="">
+            <button type="button" class="remove-btn" data-field="perfPhoto">×</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Artist Logo</label>
+          <div class="image-upload" id="drop-artistLogo">
+            <input type="file" accept="image/*" data-field="artistLogo">
+            <div class="upload-label"><strong>Upload</strong>Square 1:1</div>
+            <img class="preview-img" id="preview-artistLogo" alt="">
+            <button type="button" class="remove-btn" data-field="artistLogo">×</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gigs -->
+    <section class="form-section">
+      <h3>Gigs / Residencies</h3>
+      <div id="e-gigsContainer"></div>
+      <button type="button" class="add-entry-btn" id="e-addGigBtn">+ Add a gig</button>
+    </section>
+
+    <!-- Links -->
+    <section class="form-section">
+      <h3>Links</h3>
+      <div id="e-linksContainer"></div>
+      <button type="button" class="add-entry-btn" id="e-addLinkBtn">+ Add a link</button>
+    </section>
+
+    <!-- Fees -->
+    <section class="form-section">
+      <h3>Fees <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private)</span></h3>
+      <div class="field-row">
+        <div class="field"><label>Local Fee</label><input type="text" id="e-localFee" placeholder="Enter range (AUD)"></div>
+        <div class="field"><label>Club Fee</label><input type="text" id="e-clubFee" placeholder="Enter range (AUD)"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Festival Fee</label><input type="text" id="e-festivalFee" placeholder="Enter range (AUD)"></div>
+        <div class="field"><label>Minimum Fee</label><input type="text" id="e-minimumFee" placeholder="Enter amount (AUD)"></div>
+      </div>
+    </section>
+
+    <!-- Riders -->
+    <section class="form-section">
+      <h3>Riders</h3>
+      <div class="field"><label>Tech Rider</label><textarea id="e-techRider" placeholder="Equipment requirements..."></textarea></div>
+      <div class="field"><label>Hospitality Rider</label><textarea id="e-hospRider" placeholder="Drinks, food, travel..."></textarea></div>
+    </section>
+
+    <!-- Contact -->
+    <section class="form-section">
+      <h3>Contact <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private)</span></h3>
+      <div class="field-row">
+        <div class="field"><label>Booking Email</label><input type="email" id="e-bookingEmail"></div>
+        <div class="field"><label>Management Email</label><input type="email" id="e-mgmtEmail"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Agency Name</label><input type="text" id="e-agencyName"></div>
+        <div class="field"><label>Agency Email</label><input type="email" id="e-agencyEmail"></div>
+      </div>
+      <div class="field"><label>Agency Website</label><input type="url" id="e-agencyWebsite"></div>
+    </section>
+
+    <!-- Customization -->
+    <section class="form-section">
+      <h3>Customization</h3>
+      <div class="field-row">
+        <div class="field">
+          <label>Accent Color</label>
+          <div style="display:flex;gap:10px;align-items:center">
+            <input type="color" id="e-accentColor" value="#c4a265" style="width:48px;height:38px;padding:2px;cursor:pointer">
+            <input type="text" id="e-accentColorHex" value="#c4a265" maxlength="7" style="width:100px;text-align:center;font-family:monospace">
+          </div>
+        </div>
+        <div class="field">
+          <label>Font</label>
+          <select id="e-font">
+            <option value="Inter">Inter</option>
+            <option value="Oswald">Oswald</option>
+            <option value="Rajdhani">Rajdhani</option>
+            <option value="Space Grotesk">Space Grotesk</option>
+            <option value="DM Sans">DM Sans</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="saveBtn" style="min-width:200px">
+        <span class="btn-text">SAVE CHANGES</span>
+        <span class="spinner"></span>
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxnbN1GV9QYwsya8E_Q1mYU_ZpIauhikkcmAcAgJWn7QHTrJgcXk-HKyW7BS3fDWz5b/exec';
+
+// ─── Data ───
+const GENRE_LIST = [
+  'Afro House','Amapiano','Dance','Drum & Bass','Hardcore / Uptempo',
+  'Hard Techno','Hardstyle','Hip Hop','House','Melodic Techno',
+  'Minimal / Deep Tech','Open Format','Psytrance','Techno','Trance','UK Garage'
+];
+const GIG_ROLES = ['Resident','Organiser','Spot / Guest'];
+const GIG_FREQUENCIES = ['Weekly','Fortnightly','Monthly','Irregular / One-off'];
+
+const COUNTRIES_BY_REGION = {
+  'Oceania':['Australia','Fiji','Kiribati','Marshall Islands','Micronesia','Nauru','New Zealand','Palau','Papua New Guinea','Samoa','Solomon Islands','Tonga','Tuvalu','Vanuatu'],
+  'Asia':['Afghanistan','Armenia','Azerbaijan','Bahrain','Bangladesh','Bhutan','Brunei','Cambodia','China','Georgia','Hong Kong','India','Indonesia','Iran','Iraq','Israel','Japan','Jordan','Kazakhstan','Kuwait','Kyrgyzstan','Laos','Lebanon','Macau','Malaysia','Maldives','Mongolia','Myanmar','Nepal','North Korea','Oman','Pakistan','Palestine','Philippines','Qatar','Saudi Arabia','Singapore','South Korea','Sri Lanka','Syria','Taiwan','Tajikistan','Thailand','Timor-Leste','Turkey','Turkmenistan','United Arab Emirates','Uzbekistan','Vietnam','Yemen'],
+  'Europe':['Albania','Andorra','Austria','Belarus','Belgium','Bosnia and Herzegovina','Bulgaria','Croatia','Cyprus','Czech Republic','Denmark','Estonia','Finland','France','Germany','Greece','Hungary','Iceland','Ireland','Italy','Kosovo','Latvia','Liechtenstein','Lithuania','Luxembourg','Malta','Moldova','Monaco','Montenegro','Netherlands','North Macedonia','Norway','Poland','Portugal','Romania','Russia','San Marino','Serbia','Slovakia','Slovenia','Spain','Sweden','Switzerland','Ukraine','United Kingdom','Vatican City'],
+  'North America':['Antigua and Barbuda','Bahamas','Barbados','Belize','Canada','Costa Rica','Cuba','Dominica','Dominican Republic','El Salvador','Grenada','Guatemala','Haiti','Honduras','Jamaica','Mexico','Nicaragua','Panama','Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Trinidad and Tobago','United States'],
+  'South America':['Argentina','Bolivia','Brazil','Chile','Colombia','Ecuador','Guyana','Paraguay','Peru','Suriname','Uruguay','Venezuela'],
+  'Africa':['Algeria','Angola','Benin','Botswana','Burkina Faso','Burundi','Cabo Verde','Cameroon','Central African Republic','Chad','Comoros','Congo','Congo (DRC)','Djibouti','Egypt','Equatorial Guinea','Eritrea','Eswatini','Ethiopia','Gabon','Gambia','Ghana','Guinea','Guinea-Bissau','Ivory Coast','Kenya','Lesotho','Liberia','Libya','Madagascar','Malawi','Mali','Mauritania','Mauritius','Morocco','Mozambique','Namibia','Niger','Nigeria','Rwanda','Sao Tome and Principe','Senegal','Seychelles','Sierra Leone','Somalia','South Africa','South Sudan','Sudan','Tanzania','Togo','Tunisia','Uganda','Zambia','Zimbabwe']
+};
+
+const IMAGE_SPECS = {
+  profilePhoto:{maxWidth:1200,quality:0.85,aspect:3/4},
+  perfPhoto:{maxWidth:1920,quality:0.85,aspect:16/9},
+  artistLogo:{maxWidth:200,quality:0.8,aspect:1/1}
+};
+
+let currentToken = null;
+let currentSlug = null;
+const selectedGenres = new Set();
+const imageData = {profilePhoto:null,perfPhoto:null,artistLogo:null};
+let gigCounter = 0, linkCounter = 0;
+
+// ─── Init ───
+(function init() {
+  // Populate country select
+  const sel = document.getElementById('e-location');
+  const defOpt = document.createElement('option'); defOpt.value=''; defOpt.textContent='Select country'; sel.appendChild(defOpt);
+  Object.entries(COUNTRIES_BY_REGION).forEach(([region,countries]) => {
+    const g = document.createElement('optgroup'); g.label = region;
+    countries.forEach(c => { const o = document.createElement('option'); o.value=c; o.textContent=c; g.appendChild(o); });
+    sel.appendChild(g);
+  });
+
+  // Genre chips
+  const grid = document.getElementById('e-genreGrid');
+  GENRE_LIST.forEach(g => {
+    const chip = document.createElement('div'); chip.className='genre-chip'; chip.textContent=g;
+    chip.addEventListener('click', () => {
+      if (selectedGenres.has(g)) { selectedGenres.delete(g); chip.classList.remove('selected'); }
+      else { selectedGenres.add(g); chip.classList.add('selected'); }
+    });
+    grid.appendChild(chip);
+  });
+
+  // Check for token in URL
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  if (token) {
+    currentToken = token;
+    showView('loadingView');
+    verifyToken(token);
+  }
+})();
+
+// ─── Views ───
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─── Auth: Send token ───
+document.getElementById('authBtn').addEventListener('click', async () => {
+  const email = document.getElementById('authEmail').value.trim();
+  if (!email) return;
+  const btn = document.getElementById('authBtn');
+  btn.classList.add('loading'); btn.disabled = true;
+
+  try {
+    const res = await fetch(GAS_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ action:'request_token', email, dashboardUrl: window.location.origin + window.location.pathname })
+    });
+    const json = await res.json();
+    if (json.success) {
+      document.getElementById('authSent').textContent = 'Edit link sent! Check your email.';
+      document.getElementById('authSent').style.display = 'block';
+    } else {
+      showToast(json.error || 'Error sending link', 'error');
+    }
+  } catch (e) {
+    // no-cors fallback
+    document.getElementById('authSent').textContent = 'If your email is registered, you will receive an edit link shortly.';
+    document.getElementById('authSent').style.display = 'block';
+  }
+  btn.classList.remove('loading'); btn.disabled = false;
+});
+
+// ─── Auth: Verify token ───
+async function verifyToken(token) {
+  try {
+    const res = await fetch(GAS_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ action:'verify_token', token })
+    });
+    const json = await res.json();
+    if (json.success && json.artist) {
+      currentSlug = json.slug;
+      document.getElementById('headerSubtitle').textContent = 'Editing: ' + (json.artist.artistName || json.slug);
+      populateForm(json.artist);
+      showView('editView');
+    } else {
+      showToast(json.error || 'Invalid token', 'error');
+      showView('authView');
+    }
+  } catch (e) {
+    showToast('Error verifying token', 'error');
+    showView('authView');
+  }
+}
+
+// ─── Populate form with existing data ───
+function populateForm(d) {
+  document.getElementById('e-artistName').value = d.artistName || '';
+  document.getElementById('e-location').value = d.location || '';
+  document.getElementById('e-primarySoundLink').value = d.primarySoundLink || '';
+  document.getElementById('e-instagram').value = d.instagram || '';
+  document.getElementById('e-bio').value = d.bio || '';
+  updateBioCounter();
+  document.getElementById('e-localFee').value = d.localFee || '';
+  document.getElementById('e-clubFee').value = d.clubFee || '';
+  document.getElementById('e-festivalFee').value = d.festivalFee || '';
+  document.getElementById('e-minimumFee').value = d.minimumFee || '';
+  document.getElementById('e-techRider').value = d.techRider || '';
+  document.getElementById('e-hospRider').value = d.hospRider || '';
+  document.getElementById('e-bookingEmail').value = d.bookingEmail || '';
+  document.getElementById('e-mgmtEmail').value = d.mgmtEmail || '';
+  document.getElementById('e-agencyName').value = d.agencyName || '';
+  document.getElementById('e-agencyEmail').value = d.agencyEmail || '';
+  document.getElementById('e-agencyWebsite').value = d.agencyWebsite || '';
+  document.getElementById('e-accentColor').value = d.accentColor || '#c4a265';
+  document.getElementById('e-accentColorHex').value = d.accentColor || '#c4a265';
+  document.getElementById('e-font').value = d.font || 'Inter';
+
+  // Genres
+  selectedGenres.clear();
+  try {
+    const genres = JSON.parse(d.genre);
+    if (Array.isArray(genres)) {
+      genres.forEach(g => {
+        selectedGenres.add(g);
+        document.querySelectorAll('#e-genreGrid .genre-chip').forEach(chip => {
+          if (chip.textContent === g) chip.classList.add('selected');
+        });
+      });
+    }
+  } catch(e) {}
+
+  // Images (show existing Drive URLs)
+  ['profilePhoto','perfPhoto','artistLogo'].forEach(field => {
+    if (d[field] && d[field].toString().startsWith('http')) {
+      const preview = document.getElementById('preview-' + field);
+      const drop = document.getElementById('drop-' + field);
+      preview.src = d[field];
+      drop.classList.add('has-image');
+      imageData[field] = d[field]; // Keep existing URL
+    }
+  });
+
+  // Gigs
+  try {
+    const gigs = JSON.parse(d.gigs);
+    if (Array.isArray(gigs)) {
+      gigs.forEach(g => addGigEntry(g));
+    }
+  } catch(e) {}
+
+  // Links
+  try {
+    const links = JSON.parse(d.links);
+    if (Array.isArray(links)) {
+      links.forEach(l => addLinkEntry(l));
+    }
+  } catch(e) {}
+}
+
+// ─── Bio counter ───
+const bioEl = document.getElementById('e-bio');
+bioEl.addEventListener('input', updateBioCounter);
+function updateBioCounter() {
+  const len = bioEl.value.length;
+  const c = document.getElementById('e-bioCounter');
+  c.textContent = `${len} / 300`;
+  c.className = 'bio-counter ' + (len < 100 ? 'under' : 'ok');
+}
+
+// ─── Color sync ───
+document.getElementById('e-accentColor').addEventListener('input', function() {
+  document.getElementById('e-accentColorHex').value = this.value;
+});
+document.getElementById('e-accentColorHex').addEventListener('input', function() {
+  if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) document.getElementById('e-accentColor').value = this.value;
+});
+
+// ─── Image processing ───
+function processImage(file, spec) {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) return reject(new Error('Not an image'));
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        let srcX=0,srcY=0,srcW=img.width,srcH=img.height;
+        if (spec.aspect) {
+          const t=spec.aspect,c=img.width/img.height;
+          if(c>t){srcW=img.height*t;srcX=(img.width-srcW)/2;}
+          else{srcH=img.width/t;srcY=(img.height-srcH)/2;}
+        }
+        let outW=srcW,outH=srcH;
+        if(outW>spec.maxWidth){outH=(spec.maxWidth/outW)*outH;outW=spec.maxWidth;}
+        canvas.width=Math.round(outW);canvas.height=Math.round(outH);
+        ctx.drawImage(img,srcX,srcY,srcW,srcH,0,0,canvas.width,canvas.height);
+        resolve(canvas.toDataURL('image/jpeg',spec.quality));
+      };
+      img.onerror = () => reject(new Error('Failed'));
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+Object.keys(IMAGE_SPECS).forEach(field => {
+  const drop = document.getElementById('drop-'+field);
+  if (!drop) return;
+  const fi = drop.querySelector('input[type="file"]');
+  const preview = document.getElementById('preview-'+field);
+  const rm = drop.querySelector('.remove-btn');
+
+  fi.addEventListener('change', async e => {
+    const file = e.target.files[0]; if(!file) return;
+    try {
+      const b64 = await processImage(file, IMAGE_SPECS[field]);
+      imageData[field]=b64; preview.src=b64; drop.classList.add('has-image');
+    } catch(err) { showToast('Image error','error'); }
+  });
+  rm.addEventListener('click', e => {
+    e.stopPropagation(); imageData[field]=null; preview.src=''; fi.value=''; drop.classList.remove('has-image');
+  });
+});
+
+// ─── Gigs ───
+function addGigEntry(data) {
+  gigCounter++;
+  const id = gigCounter;
+  const div = document.createElement('div');
+  div.className='entry-row gig-grid'; div.id='gig-'+id;
+  div.innerHTML=`
+    <div class="field"><label>Party / Event</label><input type="text" data-gig="${id}" data-gig-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+    <div class="field"><label>Role</label><select data-gig="${id}" data-gig-field="role">${GIG_ROLES.map(r=>`<option value="${r}"${r===data?.role?' selected':''}>${r}</option>`).join('')}</select></div>
+    <div class="field"><label>Frequency</label><select data-gig="${id}" data-gig-field="frequency">${GIG_FREQUENCIES.map(f=>`<option value="${f}"${f===data?.frequency?' selected':''}>${f}</option>`).join('')}</select></div>
+    <div class="field"><label>Ticket URL</label><input type="url" data-gig="${id}" data-gig-field="ticketUrl" value="${(data?.ticketUrl||'').replace(/"/g,'&quot;')}"></div>
+    <button type="button" class="remove-entry" onclick="document.getElementById('gig-${id}')?.remove()">×</button>
+  `;
+  document.getElementById('e-gigsContainer').appendChild(div);
+}
+document.getElementById('e-addGigBtn').addEventListener('click', () => addGigEntry());
+
+function collectGigs() {
+  const gigs=[];
+  document.querySelectorAll('#e-gigsContainer .entry-row').forEach(entry => {
+    const name=entry.querySelector('[data-gig-field="name"]').value.trim();
+    const role=entry.querySelector('[data-gig-field="role"]').value;
+    const frequency=entry.querySelector('[data-gig-field="frequency"]').value;
+    const ticketUrl=entry.querySelector('[data-gig-field="ticketUrl"]').value.trim();
+    if(name) gigs.push({name,role,frequency,ticketUrl});
+  });
+  return gigs;
+}
+
+// ─── Links ───
+function addLinkEntry(data) {
+  linkCounter++;
+  const id = linkCounter;
+  const div = document.createElement('div');
+  div.className='entry-row link-grid'; div.id='link-'+id;
+  div.innerHTML=`
+    <div class="field"><label>Label</label><input type="text" data-link="${id}" data-link-field="label" value="${(data?.label||'').replace(/"/g,'&quot;')}"></div>
+    <div class="field"><label>URL</label><input type="url" data-link="${id}" data-link-field="url" value="${(data?.url||'').replace(/"/g,'&quot;')}"></div>
+    <button type="button" class="remove-entry" onclick="document.getElementById('link-${id}')?.remove()">×</button>
+  `;
+  document.getElementById('e-linksContainer').appendChild(div);
+}
+document.getElementById('e-addLinkBtn').addEventListener('click', () => addLinkEntry());
+
+function collectLinks() {
+  const links=[];
+  document.querySelectorAll('#e-linksContainer .entry-row').forEach(entry => {
+    const label=entry.querySelector('[data-link-field="label"]').value.trim();
+    const url=entry.querySelector('[data-link-field="url"]').value.trim();
+    if(label&&url) links.push({label,url});
+  });
+  return links;
+}
+
+// ─── Save ───
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('saveBtn');
+  btn.classList.add('loading'); btn.disabled=true;
+
+  const payload = {
+    action: 'update',
+    token: currentToken,
+    slug: currentSlug,
+    artistName: document.getElementById('e-artistName').value.trim(),
+    location: document.getElementById('e-location').value,
+    genre: JSON.stringify([...selectedGenres]),
+    primarySoundLink: document.getElementById('e-primarySoundLink').value.trim(),
+    instagram: document.getElementById('e-instagram').value.trim(),
+    bio: document.getElementById('e-bio').value.trim().substring(0,300),
+    profilePhoto: imageData.profilePhoto || '',
+    perfPhoto: imageData.perfPhoto || '',
+    artistLogo: imageData.artistLogo || '',
+    accentColor: document.getElementById('e-accentColor').value,
+    font: document.getElementById('e-font').value,
+    localFee: document.getElementById('e-localFee').value.trim(),
+    clubFee: document.getElementById('e-clubFee').value.trim(),
+    festivalFee: document.getElementById('e-festivalFee').value.trim(),
+    minimumFee: document.getElementById('e-minimumFee').value.trim(),
+    techRider: document.getElementById('e-techRider').value.trim(),
+    hospRider: document.getElementById('e-hospRider').value.trim(),
+    links: JSON.stringify(collectLinks()),
+    bookingEmail: document.getElementById('e-bookingEmail').value.trim(),
+    mgmtEmail: document.getElementById('e-mgmtEmail').value.trim(),
+    agencyName: document.getElementById('e-agencyName').value.trim(),
+    agencyEmail: document.getElementById('e-agencyEmail').value.trim(),
+    agencyWebsite: document.getElementById('e-agencyWebsite').value.trim(),
+    gigs: JSON.stringify(collectGigs()),
+    updatedAt: new Date().toISOString()
+  };
+
+  try {
+    await fetch(GAS_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    showToast('Changes saved!','success');
+  } catch(e) {
+    showToast('Error saving','error');
+  }
+  btn.classList.remove('loading'); btn.disabled=false;
+});
+
+// ─── Toast ───
+function showToast(msg,type='success') {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),4000);
+}
+</script>
+</body>
+</html>
