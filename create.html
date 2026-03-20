@@ -269,13 +269,15 @@
 <header class="page-header">
   <h1>Create Your Press Kit</h1>
   <p>Takes about 30 seconds. You can add more details anytime later.</p>
-  <p style="font-size:13px;margin-top:8px"><a href="dashboard.html" style="color:var(--gold);text-decoration:none">Already have an account? Sign in to edit →</a></p>
+  <p style="font-size:13px;margin-top:12px;color:var(--text-dim)">Already have an account?</p>
+  <a href="dashboard.html" style="display:inline-block;margin-top:8px;padding:8px 24px;border:1px solid var(--gold);border-radius:20px;color:var(--gold);font-size:12px;text-decoration:none;letter-spacing:0.5px;transition:background 0.2s,color 0.2s" onmouseover="this.style.background='var(--gold)';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='var(--gold)'">Sign in to edit</a>
 </header>
 
 <main class="form-container">
   <div class="step-indicator">
     <div class="step-dot active" id="dot-1"></div>
     <div class="step-dot" id="dot-2"></div>
+    <div class="step-dot" id="dot-3"></div>
   </div>
 
   <form id="pkForm" novalidate>
@@ -285,8 +287,9 @@
     <!-- ═══════════════════════════════════════ -->
     <div class="step active" id="step1">
       <div class="step-header">
-        <h2>Step 1: Create your account</h2>
-        <p>Set up your login credentials.</p>
+        <p style="font-size:11px;color:var(--text-muted);letter-spacing:1px;margin-bottom:12px">STEP 1 → Basics &nbsp;|&nbsp; STEP 2 → Profile &nbsp;|&nbsp; STEP 3 → Design</p>
+        <h2>Step 1: The basics</h2>
+        <p>Your name, location, and login info.</p>
       </div>
 
       <div class="validation-summary" id="validationSummary1">
@@ -306,6 +309,18 @@
           <option value="">Select country</option>
         </select>
         <div class="error-msg" id="err-location">Country is required</div>
+      </div>
+
+      <div class="field">
+        <label>Role <span class="req">*</span></label>
+        <div class="genre-grid" id="roleGrid" style="margin-top:6px">
+          <div class="genre-chip" data-role="DJ">DJ</div>
+          <div class="genre-chip" data-role="Producer">Producer</div>
+          <div class="genre-chip" data-role="MC">MC</div>
+          <div class="genre-chip" data-role="Singer">Singer</div>
+          <div class="genre-chip" data-role="Dancer">Dancer</div>
+        </div>
+        <div class="error-msg" id="err-role">Select at least one role</div>
       </div>
 
       <div class="field">
@@ -347,14 +362,15 @@
     <!-- ═══════════════════════════════════════ -->
     <div class="step" id="step2">
       <div class="step-header">
-        <h2>Step 2: Build your profile</h2>
-        <p>Add more details to stand out. You can always edit later.</p>
+        <h2>Step 2: Build your press kit</h2>
+        <p>Photos, bio, music, gigs — everything that makes you stand out. You can edit and add more anytime after publishing.</p>
       </div>
 
       <!-- Genre -->
       <section class="form-section">
         <div class="field">
-          <label>Genre <span class="req">*</span></label>
+          <label>Genre <span class="req" id="genreReqMark">*</span></label>
+          <div class="hint" id="genreHint" style="margin-bottom:8px">Required for DJ and Producer roles</div>
           <div class="genre-grid" id="genreGrid"></div>
           <div class="error-msg" id="err-genre">Pick at least one genre</div>
         </div>
@@ -431,16 +447,17 @@
         </div>
       </section>
 
-      <!-- Activity (required: at least 1) -->
+      <!-- Activity -->
       <section class="form-section">
-        <h3>Activity <span class="req">*</span></h3>
-        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have experience as:</p>
+        <h3>Activity</h3>
         <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
           <label class="genre-chip" id="actType-residency" style="cursor:pointer"><input type="checkbox" value="residency" class="act-type-cb" style="display:none"> Residency</label>
-          <label class="genre-chip" id="actType-clubGig" style="cursor:pointer"><input type="checkbox" value="clubGig" class="act-type-cb" style="display:none"> Club Gigs</label>
-          <label class="genre-chip" id="actType-festival" style="cursor:pointer"><input type="checkbox" value="festival" class="act-type-cb" style="display:none"> Festival / Tour</label>
+          <label class="genre-chip" id="actType-clubGig" style="cursor:pointer"><input type="checkbox" value="clubGig" class="act-type-cb" style="display:none"> Club Gig</label>
+          <label class="genre-chip" id="actType-festival" style="cursor:pointer"><input type="checkbox" value="festival" class="act-type-cb" style="display:none"> Festival</label>
+          <label class="genre-chip" id="actType-live" style="cursor:pointer"><input type="checkbox" value="live" class="act-type-cb" style="display:none"> Live</label>
+          <label class="genre-chip" id="actType-media" style="cursor:pointer"><input type="checkbox" value="media" class="act-type-cb" style="display:none"> Media</label>
+          <label class="genre-chip" id="actType-other" style="cursor:pointer"><input type="checkbox" value="other" class="act-type-cb" style="display:none"> Other</label>
         </div>
-        <div class="error-msg" id="err-activity">Select at least one activity type</div>
 
         <!-- Residency sub-section -->
         <div id="residencySection" style="display:none;margin-top:16px">
@@ -449,24 +466,44 @@
           <button type="button" class="add-entry-btn" id="addResidencyBtn">+ Add residency</button>
         </div>
 
-        <!-- Club Gigs sub-section -->
+        <!-- Club Gig sub-section -->
         <div id="clubGigSection" style="display:none;margin-top:16px">
-          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Club Gigs</h4>
+          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Club Gig</h4>
           <div id="clubGigContainer"></div>
           <button type="button" class="add-entry-btn" id="addClubGigBtn">+ Add club gig</button>
         </div>
 
-        <!-- Festival / Tour sub-section -->
+        <!-- Festival sub-section -->
         <div id="festivalSection" style="display:none;margin-top:16px">
-          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Festival / Tour</h4>
+          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Festival</h4>
           <div id="festivalContainer"></div>
-          <button type="button" class="add-entry-btn" id="addFestivalBtn">+ Add festival / tour</button>
+          <button type="button" class="add-entry-btn" id="addFestivalBtn">+ Add festival</button>
+        </div>
+
+        <!-- Live sub-section -->
+        <div id="liveSection" style="display:none;margin-top:16px">
+          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Live</h4>
+          <div id="liveContainer"></div>
+          <button type="button" class="add-entry-btn" id="addLiveBtn">+ Add live performance</button>
+        </div>
+
+        <!-- Media sub-section -->
+        <div id="mediaSection" style="display:none;margin-top:16px">
+          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Media</h4>
+          <div id="mediaContainer"></div>
+          <button type="button" class="add-entry-btn" id="addMediaBtn">+ Add media</button>
+        </div>
+
+        <!-- Other sub-section -->
+        <div id="otherSection" style="display:none;margin-top:16px">
+          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Other</h4>
+          <div id="otherContainer"></div>
+          <button type="button" class="add-entry-btn" id="addOtherBtn">+ Add other</button>
         </div>
       </section>
 
       <!-- Organizer -->
       <section class="form-section">
-        <h3>Organizer</h3>
         <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you organize events?</p>
         <div style="display:flex;gap:14px;margin-bottom:16px">
           <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isOrganizer" value="yes" style="accent-color:var(--gold)"> Yes</label>
@@ -480,7 +517,6 @@
 
       <!-- Promoter -->
       <section class="form-section">
-        <h3>Promoter</h3>
         <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Are you a promoter?</p>
         <div style="display:flex;gap:14px;margin-bottom:16px">
           <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isPromoter" value="yes" style="accent-color:var(--gold)"> Yes</label>
@@ -495,12 +531,7 @@
       <!-- Upcoming -->
       <section class="form-section">
         <h3>Upcoming Shows</h3>
-        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have upcoming shows?</p>
-        <div style="display:flex;gap:14px;margin-bottom:16px">
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="hasUpcoming" value="yes" style="accent-color:var(--gold)"> Yes</label>
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="hasUpcoming" value="no" checked style="accent-color:var(--gold)"> No</label>
-        </div>
-        <div id="upcomingSection" style="display:none">
+        <div id="upcomingSection">
           <div id="upcomingContainer"></div>
           <button type="button" class="add-entry-btn" id="addUpcomingBtn">+ Add upcoming show</button>
         </div>
@@ -526,6 +557,40 @@
         <div id="linksContainer"></div>
         <button type="button" class="add-entry-btn" id="addLinkBtn">+ Add a link</button>
         <div class="hint" style="margin-top:6px">SoundCloud, Spotify, website, or anything else.</div>
+      </section>
+
+      <!-- Featured Links (with images) -->
+      <section class="form-section">
+        <h3>Featured Links</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Add up to 2 links with a custom banner image. Images will be displayed at the same size as a Spotify embed (landscape, 16:5 ratio).</p>
+        <div id="featuredLink1" style="margin-bottom:20px">
+          <div style="font-size:12px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Featured Link 1</div>
+          <div class="field"><label>Label</label><input type="text" id="featLink1Label" placeholder="e.g. My Latest Mix"></div>
+          <div class="field"><label>URL</label><input type="url" id="featLink1Url" placeholder="https://..."></div>
+          <div class="field">
+            <label>Banner Image</label>
+            <div class="image-upload" id="drop-featLink1Img" style="height:80px">
+              <input type="file" accept="image/*" data-field="featLink1Img">
+              <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+              <img class="preview-img" id="preview-featLink1Img" alt="Featured link 1 preview">
+              <button type="button" class="remove-btn" data-field="featLink1Img">×</button>
+            </div>
+          </div>
+        </div>
+        <div id="featuredLink2">
+          <div style="font-size:12px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Featured Link 2</div>
+          <div class="field"><label>Label</label><input type="text" id="featLink2Label" placeholder="e.g. Event Page"></div>
+          <div class="field"><label>URL</label><input type="url" id="featLink2Url" placeholder="https://..."></div>
+          <div class="field">
+            <label>Banner Image</label>
+            <div class="image-upload" id="drop-featLink2Img" style="height:80px">
+              <input type="file" accept="image/*" data-field="featLink2Img">
+              <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+              <img class="preview-img" id="preview-featLink2Img" alt="Featured link 2 preview">
+              <button type="button" class="remove-btn" data-field="featLink2Img">×</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Fees -->
@@ -673,8 +738,8 @@
     <div class="step" id="stepDone">
       <!-- Phase 1: Preview -->
       <div id="donePreview" style="padding:40px 0">
-        <h2 style="font-size:22px;font-weight:700;margin-bottom:6px;text-align:center">Choose your design</h2>
-        <p style="color:var(--text-dim);font-size:14px;margin-bottom:20px;text-align:center">Pick a style for your press kit.</p>
+        <h2 style="font-size:22px;font-weight:700;margin-bottom:6px;text-align:center">Step 3: Pick your look</h2>
+        <p style="color:var(--text-dim);font-size:14px;margin-bottom:20px;text-align:center">Choose a design for your press kit. You can change this anytime.</p>
 
         <!-- Design pattern selector -->
         <div id="designSelector" style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
@@ -785,6 +850,36 @@ const GENRE_LIST = [
 ];
 
 const selectedGenres = new Set();
+const selectedRoles = new Set();
+
+// ─── Role (multi-select chips) ───
+(function buildRoleChips() {
+  document.querySelectorAll('#roleGrid .genre-chip[data-role]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const role = chip.dataset.role;
+      if (selectedRoles.has(role)) {
+        selectedRoles.delete(role);
+        chip.classList.remove('selected');
+      } else {
+        selectedRoles.add(role);
+        chip.classList.add('selected');
+      }
+      if (selectedRoles.size > 0) {
+        document.getElementById('err-role').classList.remove('visible');
+      }
+      // Update genre requirement based on roles
+      updateGenreRequirement();
+    });
+  });
+})();
+
+function updateGenreRequirement() {
+  const needsGenre = selectedRoles.has('DJ') || selectedRoles.has('Producer');
+  const reqMark = document.getElementById('genreReqMark');
+  const hint = document.getElementById('genreHint');
+  if (reqMark) reqMark.style.display = needsGenre ? '' : 'none';
+  if (hint) hint.style.display = needsGenre ? '' : 'none';
+}
 
 (function buildGenreChips() {
   const grid = document.getElementById('genreGrid');
@@ -811,12 +906,14 @@ const selectedGenres = new Set();
 
 // ─── Image Processing ───
 const IMAGE_SPECS = {
-  profilePhoto: { maxWidth: 1200, quality: 0.85, aspect: 3/4 },
-  perfPhoto:    { maxWidth: 1920, quality: 0.85, aspect: 16/9 },
-  artistLogo:   { maxWidth: 200,  quality: 0.8,  aspect: 1/1 }
+  profilePhoto:  { maxWidth: 1200, quality: 0.85, aspect: 3/4 },
+  perfPhoto:     { maxWidth: 1920, quality: 0.85, aspect: 16/9 },
+  artistLogo:    { maxWidth: 200,  quality: 0.8,  aspect: 1/1 },
+  featLink1Img:  { maxWidth: 1200, quality: 0.85, aspect: 16/5 },
+  featLink2Img:  { maxWidth: 1200, quality: 0.85, aspect: 16/5 }
 };
 
-const imageData = { profilePhoto: null, perfPhoto: null, artistLogo: null };
+const imageData = { profilePhoto: null, perfPhoto: null, artistLogo: null, featLink1Img: null, featLink2Img: null };
 let isSubmitting = false;
 
 function processImage(file, spec) {
@@ -946,14 +1043,9 @@ document.querySelectorAll('.act-type-cb').forEach(cb => {
     setTimeout(() => {
       const label = cb.closest('label');
       if (cb.checked) { label.classList.add('selected'); } else { label.classList.remove('selected'); }
-      document.getElementById('residencySection').style.display = cb.value === 'residency' && cb.checked ? 'block' : document.getElementById('residencySection').style.display;
-      document.getElementById('clubGigSection').style.display = cb.value === 'clubGig' && cb.checked ? 'block' : document.getElementById('clubGigSection').style.display;
-      document.getElementById('festivalSection').style.display = cb.value === 'festival' && cb.checked ? 'block' : document.getElementById('festivalSection').style.display;
-      if (!cb.checked) {
-        if (cb.value === 'residency') document.getElementById('residencySection').style.display = 'none';
-        if (cb.value === 'clubGig') document.getElementById('clubGigSection').style.display = 'none';
-        if (cb.value === 'festival') document.getElementById('festivalSection').style.display = 'none';
-      }
+      const sectionMap = { residency: 'residencySection', clubGig: 'clubGigSection', festival: 'festivalSection', live: 'liveSection', media: 'mediaSection', other: 'otherSection' };
+      const sec = sectionMap[cb.value];
+      if (sec) document.getElementById(sec).style.display = cb.checked ? 'block' : 'none';
       // Clear activity error when at least one selected
       if (document.querySelectorAll('.act-type-cb:checked').length > 0) {
         document.getElementById('err-activity')?.classList.remove('visible');
@@ -1034,6 +1126,65 @@ function addFestivalEntry() {
 }
 document.getElementById('addFestivalBtn').addEventListener('click', addFestivalEntry);
 
+// Live entry
+let liveCounter = 0;
+function addLiveEntry() {
+  liveCounter++;
+  const id = liveCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'live-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event / Performance Name <span class="req">*</span></label><input type="text" data-live="${id}" data-live-field="name" placeholder="e.g. Acoustic Live Session"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-live="${id}" data-live-field="year" placeholder="2025" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('live-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>Venue</label><input type="text" data-live="${id}" data-live-field="venue" placeholder="e.g. Jazz Club Sydney"></div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-live="${id}" data-live-field="description" placeholder="e.g. Solo vocal performance with live band" style="height:60px;resize:vertical"></textarea></div>
+  `;
+  document.getElementById('liveContainer').appendChild(div);
+}
+document.getElementById('addLiveBtn').addEventListener('click', addLiveEntry);
+
+// Media entry
+let mediaCounter = 0;
+function addMediaEntry() {
+  mediaCounter++;
+  const id = mediaCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'media-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Title <span class="req">*</span></label><input type="text" data-media="${id}" data-media-field="title" placeholder="e.g. Featured on DJ Mag"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-media="${id}" data-media-field="year" placeholder="2025" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('media-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>URL</label><input type="url" data-media="${id}" data-media-field="url" placeholder="https://..."></div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-media="${id}" data-media-field="description" placeholder="e.g. Interview about the local scene" style="height:60px;resize:vertical"></textarea></div>
+  `;
+  document.getElementById('mediaContainer').appendChild(div);
+}
+document.getElementById('addMediaBtn').addEventListener('click', addMediaEntry);
+
+// Other entry
+let otherCounter = 0;
+function addOtherEntry() {
+  otherCounter++;
+  const id = otherCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'other-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Title <span class="req">*</span></label><input type="text" data-other="${id}" data-other-field="title" placeholder="e.g. Workshop at Music Conference"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-other="${id}" data-other-field="year" placeholder="2025" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('other-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-other="${id}" data-other-field="description" placeholder="Brief description..." style="height:60px;resize:vertical"></textarea></div>
+  `;
+  document.getElementById('otherContainer').appendChild(div);
+}
+document.getElementById('addOtherBtn').addEventListener('click', addOtherEntry);
+
 // Organizer toggle + entry
 document.querySelectorAll('input[name="isOrganizer"]').forEach(r => {
   r.addEventListener('change', () => {
@@ -1096,13 +1247,7 @@ function addPromoterEntry() {
 }
 document.getElementById('addPromoterBtn').addEventListener('click', addPromoterEntry);
 
-// Upcoming toggle + entry
-document.querySelectorAll('input[name="hasUpcoming"]').forEach(r => {
-  r.addEventListener('change', () => {
-    document.getElementById('upcomingSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
-  });
-});
-
+// Upcoming entries (always visible — no toggle needed)
 function addUpcomingEntry() {
   upcomingCounter++;
   const id = upcomingCounter;
@@ -1117,7 +1262,7 @@ function addUpcomingEntry() {
       <div class="field" style="flex:1"><label>Venue <span class="req">*</span></label><input type="text" data-up="${id}" data-up-field="venue" placeholder="e.g. Warehouse Club"></div>
       <div class="field" style="flex:1"><label>Date</label><input type="date" data-up="${id}" data-up-field="date"></div>
     </div>
-    <div class="field"><label>Ticket URL</label><input type="url" data-up="${id}" data-up-field="ticketUrl" placeholder="https://..."></div>
+    <div class="field"><label>Event info / Ticket link</label><input type="url" data-up="${id}" data-up-field="ticketUrl" placeholder="https://..."></div>
   `;
   document.getElementById('upcomingContainer').appendChild(div);
 }
@@ -1188,6 +1333,29 @@ function collectActivity() {
     const description = entry.querySelector('[data-fest-field="description"]')?.value.trim() || '';
     if (name) activities.push({ type: 'festival', name, year, description });
   });
+  // Live
+  document.querySelectorAll('#liveContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-live-field="name"]')?.value.trim();
+    const venue = entry.querySelector('[data-live-field="venue"]')?.value.trim() || '';
+    const year = entry.querySelector('[data-live-field="year"]')?.value.trim() || '';
+    const description = entry.querySelector('[data-live-field="description"]')?.value.trim() || '';
+    if (name) activities.push({ type: 'live', name, venue, year, description });
+  });
+  // Media
+  document.querySelectorAll('#mediaContainer .entry-row').forEach(entry => {
+    const title = entry.querySelector('[data-media-field="title"]')?.value.trim();
+    const url = entry.querySelector('[data-media-field="url"]')?.value.trim() || '';
+    const year = entry.querySelector('[data-media-field="year"]')?.value.trim() || '';
+    const description = entry.querySelector('[data-media-field="description"]')?.value.trim() || '';
+    if (title) activities.push({ type: 'media', title, url, year, description });
+  });
+  // Other
+  document.querySelectorAll('#otherContainer .entry-row').forEach(entry => {
+    const title = entry.querySelector('[data-other-field="title"]')?.value.trim();
+    const year = entry.querySelector('[data-other-field="year"]')?.value.trim() || '';
+    const description = entry.querySelector('[data-other-field="description"]')?.value.trim() || '';
+    if (title) activities.push({ type: 'other', title, year, description });
+  });
   return activities;
 }
 
@@ -1223,8 +1391,6 @@ function collectPromoter() {
 }
 
 function collectUpcoming() {
-  const active = document.querySelector('input[name="hasUpcoming"][value="yes"]')?.checked || false;
-  if (!active) return JSON.stringify({ active: false, shows: [] });
   const shows = [];
   document.querySelectorAll('#upcomingContainer .entry-row').forEach(entry => {
     const name = entry.querySelector('[data-up-field="name"]')?.value.trim();
@@ -1233,7 +1399,7 @@ function collectUpcoming() {
     const ticketUrl = entry.querySelector('[data-up-field="ticketUrl"]')?.value.trim() || '';
     if (name) shows.push({ name, venue, date, ticketUrl });
   });
-  return JSON.stringify({ active: true, shows });
+  return JSON.stringify({ active: shows.length > 0, shows });
 }
 
 
@@ -1275,12 +1441,13 @@ function isValidUrl(str) {
 const STEP1_RULES = [
   { field: 'artistName', test: () => document.getElementById('artistName').value.trim().length > 0, message: 'Artist name is required' },
   { field: 'location', test: () => document.getElementById('location').value !== '', message: 'Country is required' },
+  { field: 'role', test: () => selectedRoles.size > 0, message: 'Select at least one role' },
   { field: 'slug', test: () => { const s = document.getElementById('slug').value.trim(); return s.length >= 3 && s.length <= 30 && /^[a-z0-9\-_]+$/.test(s); }, message: 'Profile ID must be 3-30 characters, lowercase letters, numbers, hyphens, and underscores only' },
   { field: 'password', test: () => document.getElementById('password').value.length >= 6, message: 'Password must be at least 6 characters' },
 ];
 
 const STEP2_RULES = [
-  { field: 'genre', test: () => selectedGenres.size > 0, message: 'Pick at least one genre' },
+  { field: 'genre', test: () => { const needsGenre = selectedRoles.has('DJ') || selectedRoles.has('Producer'); return !needsGenre || selectedGenres.size > 0; }, message: 'Pick at least one genre (required for DJ/Producer)' },
   { field: 'primarySoundLink', test: () => { const v = document.getElementById('primarySoundLink').value.trim(); return v.length > 0 && isValidUrl(v); }, message: 'A valid sound link is required' },
   { field: 'instagram', test: () => { const v = document.getElementById('instagram').value.trim(); return v.length > 0 && isValidUrl(v); }, message: 'Instagram link is required' },
   { field: 'bio', test: () => document.getElementById('bio').value.trim().length >= 100, message: 'Bio must be at least 100 characters' },
@@ -1385,6 +1552,8 @@ function goToStep(n) {
     if (i + 1 === n) d.classList.add('active');
     else if (i + 1 < n) d.classList.add('done');
   });
+  // Hide page header on step 2+, show on step 1
+  document.querySelector('.page-header').style.display = n === 1 ? '' : 'none';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1540,6 +1709,7 @@ async function submitForm() {
       slug,
       artistName: document.getElementById('artistName').value.trim(),
       location: document.getElementById('location').value,
+      role: JSON.stringify([...selectedRoles]),
       genre: JSON.stringify([...selectedGenres]),
       primarySoundLink: document.getElementById('primarySoundLink').value.trim(),
       instagram: document.getElementById('instagram').value.trim(),
@@ -1569,6 +1739,12 @@ async function submitForm() {
       promoter: collectPromoter(),
       upcoming: collectUpcoming(),
       awards: collectAwards(),
+      featLink1Label: document.getElementById('featLink1Label')?.value.trim() || '',
+      featLink1Url: document.getElementById('featLink1Url')?.value.trim() || '',
+      featLink1Img: imageData.featLink1Img || '',
+      featLink2Label: document.getElementById('featLink2Label')?.value.trim() || '',
+      featLink2Url: document.getElementById('featLink2Url')?.value.trim() || '',
+      featLink2Img: imageData.featLink2Img || '',
       consent: document.getElementById('consent').checked,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -1585,7 +1761,13 @@ async function submitForm() {
     document.getElementById('previewFrame').src = profileUrl + '&design=1';
     document.getElementById('donePreview').style.display = 'block';
     document.getElementById('doneActions').style.display = 'none';
-    document.querySelectorAll('.step-dot').forEach(d => d.classList.add('done'));
+    document.querySelectorAll('.step-dot').forEach((d, i) => {
+      d.classList.remove('active', 'done');
+      if (i < 2) d.classList.add('done');
+      else d.classList.add('active');
+    });
+    document.querySelector('.page-header').style.display = 'none';
+    document.querySelector('.step-indicator').style.display = 'none';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
     showToast('Error: ' + err.message, 'error');

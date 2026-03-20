@@ -121,6 +121,12 @@
     .footer a:hover { color:var(--accent); }
     .footer svg { width:14px; height:14px; }
 
+    /* Design switcher */
+    .design-switcher { max-width:480px; margin:0 auto; display:flex; justify-content:center; gap:8px; padding:16px 20px 0; }
+    .design-switcher button { padding:6px 16px; font-size:11px; font-family:inherit; letter-spacing:0.5px; border-radius:16px; cursor:pointer; transition:all 0.2s; background:transparent; border:1px solid var(--border); color:var(--text-muted); }
+    .design-switcher button.active { border-color:var(--accent); color:var(--accent); background:rgba(196,162,101,0.1); }
+    body.pat2 .design-switcher { position:relative; z-index:2; }
+
     /* Loading / Error */
     .loading-screen { display:flex; align-items:center; justify-content:center; min-height:60vh; color:var(--text-dim); font-size:14px; }
     .error-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; color:var(--text-dim); text-align:center; padding:24px; }
@@ -203,6 +209,13 @@
     </div>
   </div>
 
+  <!-- Design switcher -->
+  <div class="design-switcher" id="designSwitcher">
+    <button onclick="switchDesign(1)" data-d="1">Photo</button>
+    <button onclick="switchDesign(2)" data-d="2">BG</button>
+    <button onclick="switchDesign(3)" data-d="3">Icon</button>
+  </div>
+
   <!-- Footer -->
   <div class="footer">
     <span>Powered by</span>
@@ -252,6 +265,12 @@ function renderProfile(d) {
   const igUrl = d.instagram ? (d.instagram.includes('http') ? d.instagram : 'https://instagram.com/' + d.instagram.replace('@','')) : '';
   const igLink = igUrl ? '<a href="'+esc(igUrl)+'" target="_blank">'+igSvg+'</a>' : '';
 
+  // Roles
+  let roles = [];
+  try { roles = JSON.parse(d.role || '[]'); } catch(e) {}
+  if (typeof d.role === 'string' && !d.role.startsWith('[')) roles = d.role ? [d.role] : [];
+  const roleStr = roles.join(' / ');
+
   // Genres
   let genres = [];
   try { genres = JSON.parse(d.genre || '[]'); } catch(e) {}
@@ -260,6 +279,7 @@ function renderProfile(d) {
 
   // Hero HTML
   const heroInner = '<div class="hero-name">'+esc(d.artistName || '')+' '+igLink+'</div>' +
+    (roleStr ? '<div style="font-size:12px;color:var(--accent);letter-spacing:1px;font-weight:600;text-transform:uppercase;margin-bottom:4px">'+esc(roleStr)+'</div>' : '') +
     '<div class="hero-subtitle">based '+ esc(d.location || '') +'</div>' +
     '<div class="genre-tags">'+genreHtml+'</div>';
 
@@ -305,6 +325,16 @@ function renderProfile(d) {
         meta = p.join(' · ');
       } else if (a.type === 'festival') {
         title = a.name || '';
+        if (a.year) meta = a.year;
+      } else if (a.type === 'live') {
+        title = a.name || '';
+        const p = []; if (a.venue) p.push(a.venue); if (a.year) p.push(a.year);
+        meta = p.join(' · ');
+      } else if (a.type === 'media') {
+        title = a.title || '';
+        if (a.year) meta = a.year;
+      } else if (a.type === 'other') {
+        title = a.title || '';
         if (a.year) meta = a.year;
       }
       if (title) html += '<div class="act-item"><div class="act-title">'+esc(title)+'</div>'+(meta?'<div class="act-meta">'+esc(meta)+'</div>':'')+'</div>';
@@ -476,6 +506,17 @@ function toggleBio() {
   b.textContent = t.classList.contains('expanded') ? 'Show less' : 'Read more';
 }
 function toggleSubAcc(h) { h.parentElement.classList.toggle('open'); }
+
+// Design switcher - highlight active button
+document.querySelectorAll('#designSwitcher button').forEach(btn => {
+  if (parseInt(btn.dataset.d) === designParam) btn.classList.add('active');
+});
+
+function switchDesign(num) {
+  const u = new URL(location.href);
+  u.searchParams.set('design', num);
+  location.href = u.toString();
+}
 </script>
 </body>
 </html>

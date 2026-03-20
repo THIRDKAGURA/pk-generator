@@ -254,15 +254,24 @@
         <label for="e-artistName">Artist Name</label>
         <input type="text" id="e-artistName" maxlength="80">
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label for="e-location">Country</label>
-          <select id="e-location"></select>
+      <div class="field">
+        <label for="e-location">Country</label>
+        <select id="e-location"></select>
+      </div>
+      <div class="field">
+        <label>Role</label>
+        <div class="genre-grid" id="e-roleGrid" style="margin-top:6px">
+          <div class="genre-chip" data-role="DJ">DJ</div>
+          <div class="genre-chip" data-role="Producer">Producer</div>
+          <div class="genre-chip" data-role="MC">MC</div>
+          <div class="genre-chip" data-role="Singer">Singer</div>
+          <div class="genre-chip" data-role="Dancer">Dancer</div>
         </div>
-        <div class="field">
-          <label>Genre</label>
-          <div class="genre-grid" id="e-genreGrid"></div>
-        </div>
+      </div>
+      <div class="field">
+        <label>Genre <span id="e-genreReqMark" style="color:var(--error);margin-left:2px">*</span></label>
+        <div class="hint" id="e-genreHint" style="margin-bottom:8px">Required for DJ and Producer roles</div>
+        <div class="genre-grid" id="e-genreGrid"></div>
       </div>
       <div class="field">
         <label for="e-primarySoundLink">Primary Sound Link</label>
@@ -307,11 +316,13 @@
     <!-- Activity -->
     <section class="form-section">
       <h3>Activity</h3>
-      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have experience as:</p>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
         <label class="genre-chip" id="e-actType-residency" style="cursor:pointer"><input type="checkbox" value="residency" class="e-act-type-cb" style="display:none"> Residency</label>
-        <label class="genre-chip" id="e-actType-clubGig" style="cursor:pointer"><input type="checkbox" value="clubGig" class="e-act-type-cb" style="display:none"> Club Gigs</label>
-        <label class="genre-chip" id="e-actType-festival" style="cursor:pointer"><input type="checkbox" value="festival" class="e-act-type-cb" style="display:none"> Festival / Tour</label>
+        <label class="genre-chip" id="e-actType-clubGig" style="cursor:pointer"><input type="checkbox" value="clubGig" class="e-act-type-cb" style="display:none"> Club Gig</label>
+        <label class="genre-chip" id="e-actType-festival" style="cursor:pointer"><input type="checkbox" value="festival" class="e-act-type-cb" style="display:none"> Festival</label>
+        <label class="genre-chip" id="e-actType-live" style="cursor:pointer"><input type="checkbox" value="live" class="e-act-type-cb" style="display:none"> Live</label>
+        <label class="genre-chip" id="e-actType-media" style="cursor:pointer"><input type="checkbox" value="media" class="e-act-type-cb" style="display:none"> Media</label>
+        <label class="genre-chip" id="e-actType-other" style="cursor:pointer"><input type="checkbox" value="other" class="e-act-type-cb" style="display:none"> Other</label>
       </div>
       <div id="e-residencySection" style="display:none;margin-top:16px">
         <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Residency</h4>
@@ -319,20 +330,34 @@
         <button type="button" class="add-entry-btn" id="e-addResidencyBtn">+ Add residency</button>
       </div>
       <div id="e-clubGigSection" style="display:none;margin-top:16px">
-        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Club Gigs</h4>
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Club Gig</h4>
         <div id="e-clubGigContainer"></div>
         <button type="button" class="add-entry-btn" id="e-addClubGigBtn">+ Add club gig</button>
       </div>
       <div id="e-festivalSection" style="display:none;margin-top:16px">
-        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Festival / Tour</h4>
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Festival</h4>
         <div id="e-festivalContainer"></div>
-        <button type="button" class="add-entry-btn" id="e-addFestivalBtn">+ Add festival / tour</button>
+        <button type="button" class="add-entry-btn" id="e-addFestivalBtn">+ Add festival</button>
+      </div>
+      <div id="e-liveSection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Live</h4>
+        <div id="e-liveContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addLiveBtn">+ Add live performance</button>
+      </div>
+      <div id="e-mediaSection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Media</h4>
+        <div id="e-mediaContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addMediaBtn">+ Add media</button>
+      </div>
+      <div id="e-otherSection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Other</h4>
+        <div id="e-otherContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addOtherBtn">+ Add other</button>
       </div>
     </section>
 
     <!-- Organizer -->
     <section class="form-section">
-      <h3>Organizer</h3>
       <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you organize events?</p>
       <div style="display:flex;gap:14px;margin-bottom:16px">
         <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isOrganizer" value="yes" style="accent-color:var(--gold)"> Yes</label>
@@ -346,7 +371,6 @@
 
     <!-- Promoter -->
     <section class="form-section">
-      <h3>Promoter</h3>
       <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Are you a promoter?</p>
       <div style="display:flex;gap:14px;margin-bottom:16px">
         <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isPromoter" value="yes" style="accent-color:var(--gold)"> Yes</label>
@@ -361,12 +385,7 @@
     <!-- Upcoming -->
     <section class="form-section">
       <h3>Upcoming Shows</h3>
-      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have upcoming shows?</p>
-      <div style="display:flex;gap:14px;margin-bottom:16px">
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasUpcoming" value="yes" style="accent-color:var(--gold)"> Yes</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasUpcoming" value="no" checked style="accent-color:var(--gold)"> No</label>
-      </div>
-      <div id="e-upcomingSection" style="display:none">
+      <div id="e-upcomingSection">
         <div id="e-upcomingContainer"></div>
         <button type="button" class="add-entry-btn" id="e-addUpcomingBtn">+ Add upcoming show</button>
       </div>
@@ -391,6 +410,40 @@
       <h3>Links</h3>
       <div id="e-linksContainer"></div>
       <button type="button" class="add-entry-btn" id="e-addLinkBtn">+ Add a link</button>
+    </section>
+
+    <!-- Featured Links -->
+    <section class="form-section">
+      <h3>Featured Links</h3>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Add up to 2 links with a custom banner image (16:5 landscape ratio).</p>
+      <div id="e-featuredLink1" style="margin-bottom:20px">
+        <div style="font-size:12px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Featured Link 1</div>
+        <div class="field"><label>Label</label><input type="text" id="e-featLink1Label" placeholder="e.g. My Latest Mix"></div>
+        <div class="field"><label>URL</label><input type="url" id="e-featLink1Url" placeholder="https://..."></div>
+        <div class="field">
+          <label>Banner Image</label>
+          <div class="image-upload" id="drop-featLink1Img" style="height:80px">
+            <input type="file" accept="image/*" data-field="featLink1Img">
+            <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+            <img class="preview-img" id="preview-featLink1Img" alt="Featured link 1 preview">
+            <button type="button" class="remove-btn" data-field="featLink1Img">×</button>
+          </div>
+        </div>
+      </div>
+      <div id="e-featuredLink2">
+        <div style="font-size:12px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Featured Link 2</div>
+        <div class="field"><label>Label</label><input type="text" id="e-featLink2Label" placeholder="e.g. Event Page"></div>
+        <div class="field"><label>URL</label><input type="url" id="e-featLink2Url" placeholder="https://..."></div>
+        <div class="field">
+          <label>Banner Image</label>
+          <div class="image-upload" id="drop-featLink2Img" style="height:80px">
+            <input type="file" accept="image/*" data-field="featLink2Img">
+            <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+            <img class="preview-img" id="preview-featLink2Img" alt="Featured link 2 preview">
+            <button type="button" class="remove-btn" data-field="featLink2Img">×</button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Fees -->
@@ -541,6 +594,7 @@ const GENRE_LIST = [
   'Minimal / Deep Tech','Open Format','Psytrance','Techno','Trance','UK Garage'
 ];
 let eResidencyCounter = 0, eClubGigCounter = 0, eFestivalCounter = 0;
+let eLiveCounter = 0, eMediaCounter = 0, eOtherCounter = 0;
 let eOrganizerCounter = 0, ePromoterCounter = 0, eUpcomingCounter = 0, eAwardCounter = 0;
 
 const COUNTRIES = [
@@ -573,13 +627,16 @@ const COUNTRIES = [
 const IMAGE_SPECS = {
   profilePhoto:{maxWidth:1200,quality:0.85,aspect:3/4},
   perfPhoto:{maxWidth:1920,quality:0.85,aspect:16/9},
-  artistLogo:{maxWidth:200,quality:0.8,aspect:1/1}
+  artistLogo:{maxWidth:200,quality:0.8,aspect:1/1},
+  featLink1Img:{maxWidth:1200,quality:0.85,aspect:16/5},
+  featLink2Img:{maxWidth:1200,quality:0.85,aspect:16/5}
 };
 
 let currentToken = null;
 let currentSlug = null;
 const selectedGenres = new Set();
-const imageData = {profilePhoto:null,perfPhoto:null,artistLogo:null};
+const selectedRoles = new Set();
+const imageData = {profilePhoto:null,perfPhoto:null,artistLogo:null,featLink1Img:null,featLink2Img:null};
 let gigCounter = 0, linkCounter = 0;
 
 // ─── Init ───
@@ -588,6 +645,16 @@ let gigCounter = 0, linkCounter = 0;
   const sel = document.getElementById('e-location');
   const defOpt = document.createElement('option'); defOpt.value=''; defOpt.textContent='Select country'; sel.appendChild(defOpt);
   COUNTRIES.forEach(c => { const o = document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+
+  // Role chips
+  document.querySelectorAll('#e-roleGrid .genre-chip[data-role]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const role = chip.dataset.role;
+      if (selectedRoles.has(role)) { selectedRoles.delete(role); chip.classList.remove('selected'); }
+      else { selectedRoles.add(role); chip.classList.add('selected'); }
+      eUpdateGenreRequirement();
+    });
+  });
 
   // Genre chips
   const grid = document.getElementById('e-genreGrid');
@@ -797,6 +864,21 @@ function populateForm(d) {
   document.getElementById('e-accentColorHex').value = d.accentColor || '#c4a265';
   document.getElementById('e-font').value = d.font || 'Inter';
 
+  // Roles
+  selectedRoles.clear();
+  try {
+    const roles = typeof d.role === 'string' ? JSON.parse(d.role) : (d.role || []);
+    if (Array.isArray(roles)) {
+      roles.forEach(r => {
+        selectedRoles.add(r);
+        document.querySelectorAll('#e-roleGrid .genre-chip[data-role]').forEach(chip => {
+          if (chip.dataset.role === r) chip.classList.add('selected');
+        });
+      });
+    }
+  } catch(e) {}
+  eUpdateGenreRequirement();
+
   // Genres
   selectedGenres.clear();
   try {
@@ -812,7 +894,7 @@ function populateForm(d) {
   } catch(e) {}
 
   // Images (show existing Drive URLs)
-  ['profilePhoto','perfPhoto','artistLogo'].forEach(field => {
+  ['profilePhoto','perfPhoto','artistLogo','featLink1Img','featLink2Img'].forEach(field => {
     if (d[field] && d[field].toString().startsWith('http')) {
       const preview = document.getElementById('preview-' + field);
       const drop = document.getElementById('drop-' + field);
@@ -832,13 +914,16 @@ function populateForm(d) {
         if (a.type === 'residency') eAddResidencyEntry(a);
         else if (a.type === 'clubGig') eAddClubGigEntry(a);
         else if (a.type === 'festival') eAddFestivalEntry(a);
+        else if (a.type === 'live') eAddLiveEntry(a);
+        else if (a.type === 'media') eAddMediaEntry(a);
+        else if (a.type === 'other') eAddOtherEntry(a);
       });
+      const sectionMap = { residency:'e-residencySection', clubGig:'e-clubGigSection', festival:'e-festivalSection', live:'e-liveSection', media:'e-mediaSection', other:'e-otherSection' };
       types.forEach(t => {
         const cb = document.querySelector(`.e-act-type-cb[value="${t}"]`);
         if (cb) { cb.checked = true; cb.closest('label').classList.add('selected'); }
-        if (t === 'residency') document.getElementById('e-residencySection').style.display = 'block';
-        if (t === 'clubGig') document.getElementById('e-clubGigSection').style.display = 'block';
-        if (t === 'festival') document.getElementById('e-festivalSection').style.display = 'block';
+        const sec = sectionMap[t];
+        if (sec) document.getElementById(sec).style.display = 'block';
       });
     }
   } catch(e) {}
@@ -863,14 +948,10 @@ function populateForm(d) {
     }
   } catch(e) {}
 
-  // Upcoming
+  // Upcoming (always visible)
   try {
     const up = typeof d.upcoming === 'string' ? JSON.parse(d.upcoming) : d.upcoming;
-    if (up && up.active) {
-      document.querySelector('input[name="e-hasUpcoming"][value="yes"]').checked = true;
-      document.getElementById('e-upcomingSection').style.display = 'block';
-      if (Array.isArray(up.shows)) up.shows.forEach(s => eAddUpcomingEntry(s));
-    }
+    if (up && Array.isArray(up.shows)) up.shows.forEach(s => eAddUpcomingEntry(s));
   } catch(e) {}
 
   // Awards
@@ -882,6 +963,12 @@ function populateForm(d) {
       awards.forEach(a => eAddAwardEntry(a));
     }
   } catch(e) {}
+
+  // Featured Links
+  if (d.featLink1Label) document.getElementById('e-featLink1Label').value = d.featLink1Label;
+  if (d.featLink1Url) document.getElementById('e-featLink1Url').value = d.featLink1Url;
+  if (d.featLink2Label) document.getElementById('e-featLink2Label').value = d.featLink2Label;
+  if (d.featLink2Url) document.getElementById('e-featLink2Url').value = d.featLink2Url;
 
   // Links
   try {
@@ -958,15 +1045,24 @@ Object.keys(IMAGE_SPECS).forEach(field => {
   });
 });
 
+// ─── Genre requirement ───
+function eUpdateGenreRequirement() {
+  const needsGenre = selectedRoles.has('DJ') || selectedRoles.has('Producer');
+  const reqMark = document.getElementById('e-genreReqMark');
+  const hint = document.getElementById('e-genreHint');
+  if (reqMark) reqMark.style.display = needsGenre ? '' : 'none';
+  if (hint) hint.style.display = needsGenre ? '' : 'none';
+}
+
 // ─── Activity type toggles ───
 document.querySelectorAll('.e-act-type-cb').forEach(cb => {
   cb.closest('label').addEventListener('click', () => {
     setTimeout(() => {
       const label = cb.closest('label');
       if (cb.checked) label.classList.add('selected'); else label.classList.remove('selected');
-      if (cb.value === 'residency') document.getElementById('e-residencySection').style.display = cb.checked ? 'block' : 'none';
-      if (cb.value === 'clubGig') document.getElementById('e-clubGigSection').style.display = cb.checked ? 'block' : 'none';
-      if (cb.value === 'festival') document.getElementById('e-festivalSection').style.display = cb.checked ? 'block' : 'none';
+      const sectionMap = { residency:'e-residencySection', clubGig:'e-clubGigSection', festival:'e-festivalSection', live:'e-liveSection', media:'e-mediaSection', other:'e-otherSection' };
+      const sec = sectionMap[cb.value];
+      if (sec) document.getElementById(sec).style.display = cb.checked ? 'block' : 'none';
     }, 0);
   });
 });
@@ -1040,6 +1136,62 @@ function eAddFestivalEntry(data) {
 }
 document.getElementById('e-addFestivalBtn').addEventListener('click', () => eAddFestivalEntry());
 
+// Live
+function eAddLiveEntry(data) {
+  eLiveCounter++;
+  const id = eLiveCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-live-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event / Performance Name</label><input type="text" data-live="${id}" data-live-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-live="${id}" data-live-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-live-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>Venue</label><input type="text" data-live="${id}" data-live-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-live="${id}" data-live-field="description" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
+  `;
+  document.getElementById('e-liveContainer').appendChild(div);
+}
+document.getElementById('e-addLiveBtn').addEventListener('click', () => eAddLiveEntry());
+
+// Media
+function eAddMediaEntry(data) {
+  eMediaCounter++;
+  const id = eMediaCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-media-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Title</label><input type="text" data-media="${id}" data-media-field="title" value="${(data?.title||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-media="${id}" data-media-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-media-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>URL</label><input type="url" data-media="${id}" data-media-field="url" value="${(data?.url||'').replace(/"/g,'&quot;')}"></div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-media="${id}" data-media-field="description" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
+  `;
+  document.getElementById('e-mediaContainer').appendChild(div);
+}
+document.getElementById('e-addMediaBtn').addEventListener('click', () => eAddMediaEntry());
+
+// Other
+function eAddOtherEntry(data) {
+  eOtherCounter++;
+  const id = eOtherCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-other-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Title</label><input type="text" data-other="${id}" data-other-field="title" value="${(data?.title||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-other="${id}" data-other-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-other-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-other="${id}" data-other-field="description" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
+  `;
+  document.getElementById('e-otherContainer').appendChild(div);
+}
+document.getElementById('e-addOtherBtn').addEventListener('click', () => eAddOtherEntry());
+
 // Organizer
 document.querySelectorAll('input[name="e-isOrganizer"]').forEach(r => {
   r.addEventListener('change', () => {
@@ -1097,13 +1249,7 @@ function eAddPromoterEntry(data) {
 }
 document.getElementById('e-addPromoterBtn').addEventListener('click', () => eAddPromoterEntry());
 
-// Upcoming
-document.querySelectorAll('input[name="e-hasUpcoming"]').forEach(r => {
-  r.addEventListener('change', () => {
-    document.getElementById('e-upcomingSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
-  });
-});
-
+// Upcoming (always visible — no toggle)
 function eAddUpcomingEntry(data) {
   eUpcomingCounter++;
   const id = eUpcomingCounter;
@@ -1118,7 +1264,7 @@ function eAddUpcomingEntry(data) {
       <div class="field" style="flex:1"><label>Venue</label><input type="text" data-up="${id}" data-up-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
       <div class="field" style="flex:1"><label>Date</label><input type="date" data-up="${id}" data-up-field="date" value="${data?.date||''}"></div>
     </div>
-    <div class="field"><label>Ticket URL</label><input type="url" data-up="${id}" data-up-field="ticketUrl" value="${(data?.ticketUrl||'').replace(/"/g,'&quot;')}"></div>
+    <div class="field"><label>Event info / Ticket link</label><input type="url" data-up="${id}" data-up-field="ticketUrl" value="${(data?.ticketUrl||'').replace(/"/g,'&quot;')}"></div>
   `;
   document.getElementById('e-upcomingContainer').appendChild(div);
 }
@@ -1164,6 +1310,18 @@ function eCollectActivity() {
     const name = entry.querySelector('[data-fest-field="name"]')?.value.trim();
     if (name) activities.push({ type:'festival', name, year: entry.querySelector('[data-fest-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-fest-field="description"]')?.value.trim()||'' });
   });
+  document.querySelectorAll('#e-liveContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-live-field="name"]')?.value.trim();
+    if (name) activities.push({ type:'live', name, venue: entry.querySelector('[data-live-field="venue"]')?.value.trim()||'', year: entry.querySelector('[data-live-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-live-field="description"]')?.value.trim()||'' });
+  });
+  document.querySelectorAll('#e-mediaContainer .entry-row').forEach(entry => {
+    const title = entry.querySelector('[data-media-field="title"]')?.value.trim();
+    if (title) activities.push({ type:'media', title, url: entry.querySelector('[data-media-field="url"]')?.value.trim()||'', year: entry.querySelector('[data-media-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-media-field="description"]')?.value.trim()||'' });
+  });
+  document.querySelectorAll('#e-otherContainer .entry-row').forEach(entry => {
+    const title = entry.querySelector('[data-other-field="title"]')?.value.trim();
+    if (title) activities.push({ type:'other', title, year: entry.querySelector('[data-other-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-other-field="description"]')?.value.trim()||'' });
+  });
   return activities;
 }
 
@@ -1190,14 +1348,12 @@ function eCollectPromoter() {
 }
 
 function eCollectUpcoming() {
-  const active = document.querySelector('input[name="e-hasUpcoming"][value="yes"]')?.checked||false;
-  if (!active) return JSON.stringify({active:false,shows:[]});
   const shows = [];
   document.querySelectorAll('#e-upcomingContainer .entry-row').forEach(entry => {
     const name = entry.querySelector('[data-up-field="name"]')?.value.trim();
     if (name) shows.push({ name, venue: entry.querySelector('[data-up-field="venue"]')?.value.trim()||'', date: entry.querySelector('[data-up-field="date"]')?.value||'', ticketUrl: entry.querySelector('[data-up-field="ticketUrl"]')?.value.trim()||'' });
   });
-  return JSON.stringify({active:true,shows});
+  return JSON.stringify({active:shows.length>0,shows});
 }
 
 function eCollectAwards() {
@@ -1248,6 +1404,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     slug: currentSlug,
     artistName: document.getElementById('e-artistName').value.trim(),
     location: document.getElementById('e-location').value,
+    role: JSON.stringify([...selectedRoles]),
     genre: JSON.stringify([...selectedGenres]),
     primarySoundLink: document.getElementById('e-primarySoundLink').value.trim(),
     instagram: document.getElementById('e-instagram').value.trim(),
@@ -1275,6 +1432,12 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     promoter: eCollectPromoter(),
     upcoming: eCollectUpcoming(),
     awards: eCollectAwards(),
+    featLink1Label: document.getElementById('e-featLink1Label')?.value.trim() || '',
+    featLink1Url: document.getElementById('e-featLink1Url')?.value.trim() || '',
+    featLink1Img: imageData.featLink1Img || '',
+    featLink2Label: document.getElementById('e-featLink2Label')?.value.trim() || '',
+    featLink2Url: document.getElementById('e-featLink2Url')?.value.trim() || '',
+    featLink2Img: imageData.featLink2Img || '',
     updatedAt: new Date().toISOString()
   };
 
