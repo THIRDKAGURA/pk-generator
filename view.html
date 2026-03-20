@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Press Kit — THIRD KAGURA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#0a0a0a; --surface:#141414; --border:#2a2a2a;
+      --gold:#c4a265; --gold-dim:rgba(196,162,101,0.15);
+      --text:#f0f0f0; --text-dim:#999; --text-muted:#666;
+      --radius:8px;
+    }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; min-height:100vh; }
+
+    /* Hero */
+    .hero { position:relative; text-align:center; padding:80px 24px 48px; overflow:hidden; }
+    .hero::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(196,162,101,0.06) 0%, transparent 60%); pointer-events:none; }
+    .hero-photo { width:140px; height:140px; border-radius:50%; object-fit:cover; border:3px solid var(--gold); margin-bottom:20px; position:relative; }
+    .hero h1 { font-size:32px; font-weight:800; margin-bottom:6px; position:relative; }
+    .hero .location { color:var(--text-dim); font-size:14px; margin-bottom:4px; position:relative; }
+    .hero .genre-tag { display:inline-block; padding:4px 14px; border:1px solid var(--gold); border-radius:20px; font-size:12px; color:var(--gold); margin-top:8px; position:relative; }
+
+    /* Container */
+    .container { max-width:680px; margin:0 auto; padding:0 24px 64px; }
+
+    /* Section */
+    .section { margin-bottom:36px; }
+    .section-title {
+      font-size:11px; font-weight:600; color:var(--gold);
+      text-transform:uppercase; letter-spacing:1.5px;
+      margin-bottom:14px; padding-bottom:6px; border-bottom:1px solid var(--border);
+    }
+
+    /* Bio */
+    .bio { font-size:15px; color:var(--text-dim); line-height:1.8; }
+    .bio-toggle { background:none; border:none; color:var(--gold); cursor:pointer; font-size:13px; margin-top:6px; font-family:inherit; }
+
+    /* Sound embed */
+    .sound-link { display:block; margin-top:8px; }
+    .sound-link iframe { width:100%; border-radius:var(--radius); }
+
+    /* Activity cards */
+    .activity-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+      padding:16px; margin-bottom:10px;
+    }
+    .activity-card .card-title { font-size:14px; font-weight:600; margin-bottom:4px; }
+    .activity-card .card-meta { font-size:12px; color:var(--text-muted); }
+    .activity-card .card-desc { font-size:13px; color:var(--text-dim); margin-top:6px; }
+
+    /* Links */
+    .link-list { display:flex; flex-direction:column; gap:8px; }
+    .link-item {
+      display:flex; align-items:center; gap:12px;
+      background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+      padding:12px 16px; text-decoration:none; color:var(--text);
+      transition:border-color 0.2s;
+    }
+    .link-item:hover { border-color:var(--gold); }
+    .link-item .link-label { font-size:14px; }
+    .link-item .link-arrow { margin-left:auto; color:var(--text-muted); font-size:12px; }
+
+    /* Contact */
+    .contact-row { display:flex; gap:10px; flex-wrap:wrap; }
+    .contact-item {
+      flex:1; min-width:200px;
+      background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+      padding:14px 16px;
+    }
+    .contact-item .contact-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+    .contact-item a { color:var(--gold); text-decoration:none; font-size:14px; word-break:break-all; }
+
+    /* Instagram */
+    .ig-link { color:var(--gold); text-decoration:none; font-size:14px; }
+    .ig-link:hover { text-decoration:underline; }
+
+    /* Powered by */
+    .powered { text-align:center; padding:32px; color:var(--text-muted); font-size:11px; border-top:1px solid var(--border); margin-top:40px; }
+    .powered a { color:var(--gold); text-decoration:none; }
+
+    /* Loading */
+    .loading-screen { display:flex; align-items:center; justify-content:center; min-height:60vh; color:var(--text-dim); }
+    .error-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; color:var(--text-dim); text-align:center; padding:24px; }
+    .error-screen h2 { margin-bottom:12px; color:var(--text); }
+  </style>
+</head>
+<body>
+
+<div id="loadingScreen" class="loading-screen">Loading...</div>
+<div id="errorScreen" class="error-screen" style="display:none">
+  <h2>Press kit not found</h2>
+  <p>This profile may not exist or may have been removed.</p>
+</div>
+
+<div id="content" style="display:none">
+  <div class="hero">
+    <img class="hero-photo" id="v-photo" src="" alt="Artist photo">
+    <h1 id="v-name"></h1>
+    <div class="location" id="v-location"></div>
+    <div id="v-genres"></div>
+  </div>
+
+  <div class="container">
+
+    <!-- Bio -->
+    <div class="section" id="sec-bio">
+      <div class="section-title">About</div>
+      <div class="bio" id="v-bio"></div>
+    </div>
+
+    <!-- Primary Sound -->
+    <div class="section" id="sec-sound" style="display:none">
+      <div class="section-title">Listen</div>
+      <div id="v-sound"></div>
+    </div>
+
+    <!-- Instagram -->
+    <div class="section" id="sec-ig" style="display:none">
+      <div class="section-title">Instagram</div>
+      <a class="ig-link" id="v-ig" href="#" target="_blank"></a>
+    </div>
+
+    <!-- Activity -->
+    <div class="section" id="sec-activity" style="display:none">
+      <div class="section-title">Activity</div>
+      <div id="v-activity"></div>
+    </div>
+
+    <!-- Links -->
+    <div class="section" id="sec-links" style="display:none">
+      <div class="section-title">Links</div>
+      <div class="link-list" id="v-links"></div>
+    </div>
+
+    <!-- Contact -->
+    <div class="section" id="sec-contact" style="display:none">
+      <div class="section-title">Contact</div>
+      <div class="contact-row" id="v-contact"></div>
+    </div>
+
+    <div class="powered">Powered by <a href="https://thirdkagura.com" target="_blank">THIRD KAGURA</a></div>
+  </div>
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxnbN1GV9QYwsya8E_Q1mYU_ZpIauhikkcmAcAgJWn7QHTrJgcXk-HKyW7BS3fDWz5b/exec';
+
+const params = new URLSearchParams(window.location.search);
+const slug = params.get('id');
+
+if (!slug) {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('errorScreen').style.display = 'flex';
+} else {
+  loadProfile(slug);
+}
+
+async function loadProfile(id) {
+  try {
+    const res = await fetch(GAS_URL + '?id=' + encodeURIComponent(id));
+    const d = await res.json();
+    if (d.error) throw new Error(d.error);
+    renderProfile(d);
+  } catch (e) {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'flex';
+  }
+}
+
+function renderProfile(d) {
+  document.title = (d.artistName || 'Press Kit') + ' — THIRD KAGURA';
+
+  // Hero
+  if (d.profilePhoto) document.getElementById('v-photo').src = d.profilePhoto;
+  else document.getElementById('v-photo').style.display = 'none';
+  document.getElementById('v-name').textContent = d.artistName || '';
+  document.getElementById('v-location').textContent = d.location || '';
+
+  // Genres
+  let genres = [];
+  try { genres = JSON.parse(d.genre || '[]'); } catch(e) {}
+  if (typeof d.genre === 'string' && !d.genre.startsWith('[')) genres = [d.genre];
+  const genresEl = document.getElementById('v-genres');
+  genres.forEach(g => {
+    if (!g) return;
+    const span = document.createElement('span');
+    span.className = 'genre-tag';
+    span.textContent = g;
+    span.style.marginRight = '6px';
+    genresEl.appendChild(span);
+  });
+
+  // Bio
+  const bio = (d.bio || '').trim();
+  if (bio) {
+    const bioEl = document.getElementById('v-bio');
+    if (bio.length > 450) {
+      bioEl.textContent = bio.substring(0, 450) + '...';
+      const btn = document.createElement('button');
+      btn.className = 'bio-toggle';
+      btn.textContent = 'Read more';
+      btn.addEventListener('click', () => {
+        if (btn.textContent === 'Read more') {
+          bioEl.textContent = bio;
+          bioEl.appendChild(btn);
+          btn.textContent = 'Show less';
+        } else {
+          bioEl.textContent = bio.substring(0, 450) + '...';
+          bioEl.appendChild(btn);
+          btn.textContent = 'Read more';
+        }
+      });
+      bioEl.appendChild(btn);
+    } else {
+      bioEl.textContent = bio;
+    }
+  } else {
+    document.getElementById('sec-bio').style.display = 'none';
+  }
+
+  // Primary Sound
+  const sound = (d.primarySoundLink || '').trim();
+  if (sound) {
+    document.getElementById('sec-sound').style.display = 'block';
+    const soundEl = document.getElementById('v-sound');
+    if (sound.includes('soundcloud.com')) {
+      soundEl.innerHTML = '<iframe height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=' + encodeURIComponent(sound) + '&color=%23c4a265&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>';
+    } else if (sound.includes('spotify.com')) {
+      const spotifyUri = sound.replace('https://open.spotify.com/', 'https://open.spotify.com/embed/');
+      soundEl.innerHTML = '<iframe style="border-radius:12px" src="' + spotifyUri + '" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
+    } else if (sound.includes('youtube.com') || sound.includes('youtu.be')) {
+      let vid = '';
+      if (sound.includes('youtu.be/')) vid = sound.split('youtu.be/')[1]?.split('?')[0];
+      else vid = new URL(sound).searchParams.get('v');
+      if (vid) soundEl.innerHTML = '<iframe width="100%" height="200" src="https://www.youtube.com/embed/' + vid + '" frameborder="0" allowfullscreen style="border-radius:8px"></iframe>';
+      else soundEl.innerHTML = '<a href="' + sound + '" target="_blank" style="color:var(--gold)">' + sound + '</a>';
+    } else {
+      soundEl.innerHTML = '<a href="' + sound + '" target="_blank" style="color:var(--gold)">' + sound + '</a>';
+    }
+  }
+
+  // Instagram
+  const ig = (d.instagram || '').trim();
+  if (ig) {
+    document.getElementById('sec-ig').style.display = 'block';
+    const igEl = document.getElementById('v-ig');
+    const handle = ig.startsWith('@') ? ig : (ig.includes('instagram.com') ? '@' + ig.split('/').filter(Boolean).pop() : '@' + ig);
+    const url = ig.includes('http') ? ig : 'https://instagram.com/' + ig.replace('@','');
+    igEl.href = url;
+    igEl.textContent = handle;
+  }
+
+  // Activity
+  let activities = [];
+  try { activities = JSON.parse(d.activity || '[]'); } catch(e) {}
+  if (activities.length > 0) {
+    document.getElementById('sec-activity').style.display = 'block';
+    const actEl = document.getElementById('v-activity');
+    activities.forEach(a => {
+      const card = document.createElement('div');
+      card.className = 'activity-card';
+      let title = '', meta = '', desc = '';
+      if (a.type === 'residency') {
+        title = a.venue || '';
+        const parts = [];
+        if (a.country) parts.push(a.country);
+        if (a.startDate) parts.push(a.startDate + (a.currentlyRunning ? ' — Present' : (a.endDate ? ' — ' + a.endDate : '')));
+        meta = parts.join(' · ');
+        desc = a.description || '';
+      } else if (a.type === 'clubGig') {
+        title = a.eventName || '';
+        const parts = [];
+        if (a.venue) parts.push(a.venue);
+        if (a.year) parts.push(a.year);
+        if (a.role) parts.push(a.role);
+        meta = parts.join(' · ');
+        desc = a.description || '';
+      } else if (a.type === 'festival') {
+        title = a.name || '';
+        if (a.year) meta = a.year;
+        desc = a.description || '';
+      }
+      card.innerHTML = '<div class="card-title">' + escHtml(title) + '</div>' +
+        (meta ? '<div class="card-meta">' + escHtml(meta) + '</div>' : '') +
+        (desc ? '<div class="card-desc">' + escHtml(desc) + '</div>' : '');
+      actEl.appendChild(card);
+    });
+  }
+
+  // Links
+  let links = [];
+  try { links = JSON.parse(d.links || '[]'); } catch(e) {}
+  if (links.length > 0) {
+    document.getElementById('sec-links').style.display = 'block';
+    const linksEl = document.getElementById('v-links');
+    links.forEach(l => {
+      if (!l.url) return;
+      const a = document.createElement('a');
+      a.className = 'link-item';
+      a.href = l.url;
+      a.target = '_blank';
+      a.innerHTML = '<span class="link-label">' + escHtml(l.label || l.url) + '</span><span class="link-arrow">→</span>';
+      linksEl.appendChild(a);
+    });
+  }
+
+  // Contact
+  const contacts = [];
+  if (d.bookingEmail) contacts.push({ label: 'Booking', value: d.bookingEmail, type: 'email' });
+  if (d.mgmtEmail) contacts.push({ label: 'Management', value: d.mgmtEmail, type: 'email' });
+  if (d.agencyName || d.agencyEmail) {
+    contacts.push({ label: d.agencyName || 'Agency', value: d.agencyEmail || '', type: 'email', extra: d.agencyWebsite });
+  }
+  if (contacts.length > 0) {
+    document.getElementById('sec-contact').style.display = 'block';
+    const contactEl = document.getElementById('v-contact');
+    contacts.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'contact-item';
+      let html = '<div class="contact-label">' + escHtml(c.label) + '</div>';
+      if (c.type === 'email' && c.value) html += '<a href="mailto:' + escHtml(c.value) + '">' + escHtml(c.value) + '</a>';
+      if (c.extra) html += '<br><a href="' + escHtml(c.extra) + '" target="_blank" style="font-size:12px">' + escHtml(c.extra) + '</a>';
+      div.innerHTML = html;
+      contactEl.appendChild(div);
+    });
+  }
+
+  // Show content
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+}
+
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>
