@@ -215,7 +215,7 @@
     <!-- ===== DOWNLOAD ===== -->
     <div class="parent-block" id="secDl" style="display:none">
       <div class="dl-header">
-        <span class="dl-title">Download <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+        <span class="dl-title">Download</span>
         <button class="dl-all-btn" id="dlAllBtn" style="display:none" title="Download all"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
       </div>
       <div class="parent-body">
@@ -506,7 +506,7 @@ function renderProfile(d) {
 }
 
 function thumbHtml(src, label) {
-  return '<div class="dl-thumb-wrap"><div class="dl-thumb"><img src="'+esc(src)+'" alt="'+esc(label)+'"></div><div class="dl-thumb-label">'+esc(label)+'</div></div>';
+  return '<a href="'+esc(src)+'" target="_blank" class="dl-thumb-wrap" style="text-decoration:none"><div class="dl-thumb"><img src="'+esc(src)+'" alt="'+esc(label)+'"></div><div class="dl-thumb-label">'+esc(label)+'</div></a>';
 }
 
 function subAccHtml(label, body) {
