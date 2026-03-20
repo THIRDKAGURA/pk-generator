@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Press Kit — THIRD KAGURA</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
@@ -213,7 +216,7 @@
     <div class="parent-block" id="secDl" style="display:none">
       <div class="dl-header">
         <span class="dl-title">Download <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
-        <button class="dl-all-btn" id="dlAllBtn" style="display:none">SAVE ALL</button>
+        <button class="dl-all-btn" id="dlAllBtn" style="display:none" title="Download all"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
       </div>
       <div class="parent-body">
         <div class="dl-thumbs" id="vDlThumbs" style="display:none"></div>
@@ -482,17 +485,18 @@ function renderProfile(d) {
       if (hasProfile) { thumbsEl.innerHTML += thumbHtml(d.profilePhoto, 'Profile'); dlFiles.push({url:d.profilePhoto, name:'profile'}); }
       if (hasPerf) { thumbsEl.innerHTML += thumbHtml(d.perfPhoto, 'Performance'); dlFiles.push({url:d.perfPhoto, name:'performance'}); }
 
-      // Show SAVE ALL
+      // Show download button
       document.getElementById('dlAllBtn').style.display = 'block';
-      document.getElementById('dlAllBtn').onclick = () => { dlFiles.forEach(f => { const a=document.createElement('a'); a.href=f.url; a.download=f.name; a.click(); }); };
+      window._dlFiles = dlFiles;
+      document.getElementById('dlAllBtn').onclick = () => downloadZip(d);
     }
 
-    // Riders
+    // Riders (show as text content)
     if (hasTech || hasHosp) {
       if (hasLogo || hasProfile || hasPerf) document.getElementById('dlSep').style.display = 'block';
       const dfel = document.getElementById('vDlFiles');
-      if (hasTech) dfel.innerHTML += subAccHtml('Rider', '<a href="'+esc(d.techRider)+'" target="_blank" style="color:var(--accent);text-decoration:none;font-size:13px;">Tech Rider (PDF)</a>');
-      if (hasHosp) dfel.innerHTML += subAccHtml('Hospitality', '<a href="'+esc(d.hospRider)+'" target="_blank" style="color:var(--accent);text-decoration:none;font-size:13px;">Hospitality Rider (PDF)</a>');
+      if (hasTech) dfel.innerHTML += subAccHtml('Tech Rider', '<div style="font-size:13px;color:var(--text-dim);line-height:1.7;white-space:pre-wrap;">'+esc(d.techRider)+'</div>');
+      if (hasHosp) dfel.innerHTML += subAccHtml('Hospitality Rider', '<div style="font-size:13px;color:var(--text-dim);line-height:1.7;white-space:pre-wrap;">'+esc(d.hospRider)+'</div>');
     }
   }
 
@@ -555,6 +559,89 @@ function switchDesign(num) {
   const u = new URL(location.href);
   u.searchParams.set('design', num);
   location.href = u.toString();
+}
+
+// ═══ ZIP DOWNLOAD (PDF + images) ═══
+async function downloadZip(d) {
+  const btn = document.getElementById('dlAllBtn');
+  btn.style.opacity = '0.5';
+  btn.style.pointerEvents = 'none';
+
+  try {
+    const zip = new JSZip();
+    const folder = zip.folder(d.artistName.replace(/[^a-zA-Z0-9_-]/g,'_') + '_PressKit');
+
+    // 1. Collect images
+    const images = [];
+    if (d.profilePhoto) images.push({url: d.profilePhoto, name: 'profile'});
+    if (d.perfPhoto) images.push({url: d.perfPhoto, name: 'performance'});
+    if (d.artistLogo) images.push({url: d.artistLogo, name: 'logo'});
+    if (d.featLink1Img) images.push({url: d.featLink1Img, name: 'featured1'});
+    if (d.featLink2Img) images.push({url: d.featLink2Img, name: 'featured2'});
+
+    // Fetch images as blobs and add to zip
+    for (const img of images) {
+      try {
+        const res = await fetch(img.url);
+        const blob = await res.blob();
+        const ext = blob.type.includes('png') ? '.png' : '.jpg';
+        folder.file(img.name + ext, blob);
+      } catch(e) { console.warn('Failed to fetch image:', img.name); }
+    }
+
+    // 2. Generate PDF — open all accordions first
+    document.querySelectorAll('.sub-acc').forEach(el => el.classList.add('open'));
+    const bioEl = document.getElementById('vBio');
+    if (bioEl) bioEl.classList.add('expanded');
+
+    const mainEl = document.getElementById('mainContent');
+    const canvas = await html2canvas(mainEl, {
+      backgroundColor: '#0a0a0a',
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      scrollY: -window.scrollY,
+      windowWidth: 480
+    });
+
+    const { jsPDF } = window.jspdf;
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    let heightLeft = imgHeight;
+    let position = 0;
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+      position -= pageHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    const pdfBlob = pdf.output('blob');
+    folder.file(d.artistName.replace(/[^a-zA-Z0-9_-]/g,'_') + '_PressKit.pdf', pdfBlob);
+
+    // 3. Generate and download zip
+    const zipBlob = await zip.generateAsync({type: 'blob'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(zipBlob);
+    a.download = d.artistName.replace(/[^a-zA-Z0-9_-]/g,'_') + '_PressKit.zip';
+    a.click();
+    URL.revokeObjectURL(a.href);
+
+  } catch(e) {
+    console.error('Download failed:', e);
+    alert('Download failed. Please try again.');
+  } finally {
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+  }
 }
 </script>
 </body>
