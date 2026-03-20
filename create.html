@@ -548,32 +548,36 @@
 
         <div style="margin-top:28px">
           <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Add up to 2 links with a custom banner image.</p>
-          <div id="featuredLink1" style="margin-bottom:20px">
-            <div class="field"><label>Title</label><input type="text" id="featLink1Label" placeholder="e.g. My Latest Mix"></div>
-            <div class="field"><label>URL</label><input type="url" id="featLink1Url" placeholder="https://..."></div>
-            <div class="field">
-              <label>Banner Image</label>
-              <div class="image-upload" id="drop-featLink1Img" style="height:80px">
-                <input type="file" accept="image/*" data-field="featLink1Img">
-                <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
-                <img class="preview-img" id="preview-featLink1Img" alt="Featured link 1 preview">
-                <button type="button" class="remove-btn" data-field="featLink1Img">×</button>
+          <div id="featuredLinksContainer">
+            <div id="featuredLink1" style="margin-bottom:20px">
+              <div class="field"><label>Title</label><input type="text" id="featLink1Label" placeholder="e.g. My Latest Mix"></div>
+              <div class="field"><label>URL</label><input type="url" id="featLink1Url" placeholder="https://..."></div>
+              <div class="field">
+                <label>Banner Image</label>
+                <div class="image-upload" id="drop-featLink1Img" style="height:80px">
+                  <input type="file" accept="image/*" data-field="featLink1Img">
+                  <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+                  <img class="preview-img" id="preview-featLink1Img" alt="Featured link 1 preview">
+                  <button type="button" class="remove-btn" data-field="featLink1Img">×</button>
+                </div>
+              </div>
+            </div>
+            <div id="featuredLink2" style="display:none;margin-bottom:20px">
+              <div style="display:flex;justify-content:flex-end;margin-bottom:4px"><button type="button" class="remove-entry" id="removeFeatLink2" style="font-size:18px">×</button></div>
+              <div class="field"><label>Title</label><input type="text" id="featLink2Label" placeholder="e.g. Event Page"></div>
+              <div class="field"><label>URL</label><input type="url" id="featLink2Url" placeholder="https://..."></div>
+              <div class="field">
+                <label>Banner Image</label>
+                <div class="image-upload" id="drop-featLink2Img" style="height:80px">
+                  <input type="file" accept="image/*" data-field="featLink2Img">
+                  <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+                  <img class="preview-img" id="preview-featLink2Img" alt="Featured link 2 preview">
+                  <button type="button" class="remove-btn" data-field="featLink2Img">×</button>
+                </div>
               </div>
             </div>
           </div>
-          <div id="featuredLink2">
-            <div class="field"><label>Title</label><input type="text" id="featLink2Label" placeholder="e.g. Event Page"></div>
-            <div class="field"><label>URL</label><input type="url" id="featLink2Url" placeholder="https://..."></div>
-            <div class="field">
-              <label>Banner Image</label>
-              <div class="image-upload" id="drop-featLink2Img" style="height:80px">
-                <input type="file" accept="image/*" data-field="featLink2Img">
-                <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
-                <img class="preview-img" id="preview-featLink2Img" alt="Featured link 2 preview">
-                <button type="button" class="remove-btn" data-field="featLink2Img">×</button>
-              </div>
-            </div>
-          </div>
+          <button type="button" class="add-entry-btn" id="addFeatLinkBtn" style="margin-top:8px">+ Add a link</button>
         </div>
       </section>
 
@@ -1410,6 +1414,22 @@ function collectLinks() {
 }
 document.getElementById('addLinkBtn').addEventListener('click', addLinkEntry);
 
+// Featured Link 2 toggle
+document.getElementById('addFeatLinkBtn').addEventListener('click', function() {
+  document.getElementById('featuredLink2').style.display = 'block';
+  this.style.display = 'none';
+});
+document.getElementById('removeFeatLink2').addEventListener('click', function() {
+  document.getElementById('featuredLink2').style.display = 'none';
+  document.getElementById('featLink2Label').value = '';
+  document.getElementById('featLink2Url').value = '';
+  imageData.featLink2Img = null;
+  var prev = document.getElementById('preview-featLink2Img');
+  if (prev) { prev.style.display = 'none'; prev.src = ''; }
+  var rmBtn = document.querySelector('#drop-featLink2Img .remove-btn');
+  if (rmBtn) rmBtn.style.display = 'none';
+  document.getElementById('addFeatLinkBtn').style.display = '';
+});
 
 // ═══ VALIDATION (Step 1 only) ═══
 

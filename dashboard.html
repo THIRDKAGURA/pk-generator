@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Your Press Kit — THIRD KAGURA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
@@ -356,99 +356,98 @@
       </div>
     </section>
 
-    <!-- Organizer -->
-    <section class="form-section">
-      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you organize events?</p>
-      <div style="display:flex;gap:14px;margin-bottom:16px">
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isOrganizer" value="yes" style="accent-color:var(--gold)"> Yes</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isOrganizer" value="no" checked style="accent-color:var(--gold)"> No</label>
+    <!-- Awards / Organizer / Promoter (no separators) -->
+    <div style="padding:0 0 20px">
+      <div style="margin-bottom:20px">
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px">Do you have any awards or achievements?</p>
+        <div style="display:flex;gap:14px;margin-bottom:12px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasAwards" value="yes" style="accent-color:var(--gold)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasAwards" value="no" checked style="accent-color:var(--gold)"> No</label>
+        </div>
+        <div id="e-awardsSection" style="display:none">
+          <div id="e-awardsContainer"></div>
+          <button type="button" class="add-entry-btn" id="e-addAwardBtn">+ Add award</button>
+        </div>
       </div>
-      <div id="e-organizerSection" style="display:none">
-        <div id="e-organizerContainer"></div>
-        <button type="button" class="add-entry-btn" id="e-addOrganizerBtn">+ Add event</button>
-      </div>
-    </section>
 
-    <!-- Promoter -->
-    <section class="form-section">
-      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Are you a promoter?</p>
-      <div style="display:flex;gap:14px;margin-bottom:16px">
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isPromoter" value="yes" style="accent-color:var(--gold)"> Yes</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isPromoter" value="no" checked style="accent-color:var(--gold)"> No</label>
+      <div style="margin-bottom:20px">
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px">Do you organize events?</p>
+        <div style="display:flex;gap:14px;margin-bottom:12px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isOrganizer" value="yes" style="accent-color:var(--gold)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isOrganizer" value="no" checked style="accent-color:var(--gold)"> No</label>
+        </div>
+        <div id="e-organizerSection" style="display:none">
+          <div id="e-organizerContainer"></div>
+          <button type="button" class="add-entry-btn" id="e-addOrganizerBtn">+ Add event</button>
+        </div>
       </div>
-      <div id="e-promoterSection" style="display:none">
-        <div id="e-promoterContainer"></div>
-        <button type="button" class="add-entry-btn" id="e-addPromoterBtn">+ Add promoted event</button>
-      </div>
-    </section>
 
-    <!-- Upcoming -->
+      <div>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px">Are you a promoter?</p>
+        <div style="display:flex;gap:14px;margin-bottom:12px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isPromoter" value="yes" style="accent-color:var(--gold)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isPromoter" value="no" checked style="accent-color:var(--gold)"> No</label>
+        </div>
+        <div id="e-promoterSection" style="display:none">
+          <div id="e-promoterContainer"></div>
+          <button type="button" class="add-entry-btn" id="e-addPromoterBtn">+ Add promoted event</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Shows -->
     <section class="form-section">
-      <h3>Upcoming Shows</h3>
+      <h3>Upcoming Shows <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Optional)</span></h3>
       <div id="e-upcomingSection">
         <div id="e-upcomingContainer"></div>
         <button type="button" class="add-entry-btn" id="e-addUpcomingBtn">+ Add upcoming show</button>
       </div>
     </section>
 
-    <!-- Awards -->
-    <section class="form-section">
-      <h3>Awards <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Optional)</span></h3>
-      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have any awards or achievements?</p>
-      <div style="display:flex;gap:14px;margin-bottom:16px">
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasAwards" value="yes" style="accent-color:var(--gold)"> Yes</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasAwards" value="no" checked style="accent-color:var(--gold)"> No</label>
-      </div>
-      <div id="e-awardsSection" style="display:none">
-        <div id="e-awardsContainer"></div>
-        <button type="button" class="add-entry-btn" id="e-addAwardBtn">+ Add award</button>
-      </div>
-    </section>
-
-    <!-- Links -->
+    <!-- Links + Featured Links -->
     <section class="form-section">
       <h3>Links</h3>
       <div id="e-linksContainer"></div>
       <button type="button" class="add-entry-btn" id="e-addLinkBtn">+ Add a link</button>
-    </section>
 
-    <!-- Featured Links -->
-    <section class="form-section">
-      <h3>Featured Links</h3>
-      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Add up to 2 links with a custom banner image (16:5 landscape ratio).</p>
-      <div id="e-featuredLink1" style="margin-bottom:20px">
-        <div style="font-size:12px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Featured Link 1</div>
-        <div class="field"><label>Label</label><input type="text" id="e-featLink1Label" placeholder="e.g. My Latest Mix"></div>
-        <div class="field"><label>URL</label><input type="url" id="e-featLink1Url" placeholder="https://..."></div>
-        <div class="field">
-          <label>Banner Image</label>
-          <div class="image-upload" id="drop-featLink1Img" style="height:80px">
-            <input type="file" accept="image/*" data-field="featLink1Img">
-            <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
-            <img class="preview-img" id="preview-featLink1Img" alt="Featured link 1 preview">
-            <button type="button" class="remove-btn" data-field="featLink1Img">×</button>
+      <div style="margin-top:28px">
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Add up to 2 links with a custom banner image.</p>
+        <div id="e-featuredLinksContainer">
+          <div id="e-featuredLink1" style="margin-bottom:20px">
+            <div class="field"><label>Title</label><input type="text" id="e-featLink1Label" placeholder="e.g. My Latest Mix"></div>
+            <div class="field"><label>URL</label><input type="url" id="e-featLink1Url" placeholder="https://..."></div>
+            <div class="field">
+              <label>Banner Image</label>
+              <div class="image-upload" id="drop-featLink1Img" style="height:80px">
+                <input type="file" accept="image/*" data-field="featLink1Img">
+                <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+                <img class="preview-img" id="preview-featLink1Img" alt="Featured link 1 preview">
+                <button type="button" class="remove-btn" data-field="featLink1Img">×</button>
+              </div>
+            </div>
+          </div>
+          <div id="e-featuredLink2" style="display:none;margin-bottom:20px">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:4px"><button type="button" class="remove-entry" id="e-removeFeatLink2" style="font-size:18px">×</button></div>
+            <div class="field"><label>Title</label><input type="text" id="e-featLink2Label" placeholder="e.g. Event Page"></div>
+            <div class="field"><label>URL</label><input type="url" id="e-featLink2Url" placeholder="https://..."></div>
+            <div class="field">
+              <label>Banner Image</label>
+              <div class="image-upload" id="drop-featLink2Img" style="height:80px">
+                <input type="file" accept="image/*" data-field="featLink2Img">
+                <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+                <img class="preview-img" id="preview-featLink2Img" alt="Featured link 2 preview">
+                <button type="button" class="remove-btn" data-field="featLink2Img">×</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="e-featuredLink2">
-        <div style="font-size:12px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Featured Link 2</div>
-        <div class="field"><label>Label</label><input type="text" id="e-featLink2Label" placeholder="e.g. Event Page"></div>
-        <div class="field"><label>URL</label><input type="url" id="e-featLink2Url" placeholder="https://..."></div>
-        <div class="field">
-          <label>Banner Image</label>
-          <div class="image-upload" id="drop-featLink2Img" style="height:80px">
-            <input type="file" accept="image/*" data-field="featLink2Img">
-            <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
-            <img class="preview-img" id="preview-featLink2Img" alt="Featured link 2 preview">
-            <button type="button" class="remove-btn" data-field="featLink2Img">×</button>
-          </div>
-        </div>
+        <button type="button" class="add-entry-btn" id="e-addFeatLinkBtn" style="margin-top:8px">+ Add a link</button>
       </div>
     </section>
 
-    <!-- Fees -->
+    <!-- Fees + Riders -->
     <section class="form-section">
-      <h3>Fees <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private)</span></h3>
+      <h3>Fees <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private — never shown publicly)</span></h3>
       <div class="field" style="margin-bottom:14px">
         <label for="e-feeCurrency">Currency</label>
         <select id="e-feeCurrency" style="width:auto;min-width:160px">
@@ -482,18 +481,13 @@
         <div class="field"><label>Festival Fee</label><input type="text" id="e-festivalFee" placeholder="Enter range"></div>
         <div class="field"><label>Minimum Fee</label><input type="text" id="e-minimumFee" placeholder="Enter amount"></div>
       </div>
+      <div class="field" style="margin-top:20px"><label>Tech Rider</label><textarea id="e-techRider" placeholder="Equipment requirements, setup preferences..."></textarea></div>
+      <div class="field"><label>Hospitality Rider</label><textarea id="e-hospRider" placeholder="Drinks, food, travel requirements..."></textarea></div>
     </section>
 
-    <!-- Riders -->
+    <!-- Contact Information -->
     <section class="form-section">
-      <h3>Riders</h3>
-      <div class="field"><label>Tech Rider</label><textarea id="e-techRider" placeholder="Equipment requirements..."></textarea></div>
-      <div class="field"><label>Hospitality Rider</label><textarea id="e-hospRider" placeholder="Drinks, food, travel..."></textarea></div>
-    </section>
-
-    <!-- Contact -->
-    <section class="form-section">
-      <h3>Contact <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Shown on your profile)</span></h3>
+      <h3>Contact Information <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Shown on your profile)</span></h3>
       <div class="field-row">
         <div class="field"><label>Booking Email</label><input type="email" id="e-bookingEmail"></div>
         <div class="field"><label>Management Email</label><input type="email" id="e-mgmtEmail"></div>
@@ -518,12 +512,12 @@
         </div>
         <div class="field">
           <label>Font</label>
-          <select id="e-font">
-            <option value="Inter">Inter</option>
-            <option value="Oswald">Oswald</option>
-            <option value="Rajdhani">Rajdhani</option>
-            <option value="Space Grotesk">Space Grotesk</option>
-            <option value="DM Sans">DM Sans</option>
+          <select id="e-font" style="font-size:14px">
+            <option value="Montserrat" style="font-family:'Montserrat',sans-serif">Montserrat</option>
+            <option value="Poppins" style="font-family:'Poppins',sans-serif">Poppins</option>
+            <option value="Playfair Display" style="font-family:'Playfair Display',serif">Playfair Display</option>
+            <option value="Bebas Neue" style="font-family:'Bebas Neue',sans-serif">Bebas Neue</option>
+            <option value="Inter" style="font-family:'Inter',sans-serif">Inter</option>
           </select>
         </div>
       </div>
@@ -969,6 +963,10 @@ function populateForm(d) {
   if (d.featLink1Url) document.getElementById('e-featLink1Url').value = d.featLink1Url;
   if (d.featLink2Label) document.getElementById('e-featLink2Label').value = d.featLink2Label;
   if (d.featLink2Url) document.getElementById('e-featLink2Url').value = d.featLink2Url;
+  if (d.featLink2Label || d.featLink2Url) {
+    document.getElementById('e-featuredLink2').style.display = 'block';
+    document.getElementById('e-addFeatLinkBtn').style.display = 'none';
+  }
 
   // Links
   try {
@@ -1269,6 +1267,23 @@ function eAddUpcomingEntry(data) {
   document.getElementById('e-upcomingContainer').appendChild(div);
 }
 document.getElementById('e-addUpcomingBtn').addEventListener('click', () => eAddUpcomingEntry());
+
+// Featured Link 2 toggle
+document.getElementById('e-addFeatLinkBtn').addEventListener('click', function() {
+  document.getElementById('e-featuredLink2').style.display = 'block';
+  this.style.display = 'none';
+});
+document.getElementById('e-removeFeatLink2').addEventListener('click', function() {
+  document.getElementById('e-featuredLink2').style.display = 'none';
+  document.getElementById('e-featLink2Label').value = '';
+  document.getElementById('e-featLink2Url').value = '';
+  imageData.featLink2Img = null;
+  var prev = document.getElementById('preview-featLink2Img');
+  if (prev) { prev.style.display = 'none'; prev.src = ''; }
+  var rmBtn = document.querySelector('#drop-featLink2Img .remove-btn');
+  if (rmBtn) rmBtn.style.display = 'none';
+  document.getElementById('e-addFeatLinkBtn').style.display = '';
+});
 
 // Awards
 document.querySelectorAll('input[name="e-hasAwards"]').forEach(r => {
