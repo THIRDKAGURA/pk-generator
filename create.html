@@ -1246,6 +1246,7 @@ function addUpcomingEntry() {
   document.getElementById('upcomingContainer').appendChild(div);
 }
 document.getElementById('addUpcomingBtn').addEventListener('click', addUpcomingEntry);
+addUpcomingEntry(); // 最初から1件開いておく
 
 // Awards toggle + entry
 document.querySelectorAll('input[name="hasAwards"]').forEach(r => {
