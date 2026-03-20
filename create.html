@@ -329,9 +329,16 @@
       </div>
 
       <div class="field">
+        <label for="email">Your Email <span class="req">*</span></label>
+        <input type="email" id="email" name="email" required placeholder="you@example.com">
+        <div class="hint">Used to sign in and edit your profile later. Never shown publicly.</div>
+        <div class="error-msg" id="err-email">Email is required</div>
+      </div>
+
+      <div class="field">
         <label for="bio">Bio <span class="req">*</span></label>
-        <textarea id="bio" name="bio" required maxlength="350" placeholder="Tell us about yourself and your sound (100–300 characters)"></textarea>
-        <div class="bio-counter" id="bioCounter">0 / 300</div>
+        <textarea id="bio" name="bio" required maxlength="1100" placeholder="Tell us about yourself and your sound (100–1000 characters)"></textarea>
+        <div class="bio-counter" id="bioCounter">0 / 1000</div>
         <div class="error-msg" id="err-bio">Bio must be at least 100 characters</div>
       </div>
 
@@ -349,31 +356,17 @@
         <div class="error-msg" id="err-profilePhoto">Profile photo is required</div>
       </div>
 
-      <!-- Consent (split by purpose) -->
+      <!-- Consent -->
       <div class="form-section" style="margin-top:24px">
-        <h3>Consent</h3>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;opacity:0.7">
+          We respect your privacy. Your data is used to create your profile and connect you with opportunities. We do not sell your data. You can request removal anytime. <a href="https://thirdkagura.com/home/privacy-policy" target="_blank" style="color:var(--gold)">Privacy Policy</a>
+        </div>
 
         <div class="consent-field">
-          <input type="checkbox" id="consentDatabase" name="consentDatabase" required>
-          <label for="consentDatabase">I agree to have my profile included in THIRD KAGURA's artist database. <span class="req">*</span></label>
+          <input type="checkbox" id="consent" name="consent" required>
+          <label for="consent">I agree to submit my profile to THIRD KAGURA for internal use and artist opportunities. <span class="req">*</span></label>
         </div>
-        <div class="error-msg" id="err-consentDatabase">Required to proceed</div>
-
-        <div class="consent-field" style="margin-top:8px">
-          <input type="checkbox" id="consentScouting" name="consentScouting" required>
-          <label for="consentScouting">I agree to be considered for artist scouting and event opportunities. <span class="req">*</span></label>
-        </div>
-        <div class="error-msg" id="err-consentScouting">Required to proceed</div>
-
-        <div class="consent-field" style="margin-top:8px">
-          <input type="checkbox" id="consentPromo" name="consentPromo">
-          <label for="consentPromo">I agree to have my profile, images, and content used for promotional purposes (website, social media, advertising). <span style="font-size:11px;color:var(--text-muted)">(Optional)</span></label>
-        </div>
-
-        <div class="consent-field" style="margin-top:8px">
-          <input type="checkbox" id="consentFeatured" name="consentFeatured">
-          <label for="consentFeatured">I agree to be featured as a highlighted artist by THIRD KAGURA. <span style="font-size:11px;color:var(--text-muted)">(Optional)</span></label>
-        </div>
+        <div class="error-msg" id="err-consent">Required to proceed</div>
       </div>
 
       <div class="btn-row">
@@ -438,24 +431,50 @@
       <!-- Fees -->
       <section class="form-section">
         <h3>Fees <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private — never shown publicly)</span></h3>
+        <div class="field" style="margin-bottom:14px">
+          <label for="feeCurrency">Currency</label>
+          <select id="feeCurrency" name="feeCurrency" style="width:auto;min-width:160px">
+            <option value="AUD">AUD — Australian Dollar</option>
+            <option value="USD">USD — US Dollar</option>
+            <option value="EUR">EUR — Euro</option>
+            <option value="GBP">GBP — British Pound</option>
+            <option value="JPY">JPY — Japanese Yen</option>
+            <option value="KRW">KRW — Korean Won</option>
+            <option value="CNY">CNY — Chinese Yuan</option>
+            <option value="NZD">NZD — New Zealand Dollar</option>
+            <option value="SGD">SGD — Singapore Dollar</option>
+            <option value="THB">THB — Thai Baht</option>
+            <option value="IDR">IDR — Indonesian Rupiah</option>
+            <option value="PHP">PHP — Philippine Peso</option>
+            <option value="INR">INR — Indian Rupee</option>
+            <option value="BRL">BRL — Brazilian Real</option>
+            <option value="ZAR">ZAR — South African Rand</option>
+            <option value="AED">AED — UAE Dirham</option>
+            <option value="CAD">CAD — Canadian Dollar</option>
+            <option value="SEK">SEK — Swedish Krona</option>
+            <option value="CHF">CHF — Swiss Franc</option>
+            <option value="MXN">MXN — Mexican Peso</option>
+          </select>
+          <div class="hint">Auto-set from your country. Change if needed.</div>
+        </div>
         <div class="field-row">
           <div class="field">
             <label for="localFee">Local Fee</label>
-            <input type="text" id="localFee" name="localFee" placeholder="Enter range (AUD)">
+            <input type="text" id="localFee" name="localFee" placeholder="Enter range">
           </div>
           <div class="field">
             <label for="clubFee">Club Fee</label>
-            <input type="text" id="clubFee" name="clubFee" placeholder="Enter range (AUD)">
+            <input type="text" id="clubFee" name="clubFee" placeholder="Enter range">
           </div>
         </div>
         <div class="field-row">
           <div class="field">
             <label for="festivalFee">Festival Fee</label>
-            <input type="text" id="festivalFee" name="festivalFee" placeholder="Enter range (AUD)">
+            <input type="text" id="festivalFee" name="festivalFee" placeholder="Enter range">
           </div>
           <div class="field">
             <label for="minimumFee">Minimum Fee</label>
-            <input type="text" id="minimumFee" name="minimumFee" placeholder="Enter amount (AUD)">
+            <input type="text" id="minimumFee" name="minimumFee" placeholder="Enter amount">
           </div>
         </div>
       </section>
@@ -532,6 +551,41 @@
           <span class="btn-text">CREATE PRESS KIT</span>
           <span class="spinner"></span>
         </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- DONE: Success screen                 -->
+    <!-- ═══════════════════════════════════════ -->
+    <div class="step" id="stepDone">
+      <div style="text-align:center;padding:60px 0 40px">
+        <div style="font-size:48px;margin-bottom:16px">✓</div>
+        <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">Your press kit is live!</h2>
+        <p style="color:var(--text-dim);font-size:14px;margin-bottom:32px">Here's what you need to know.</p>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:left;margin-bottom:20px">
+          <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Your profile URL</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" id="doneUrl" readonly style="flex:1;background:var(--bg);cursor:text;font-size:13px">
+            <button type="button" class="btn btn-primary" style="padding:10px 16px;font-size:12px" onclick="navigator.clipboard.writeText(document.getElementById('doneUrl').value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)">Copy</button>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:left;margin-bottom:20px">
+          <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Edit your profile later</div>
+          <p style="font-size:13px;color:var(--text-dim);line-height:1.6">
+            Go to <a href="dashboard.html" style="color:var(--gold)">the dashboard</a> and enter your email. We'll send you a one-time link to edit your profile.
+          </p>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:left;margin-bottom:32px">
+          <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Want to add more details?</div>
+          <p style="font-size:13px;color:var(--text-dim);line-height:1.6">
+            You can add gigs, links, fees, riders, and customization from the dashboard at any time.
+          </p>
+        </div>
+
+        <a href="dashboard.html" class="btn btn-primary" style="text-decoration:none;padding:14px 48px">GO TO DASHBOARD</a>
       </div>
     </div>
 
@@ -724,13 +778,43 @@ Object.keys(IMAGE_SPECS).forEach(field => {
 });
 
 
+// ═══ COUNTRY → CURRENCY AUTO-SET ═══
+const COUNTRY_CURRENCY = {
+  'Australia':'AUD','New Zealand':'NZD','Fiji':'NZD',
+  'Japan':'JPY','South Korea':'KRW','China':'CNY','Taiwan':'CNY',
+  'Hong Kong':'HKD','Singapore':'SGD','Malaysia':'SGD',
+  'Thailand':'THB','Indonesia':'IDR','Philippines':'PHP','India':'INR',
+  'Vietnam':'USD','Cambodia':'USD',
+  'United Kingdom':'GBP','Ireland':'EUR',
+  'Germany':'EUR','France':'EUR','Netherlands':'EUR','Spain':'EUR',
+  'Italy':'EUR','Portugal':'EUR','Belgium':'EUR','Austria':'EUR',
+  'Finland':'EUR','Greece':'EUR','Luxembourg':'EUR','Malta':'EUR',
+  'Cyprus':'EUR','Estonia':'EUR','Latvia':'EUR','Lithuania':'EUR',
+  'Slovakia':'EUR','Slovenia':'EUR','Croatia':'EUR',
+  'Sweden':'SEK','Norway':'SEK','Denmark':'SEK',
+  'Switzerland':'CHF','Poland':'EUR','Czech Republic':'EUR',
+  'Hungary':'EUR','Romania':'EUR','Bulgaria':'EUR',
+  'United States':'USD','Canada':'CAD','Mexico':'MXN',
+  'Brazil':'BRL','Argentina':'USD','Colombia':'USD','Chile':'USD',
+  'South Africa':'ZAR','Nigeria':'USD','Kenya':'USD','Morocco':'USD','Egypt':'USD',
+  'United Arab Emirates':'AED','Israel':'USD','Turkey':'EUR','Lebanon':'USD',
+};
+
+document.getElementById('location').addEventListener('change', function() {
+  const currency = COUNTRY_CURRENCY[this.value];
+  if (currency) {
+    document.getElementById('feeCurrency').value = currency;
+  }
+});
+
+
 // ═══ BIO COUNTER ═══
 const bioEl = document.getElementById('bio');
 const bioCounter = document.getElementById('bioCounter');
 bioEl.addEventListener('input', () => {
   const len = bioEl.value.length;
-  bioCounter.textContent = `${len} / 300`;
-  bioCounter.className = 'bio-counter ' + (len < 100 ? 'under' : len <= 300 ? 'ok' : 'over');
+  bioCounter.textContent = `${len} / 1000`;
+  bioCounter.className = 'bio-counter ' + (len < 100 ? 'under' : len <= 1000 ? 'ok' : 'over');
   if (len >= 100) { document.getElementById('err-bio').classList.remove('visible'); bioEl.classList.remove('error'); }
 });
 
@@ -743,21 +827,32 @@ colorHex.addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(colorHex
 
 
 // ═══ GIGS ═══
-const GIG_ROLES = ['Resident', 'Organiser', 'Spot / Guest'];
-const GIG_FREQUENCIES = ['Weekly', 'Fortnightly', 'Monthly', 'Irregular / One-off'];
+const GIG_TAGS = ['Organiser', 'Headliner', 'Resident'];
 let gigCounter = 0;
 
 function addGigEntry() {
   gigCounter++;
   const id = gigCounter;
   const div = document.createElement('div');
-  div.className = 'entry-row gig-grid'; div.id = 'gig-' + id;
+  div.className = 'entry-row'; div.id = 'gig-' + id;
+  div.style.display = 'block';
   div.innerHTML = `
-    <div class="field"><label>Party / Event</label><input type="text" data-gig="${id}" data-gig-field="name" placeholder="e.g. Techno Tuesday"></div>
-    <div class="field"><label>Role</label><select data-gig="${id}" data-gig-field="role">${GIG_ROLES.map(r => `<option value="${r}">${r}</option>`).join('')}</select></div>
-    <div class="field"><label>Frequency</label><select data-gig="${id}" data-gig-field="frequency">${GIG_FREQUENCIES.map(f => `<option value="${f}">${f}</option>`).join('')}</select></div>
-    <div class="field"><label>Ticket URL</label><input type="url" data-gig="${id}" data-gig-field="ticketUrl" placeholder="https://..."></div>
-    <button type="button" class="remove-entry" onclick="document.getElementById('gig-${id}')?.remove()">×</button>
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Party / Event</label><input type="text" data-gig="${id}" data-gig-field="name" placeholder="e.g. Techno Tuesday"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('gig-${id}')?.remove()">×</button>
+    </div>
+    <div style="display:flex;gap:14px;align-items:center;margin-bottom:8px">
+      ${GIG_TAGS.map(t => `<label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="checkbox" data-gig="${id}" data-gig-tag="${t}" style="accent-color:var(--gold);width:15px;height:15px;cursor:pointer">${t}</label>`).join('')}
+    </div>
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Weekly" style="accent-color:var(--gold);cursor:pointer" onchange="document.getElementById('freq-other-${id}').style.display='none'"> Weekly</label>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Monthly" style="accent-color:var(--gold);cursor:pointer" onchange="document.getElementById('freq-other-${id}').style.display='none'"> Monthly</label>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Other" style="accent-color:var(--gold);cursor:pointer" onchange="document.getElementById('freq-other-${id}').style.display='block'"> Other</label>
+      <div class="field" id="freq-other-${id}" style="flex:1;display:none"><input type="text" data-gig="${id}" data-gig-field="frequencyOther" placeholder="e.g. Every 2 weeks, Irregular"></div>
+    </div>
+    <div class="field">
+      <label>Ticket / Event URL</label><input type="url" data-gig="${id}" data-gig-field="ticketUrl" placeholder="https://...">
+    </div>
   `;
   document.getElementById('gigsContainer').appendChild(div);
 }
@@ -766,10 +861,23 @@ function collectGigs() {
   const gigs = [];
   document.querySelectorAll('#gigsContainer .entry-row').forEach(entry => {
     const name = entry.querySelector('[data-gig-field="name"]').value.trim();
-    const role = entry.querySelector('[data-gig-field="role"]').value;
-    const frequency = entry.querySelector('[data-gig-field="frequency"]').value;
-    const ticketUrl = entry.querySelector('[data-gig-field="ticketUrl"]').value.trim();
-    if (name) gigs.push({ name, role, frequency, ticketUrl });
+    const ticketUrl = entry.querySelector('[data-gig-field="ticketUrl"]')?.value.trim() || '';
+
+    // Frequency: radio (Weekly/Monthly/Other) + freetext
+    let frequency = '';
+    const radios = entry.querySelectorAll('[data-gig-freq]');
+    radios.forEach(r => { if (r.checked) frequency = r.dataset.gigFreq; });
+    if (frequency === 'Other') {
+      frequency = entry.querySelector('[data-gig-field="frequencyOther"]')?.value.trim() || 'Other';
+    }
+
+    // Tags: checkboxes
+    const tags = [];
+    GIG_TAGS.forEach(t => {
+      const cb = entry.querySelector(`[data-gig-tag="${t}"]`);
+      if (cb && cb.checked) tags.push(t);
+    });
+    if (name) gigs.push({ name, frequency, ticketUrl, tags });
   });
   return gigs;
 }
@@ -817,10 +925,10 @@ const STEP1_RULES = [
   { field: 'genre', test: () => selectedGenres.size > 0, message: 'Pick at least one genre' },
   { field: 'primarySoundLink', test: () => { const v = document.getElementById('primarySoundLink').value.trim(); return v.length > 0 && isValidUrl(v); }, message: 'A valid sound link is required' },
   { field: 'instagram', test: () => { const v = document.getElementById('instagram').value.trim(); return v.length > 0 && isValidUrl(v); }, message: 'Instagram link is required' },
+  { field: 'email', test: () => { const v = document.getElementById('email').value.trim(); return v.length > 0 && v.includes('@') && v.includes('.'); }, message: 'Email is required' },
   { field: 'bio', test: () => document.getElementById('bio').value.trim().length >= 100, message: 'Bio must be at least 100 characters' },
   { field: 'profilePhoto', test: () => imageData.profilePhoto !== null, message: 'Profile photo is required' },
-  { field: 'consentDatabase', test: () => document.getElementById('consentDatabase').checked, message: 'Database consent is required' },
-  { field: 'consentScouting', test: () => document.getElementById('consentScouting').checked, message: 'Scouting consent is required' },
+  { field: 'consent', test: () => document.getElementById('consent').checked, message: 'You must agree to proceed' },
 ];
 
 function validateStep1() {
@@ -924,7 +1032,7 @@ async function submitForm() {
 
   // Bio truncation warning
   const bioLen = bioEl.value.length;
-  if (bioLen > 300 && !confirm(`Your bio is ${bioLen} characters. It will be truncated to 300. Continue?`)) return;
+  if (bioLen > 1000 && !confirm(`Your bio is ${bioLen} characters. It will be truncated to 1000. Continue?`)) return;
 
   isSubmitting = true;
   const btn = document.getElementById('submitBtn') || document.getElementById('toStep2Btn');
@@ -939,12 +1047,13 @@ async function submitForm() {
       genre: JSON.stringify([...selectedGenres]),
       primarySoundLink: document.getElementById('primarySoundLink').value.trim(),
       instagram: document.getElementById('instagram').value.trim(),
-      bio: bioEl.value.trim().substring(0, 300),
+      bio: bioEl.value.trim().substring(0, 1000),
       profilePhoto: imageData.profilePhoto || '',
       perfPhoto: imageData.perfPhoto || '',
       artistLogo: imageData.artistLogo || '',
       accentColor: colorPicker.value,
       font: document.getElementById('font').value,
+      feeCurrency: document.getElementById('feeCurrency')?.value || 'AUD',
       localFee: document.getElementById('localFee')?.value.trim() || '',
       clubFee: document.getElementById('clubFee')?.value.trim() || '',
       festivalFee: document.getElementById('festivalFee')?.value.trim() || '',
@@ -952,23 +1061,25 @@ async function submitForm() {
       techRider: document.getElementById('techRider')?.value.trim() || '',
       hospRider: document.getElementById('hospRider')?.value.trim() || '',
       links: JSON.stringify(collectLinks()),
-      bookingEmail: document.getElementById('bookingEmail')?.value.trim() || '',
+      bookingEmail: document.getElementById('bookingEmail')?.value.trim() || document.getElementById('email').value.trim(),
       mgmtEmail: document.getElementById('mgmtEmail')?.value.trim() || '',
       agencyName: document.getElementById('agencyName')?.value.trim() || '',
       agencyEmail: document.getElementById('agencyEmail')?.value.trim() || '',
       agencyWebsite: document.getElementById('agencyWebsite')?.value.trim() || '',
       gigs: JSON.stringify(collectGigs()),
-      consentDatabase: document.getElementById('consentDatabase').checked,
-      consentScouting: document.getElementById('consentScouting').checked,
-      consentPromo: document.getElementById('consentPromo').checked,
-      consentFeatured: document.getElementById('consentFeatured').checked,
+      consent: document.getElementById('consent').checked,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
 
     await postViaIframe(GAS_URL, payload);
 
-    showToast('Press kit created!', 'success');
+    // Show success screen
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('stepDone').classList.add('active');
+    document.getElementById('doneUrl').value = window.location.origin + '/pk-generator/view.html?id=' + slug;
+    document.querySelectorAll('.step-dot').forEach(d => d.classList.add('done'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {
     showToast('Error: ' + err.message, 'error');
   } finally {
