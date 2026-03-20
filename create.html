@@ -560,7 +560,7 @@
 
       <!-- Contact -->
       <section class="form-section">
-        <h3>Contact <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private)</span></h3>
+        <h3>Contact <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Shown on your profile)</span></h3>
         <div class="field-row">
           <div class="field">
             <label for="bookingEmail">Booking Email</label>
@@ -924,16 +924,21 @@ function addResidencyEntry() {
   const id = residencyCounter;
   const div = document.createElement('div');
   div.className = 'entry-row'; div.id = 'residency-' + id; div.style.display = 'block';
+  const countryOptions = '<option value="">Select country</option>' + Object.entries(COUNTRIES_BY_REGION).map(([region, countries]) => '<optgroup label="' + region + '">' + countries.map(c => '<option value="' + c + '">' + c + '</option>').join('') + '</optgroup>').join('');
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
       <div class="field" style="flex:1"><label>Venue / Club Name <span class="req">*</span></label><input type="text" data-res="${id}" data-res-field="venue" placeholder="e.g. Club XYZ"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('residency-${id}')?.remove()">×</button>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Country</label><select data-res="${id}" data-res-field="country">${countryOptions}</select></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
       <div class="field" style="flex:1"><label>Start Date <span class="req">*</span></label><input type="month" data-res="${id}" data-res-field="startDate"></div>
       <div class="field" style="flex:1"><label>End Date</label><input type="month" data-res="${id}" data-res-field="endDate" id="resEnd-${id}"></div>
     </div>
     <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;margin-bottom:4px"><input type="checkbox" data-res="${id}" data-res-field="currentlyRunning" style="accent-color:var(--gold)" onchange="document.getElementById('resEnd-${id}').disabled=this.checked;if(this.checked)document.getElementById('resEnd-${id}').value=''"> Currently running</label>
+    <div class="field" style="margin-top:8px"><label>Description</label><textarea data-res="${id}" data-res-field="description" placeholder="e.g. Weekly Saturday night residency" style="height:60px;resize:vertical"></textarea></div>
   `;
   document.getElementById('residencyContainer').appendChild(div);
 }
@@ -948,6 +953,7 @@ function addClubGigEntry() {
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
       <div class="field" style="flex:1"><label>Event Name <span class="req">*</span></label><input type="text" data-cg="${id}" data-cg-field="eventName" placeholder="e.g. Techno Tuesday"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-cg="${id}" data-cg-field="year" placeholder="2025" maxlength="4"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('clubgig-${id}')?.remove()">×</button>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:8px">
@@ -960,6 +966,7 @@ function addClubGigEntry() {
         </div>
       </div>
     </div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-cg="${id}" data-cg-field="description" placeholder="e.g. Opening set for international headliner" style="height:60px;resize:vertical"></textarea></div>
   `;
   document.getElementById('clubGigContainer').appendChild(div);
 }
@@ -974,9 +981,10 @@ function addFestivalEntry() {
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
       <div class="field" style="flex:1"><label>Festival / Tour Name <span class="req">*</span></label><input type="text" data-fest="${id}" data-fest-field="name" placeholder="e.g. Defqon.1"></div>
-      <div class="field" style="width:120px"><label>Year</label><input type="text" data-fest="${id}" data-fest-field="year" placeholder="2025" maxlength="4"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-fest="${id}" data-fest-field="year" placeholder="2025" maxlength="4"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('festival-${id}')?.remove()">×</button>
     </div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-fest="${id}" data-fest-field="description" placeholder="e.g. Main stage closing set" style="height:60px;resize:vertical"></textarea></div>
   `;
   document.getElementById('festivalContainer').appendChild(div);
 }
@@ -1077,10 +1085,12 @@ function collectActivity() {
   // Residencies
   document.querySelectorAll('#residencyContainer .entry-row').forEach(entry => {
     const venue = entry.querySelector('[data-res-field="venue"]')?.value.trim();
+    const country = entry.querySelector('[data-res-field="country"]')?.value || '';
     const startDate = entry.querySelector('[data-res-field="startDate"]')?.value || '';
     const endDate = entry.querySelector('[data-res-field="endDate"]')?.value || '';
     const currentlyRunning = entry.querySelector('[data-res-field="currentlyRunning"]')?.checked || false;
-    if (venue) activities.push({ type: 'residency', venue, startDate, endDate, currentlyRunning });
+    const description = entry.querySelector('[data-res-field="description"]')?.value.trim() || '';
+    if (venue) activities.push({ type: 'residency', venue, country, startDate, endDate, currentlyRunning, description });
   });
   // Club Gigs
   document.querySelectorAll('#clubGigContainer .entry-row').forEach(entry => {
@@ -1088,13 +1098,16 @@ function collectActivity() {
     const venue = entry.querySelector('[data-cg-field="venue"]')?.value.trim() || '';
     const roles = [];
     entry.querySelectorAll('[data-cg-role]').forEach(cb => { if (cb.checked) roles.push(cb.dataset.cgRole); });
-    if (eventName) activities.push({ type: 'clubGig', eventName, venue, role: roles.join(', ') });
+    const year = entry.querySelector('[data-cg-field="year"]')?.value.trim() || '';
+    const description = entry.querySelector('[data-cg-field="description"]')?.value.trim() || '';
+    if (eventName) activities.push({ type: 'clubGig', eventName, venue, role: roles.join(', '), year, description });
   });
   // Festivals
   document.querySelectorAll('#festivalContainer .entry-row').forEach(entry => {
     const name = entry.querySelector('[data-fest-field="name"]')?.value.trim();
     const year = entry.querySelector('[data-fest-field="year"]')?.value.trim() || '';
-    if (name) activities.push({ type: 'festival', name, year });
+    const description = entry.querySelector('[data-fest-field="description"]')?.value.trim() || '';
+    if (name) activities.push({ type: 'festival', name, year, description });
   });
   return activities;
 }

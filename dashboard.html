@@ -374,7 +374,7 @@
 
     <!-- Contact -->
     <section class="form-section">
-      <h3>Contact <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private)</span></h3>
+      <h3>Contact <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Shown on your profile)</span></h3>
       <div class="field-row">
         <div class="field"><label>Booking Email</label><input type="email" id="e-bookingEmail"></div>
         <div class="field"><label>Management Email</label><input type="email" id="e-mgmtEmail"></div>
@@ -738,16 +738,21 @@ function eAddResidencyEntry(data) {
   const id = eResidencyCounter;
   const div = document.createElement('div');
   div.className = 'entry-row'; div.id = 'e-residency-' + id; div.style.display = 'block';
+  const countryOptions = '<option value="">Select country</option>' + Object.entries(COUNTRIES_BY_REGION).map(([region, countries]) => '<optgroup label="' + region + '">' + countries.map(c => '<option value="' + c + '"' + (c === (data?.country||'') ? ' selected' : '') + '>' + c + '</option>').join('') + '</optgroup>').join('');
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
       <div class="field" style="flex:1"><label>Venue / Club Name</label><input type="text" data-res="${id}" data-res-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('e-residency-${id}')?.remove()">×</button>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Country</label><select data-res="${id}" data-res-field="country">${countryOptions}</select></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
       <div class="field" style="flex:1"><label>Start Date</label><input type="month" data-res="${id}" data-res-field="startDate" value="${data?.startDate||''}"></div>
       <div class="field" style="flex:1"><label>End Date</label><input type="month" data-res="${id}" data-res-field="endDate" id="e-resEnd-${id}" value="${data?.endDate||''}"${data?.currentlyRunning?' disabled':''}></div>
     </div>
     <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;margin-bottom:4px"><input type="checkbox" data-res="${id}" data-res-field="currentlyRunning" style="accent-color:var(--gold)"${data?.currentlyRunning?' checked':''} onchange="document.getElementById('e-resEnd-${id}').disabled=this.checked;if(this.checked)document.getElementById('e-resEnd-${id}').value=''"> Currently running</label>
+    <div class="field" style="margin-top:8px"><label>Description</label><textarea data-res="${id}" data-res-field="description" placeholder="e.g. Weekly Saturday night residency" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
   `;
   document.getElementById('e-residencyContainer').appendChild(div);
 }
@@ -761,6 +766,7 @@ function eAddClubGigEntry(data) {
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
       <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-cg="${id}" data-cg-field="eventName" value="${(data?.eventName||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-cg="${id}" data-cg-field="year" value="${data?.year||''}" maxlength="4"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('e-clubgig-${id}')?.remove()">×</button>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:8px">
@@ -773,6 +779,7 @@ function eAddClubGigEntry(data) {
         </div>
       </div>
     </div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-cg="${id}" data-cg-field="description" placeholder="e.g. Opening set for international headliner" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
   `;
   document.getElementById('e-clubGigContainer').appendChild(div);
 }
@@ -786,9 +793,10 @@ function eAddFestivalEntry(data) {
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
       <div class="field" style="flex:1"><label>Name</label><input type="text" data-fest="${id}" data-fest-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
-      <div class="field" style="width:120px"><label>Year</label><input type="text" data-fest="${id}" data-fest-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-fest="${id}" data-fest-field="year" value="${data?.year||''}" maxlength="4"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('e-festival-${id}')?.remove()">×</button>
     </div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-fest="${id}" data-fest-field="description" placeholder="e.g. Main stage closing set" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
   `;
   document.getElementById('e-festivalContainer').appendChild(div);
 }
@@ -883,17 +891,17 @@ function eCollectActivity() {
   const activities = [];
   document.querySelectorAll('#e-residencyContainer .entry-row').forEach(entry => {
     const venue = entry.querySelector('[data-res-field="venue"]')?.value.trim();
-    if (venue) activities.push({ type:'residency', venue, startDate: entry.querySelector('[data-res-field="startDate"]')?.value||'', endDate: entry.querySelector('[data-res-field="endDate"]')?.value||'', currentlyRunning: entry.querySelector('[data-res-field="currentlyRunning"]')?.checked||false });
+    if (venue) activities.push({ type:'residency', venue, country: entry.querySelector('[data-res-field="country"]')?.value||'', startDate: entry.querySelector('[data-res-field="startDate"]')?.value||'', endDate: entry.querySelector('[data-res-field="endDate"]')?.value||'', currentlyRunning: entry.querySelector('[data-res-field="currentlyRunning"]')?.checked||false, description: entry.querySelector('[data-res-field="description"]')?.value.trim()||'' });
   });
   document.querySelectorAll('#e-clubGigContainer .entry-row').forEach(entry => {
     const eventName = entry.querySelector('[data-cg-field="eventName"]')?.value.trim();
     const roles = [];
     entry.querySelectorAll('[data-cg-role]').forEach(cb => { if(cb.checked) roles.push(cb.dataset.cgRole); });
-    if (eventName) activities.push({ type:'clubGig', eventName, venue: entry.querySelector('[data-cg-field="venue"]')?.value.trim()||'', role: roles.join(', ') });
+    if (eventName) activities.push({ type:'clubGig', eventName, venue: entry.querySelector('[data-cg-field="venue"]')?.value.trim()||'', role: roles.join(', '), year: entry.querySelector('[data-cg-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-cg-field="description"]')?.value.trim()||'' });
   });
   document.querySelectorAll('#e-festivalContainer .entry-row').forEach(entry => {
     const name = entry.querySelector('[data-fest-field="name"]')?.value.trim();
-    if (name) activities.push({ type:'festival', name, year: entry.querySelector('[data-fest-field="year"]')?.value.trim()||'' });
+    if (name) activities.push({ type:'festival', name, year: entry.querySelector('[data-fest-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-fest-field="description"]')?.value.trim()||'' });
   });
   return activities;
 }
