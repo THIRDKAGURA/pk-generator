@@ -159,7 +159,7 @@
 
 <header class="page-header">
   <h1>Edit Your Press Kit</h1>
-  <p id="headerSubtitle">Enter your email to receive an edit link.</p>
+  <p id="headerSubtitle">Sign in with your ID and password</p>
 </header>
 
 <main class="container">
@@ -167,7 +167,6 @@
   <!-- ═══ AUTH VIEW ═══ -->
   <div class="view active" id="authView">
     <div class="login-box">
-      <h2>Edit Your Press Kit</h2>
       <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px">Sign in with your ID and password</p>
 
       <div id="loginForm">
@@ -933,8 +932,7 @@ function eAddResidencyEntry(data) {
   const countryOptions = '<option value="">Select country</option>' + COUNTRIES.map(c => '<option value="' + c + '"' + (c === (data?.country||'') ? ' selected' : '') + '>' + c + '</option>').join('');
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
-      <div class="field" style="flex:1"><label>Venue / Club Name</label><input type="text" data-res="${id}" data-res-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
-      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-res="${id}" data-res-field="eventName" value="${(data?.eventName||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="flex:1"><label>Club Name / Event Name</label><input type="text" data-res="${id}" data-res-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('e-residency-${id}')?.remove()">×</button>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:8px">
@@ -1084,7 +1082,7 @@ function eCollectActivity() {
   const activities = [];
   document.querySelectorAll('#e-residencyContainer .entry-row').forEach(entry => {
     const venue = entry.querySelector('[data-res-field="venue"]')?.value.trim();
-    if (venue) activities.push({ type:'residency', venue, eventName: entry.querySelector('[data-res-field="eventName"]')?.value.trim()||'', country: entry.querySelector('[data-res-field="country"]')?.value||'', startDate: entry.querySelector('[data-res-field="startDate"]')?.value||'', endDate: entry.querySelector('[data-res-field="endDate"]')?.value||'', currentlyRunning: entry.querySelector('[data-res-field="currentlyRunning"]')?.checked||false, description: entry.querySelector('[data-res-field="description"]')?.value.trim()||'' });
+    if (venue) activities.push({ type:'residency', venue, country: entry.querySelector('[data-res-field="country"]')?.value||'', startDate: entry.querySelector('[data-res-field="startDate"]')?.value||'', endDate: entry.querySelector('[data-res-field="endDate"]')?.value||'', currentlyRunning: entry.querySelector('[data-res-field="currentlyRunning"]')?.checked||false, description: entry.querySelector('[data-res-field="description"]')?.value.trim()||'' });
   });
   document.querySelectorAll('#e-clubGigContainer .entry-row').forEach(entry => {
     const eventName = entry.querySelector('[data-cg-field="eventName"]')?.value.trim();

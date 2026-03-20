@@ -933,8 +933,7 @@ function addResidencyEntry() {
   const countryOptions = '<option value="">Select country</option>' + COUNTRIES.map(c => '<option value="' + c + '">' + c + '</option>').join('');
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
-      <div class="field" style="flex:1"><label>Venue / Club Name <span class="req">*</span></label><input type="text" data-res="${id}" data-res-field="venue" placeholder="e.g. Club XYZ"></div>
-      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-res="${id}" data-res-field="eventName" placeholder="e.g. Friday Night Residency"></div>
+      <div class="field" style="flex:1"><label>Club Name / Event Name <span class="req">*</span></label><input type="text" data-res="${id}" data-res-field="venue" placeholder="e.g. Club XYZ / Friday Night Residency"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('residency-${id}')?.remove()">×</button>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:8px">
@@ -1092,13 +1091,12 @@ function collectActivity() {
   // Residencies
   document.querySelectorAll('#residencyContainer .entry-row').forEach(entry => {
     const venue = entry.querySelector('[data-res-field="venue"]')?.value.trim();
-    const eventName = entry.querySelector('[data-res-field="eventName"]')?.value.trim() || '';
     const country = entry.querySelector('[data-res-field="country"]')?.value || '';
     const startDate = entry.querySelector('[data-res-field="startDate"]')?.value || '';
     const endDate = entry.querySelector('[data-res-field="endDate"]')?.value || '';
     const currentlyRunning = entry.querySelector('[data-res-field="currentlyRunning"]')?.checked || false;
     const description = entry.querySelector('[data-res-field="description"]')?.value.trim() || '';
-    if (venue) activities.push({ type: 'residency', venue, eventName, country, startDate, endDate, currentlyRunning, description });
+    if (venue) activities.push({ type: 'residency', venue, country, startDate, endDate, currentlyRunning, description });
   });
   // Club Gigs
   document.querySelectorAll('#clubGigContainer .entry-row').forEach(entry => {
