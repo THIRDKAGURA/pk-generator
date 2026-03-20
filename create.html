@@ -1285,16 +1285,18 @@ STEP1_RULES.forEach(rule => {
   }
 });
 
-// Inline validation for Step 2 rules
+// Inline validation for Step 2 rules — only clear errors on valid input, never show on initial load
+let step2Submitted = false;
 STEP2_RULES.forEach(rule => {
   const el = document.getElementById(rule.field);
   if (el && el.tagName) {
     const evts = ['blur', 'change'];
     evts.forEach(evt => {
       el.addEventListener(evt, () => {
+        if (!step2Submitted) return; // Don't show errors until user has tried to submit
         const errEl = document.getElementById('err-' + rule.field);
         if (rule.test()) { errEl?.classList.remove('visible'); el.classList.remove('error'); }
-        else if (el.value !== '' || rule.field === 'genre') { errEl?.classList.add('visible'); el.classList.add('error'); }
+        else { errEl?.classList.add('visible'); el.classList.add('error'); }
       });
     });
   }
@@ -1437,6 +1439,7 @@ async function submitForm() {
   if (isSubmitting) return;
 
   // Validate Step 2 before submitting
+  step2Submitted = true;
   const step2Errors = validateStep2();
   if (step2Errors.length > 0) {
     // Create validation summary if it doesn't exist
