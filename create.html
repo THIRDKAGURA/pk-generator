@@ -673,15 +673,22 @@
     <div class="step" id="stepDone">
       <!-- Phase 1: Preview -->
       <div id="donePreview" style="padding:40px 0">
-        <h2 style="font-size:22px;font-weight:700;margin-bottom:6px;text-align:center">Does this look right?</h2>
-        <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;text-align:center">Here's a preview of your press kit.</p>
+        <h2 style="font-size:22px;font-weight:700;margin-bottom:6px;text-align:center">Choose your design</h2>
+        <p style="color:var(--text-dim);font-size:14px;margin-bottom:20px;text-align:center">Pick a style for your press kit.</p>
+
+        <!-- Design pattern selector -->
+        <div id="designSelector" style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
+          <button type="button" class="btn design-select-btn active" data-design="1" style="padding:10px 20px;font-size:12px;border:1px solid var(--gold);color:var(--gold);background:var(--gold-dim);border-radius:20px" onclick="switchDesignPreview(1)">Photo Fade</button>
+          <button type="button" class="btn design-select-btn" data-design="2" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="switchDesignPreview(2)">Background</button>
+          <button type="button" class="btn design-select-btn" data-design="3" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="switchDesignPreview(3)">Linktree</button>
+        </div>
 
         <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;background:#000">
           <iframe id="previewFrame" style="width:100%;height:520px;border:none;background:#000" sandbox="allow-scripts allow-same-origin"></iframe>
         </div>
 
         <div style="display:flex;gap:12px;justify-content:center">
-          <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="window.open(document.getElementById('doneUrl').value,'_blank')">Open in new tab</button>
+          <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="window.open(document.getElementById('doneUrl').value + '&design=' + selectedDesign,'_blank')">Open in new tab</button>
           <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('donePreview').style.display='none';document.getElementById('doneActions').style.display='block'">Looks good!</button>
         </div>
         <p style="text-align:center;margin-top:12px">
@@ -699,13 +706,13 @@
           <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Your profile URL</div>
           <div style="display:flex;gap:8px;align-items:center">
             <input type="text" id="doneUrl" readonly style="flex:1;background:var(--bg);cursor:text;font-size:13px">
-            <button type="button" class="btn btn-primary" style="padding:10px 16px;font-size:12px" onclick="navigator.clipboard.writeText(document.getElementById('doneUrl').value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)">Copy</button>
+            <button type="button" class="btn btn-primary" style="padding:10px 16px;font-size:12px" onclick="var u=document.getElementById('doneUrl').value+'&design='+selectedDesign;navigator.clipboard.writeText(u);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)">Copy</button>
           </div>
         </div>
 
         <div style="display:flex;gap:10px;margin-bottom:20px">
-          <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="window.open(document.getElementById('doneUrl').value,'_blank')">View Press Kit</button>
-          <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="var u=document.getElementById('doneUrl').value;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Link copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
+          <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="window.open(document.getElementById('doneUrl').value+'&design='+selectedDesign,'_blank')">View Press Kit</button>
+          <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="var u=document.getElementById('doneUrl').value+'&design='+selectedDesign;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Link copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
         </div>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:left;margin-bottom:32px">
@@ -1569,12 +1576,13 @@ async function submitForm() {
 
     await postViaIframe(GAS_URL, payload);
 
-    // Show preview screen
+    // Show preview screen with design selector
     var profileUrl = window.location.origin + '/pk-generator/view.html?id=' + slug;
+    selectedDesign = 1;
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.getElementById('stepDone').classList.add('active');
     document.getElementById('doneUrl').value = profileUrl;
-    document.getElementById('previewFrame').src = profileUrl;
+    document.getElementById('previewFrame').src = profileUrl + '&design=1';
     document.getElementById('donePreview').style.display = 'block';
     document.getElementById('doneActions').style.display = 'none';
     document.querySelectorAll('.step-dot').forEach(d => d.classList.add('done'));
@@ -1592,6 +1600,29 @@ document.getElementById('pkForm').addEventListener('submit', (e) => {
   submitForm();
 });
 
+// ═══ DESIGN PREVIEW SELECTOR ═══
+let selectedDesign = 1;
+
+function switchDesignPreview(num) {
+  selectedDesign = num;
+  const baseUrl = document.getElementById('doneUrl').value;
+  document.getElementById('previewFrame').src = baseUrl + '&design=' + num;
+
+  document.querySelectorAll('.design-select-btn').forEach(btn => {
+    const d = parseInt(btn.getAttribute('data-design'));
+    if (d === num) {
+      btn.style.borderColor = 'var(--gold)';
+      btn.style.color = 'var(--gold)';
+      btn.style.background = 'var(--gold-dim)';
+      btn.classList.add('active');
+    } else {
+      btn.style.borderColor = 'var(--border)';
+      btn.style.color = 'var(--text-dim)';
+      btn.style.background = 'transparent';
+      btn.classList.remove('active');
+    }
+  });
+}
 
 // ═══ IFRAME POST (GAS workaround for CORS) ═══
 // Creates a hidden form + iframe, submits the JSON payload as a form field.
