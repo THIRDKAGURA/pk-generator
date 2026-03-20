@@ -1368,17 +1368,12 @@ async function checkSlugAvailability(slug) {
   updateSlugStatus('Checking availability...', false);
 
   try {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'check_slug', slug })
-    });
-
+    const response = await fetch(GAS_URL + '?action=check_slug&slug=' + encodeURIComponent(slug));
     const result = await response.json();
     if (result.available) {
-      updateSlugStatus('✓ Slug available', false);
+      updateSlugStatus('✓ Available', false);
     } else {
-      updateSlugStatus('✗ Slug already taken, try another', true);
+      updateSlugStatus('✗ Already taken, try another', true);
     }
   } catch (err) {
     updateSlugStatus('Could not verify availability', true);
