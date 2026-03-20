@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Your Press Kit — THIRD KAGURA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
@@ -512,13 +512,15 @@
         </div>
         <div class="field">
           <label>Font</label>
-          <select id="e-font" style="font-size:14px">
+          <select id="e-font" style="font-size:14px" onchange="document.getElementById('e-fontPreview').style.fontFamily=this.value+',sans-serif'">
             <option value="Montserrat" style="font-family:'Montserrat',sans-serif">Montserrat</option>
             <option value="Poppins" style="font-family:'Poppins',sans-serif">Poppins</option>
             <option value="Playfair Display" style="font-family:'Playfair Display',serif">Playfair Display</option>
             <option value="Bebas Neue" style="font-family:'Bebas Neue',sans-serif">Bebas Neue</option>
             <option value="Inter" style="font-family:'Inter',sans-serif">Inter</option>
+            <option value="Rajdhani" style="font-family:'Rajdhani',sans-serif">Rajdhani</option>
           </select>
+          <div id="e-fontPreview" style="margin-top:8px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);font-family:'Inter',sans-serif;font-size:18px;color:var(--text)">The quick brown fox jumps over the lazy dog</div>
         </div>
       </div>
     </section>
@@ -857,6 +859,7 @@ function populateForm(d) {
   document.getElementById('e-accentColor').value = d.accentColor || '#c4a265';
   document.getElementById('e-accentColorHex').value = d.accentColor || '#c4a265';
   document.getElementById('e-font').value = d.font || 'Inter';
+  document.getElementById('e-fontPreview').style.fontFamily = (d.font || 'Inter') + ',sans-serif';
 
   // Roles
   selectedRoles.clear();
