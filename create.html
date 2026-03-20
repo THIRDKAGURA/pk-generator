@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Your Press Kit — PK Generator V2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -448,7 +448,7 @@
       </section>
 
       <!-- Activity -->
-      <section class="form-section">
+      <section class="form-section" style="border-bottom:none;padding-bottom:0">
         <h3>Activity</h3>
         <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
           <label class="genre-chip" id="actType-residency" style="cursor:pointer"><input type="checkbox" value="residency" class="act-type-cb" style="display:none"> Residency</label>
@@ -459,42 +459,31 @@
           <label class="genre-chip" id="actType-other" style="cursor:pointer"><input type="checkbox" value="other" class="act-type-cb" style="display:none"> Other</label>
         </div>
 
-        <!-- Residency sub-section -->
         <div id="residencySection" style="display:none;margin-top:16px">
           <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Residency</h4>
           <div id="residencyContainer"></div>
           <button type="button" class="add-entry-btn" id="addResidencyBtn">+ Add residency</button>
         </div>
-
-        <!-- Club Gig sub-section -->
         <div id="clubGigSection" style="display:none;margin-top:16px">
           <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Club Gig</h4>
           <div id="clubGigContainer"></div>
           <button type="button" class="add-entry-btn" id="addClubGigBtn">+ Add club gig</button>
         </div>
-
-        <!-- Festival sub-section -->
         <div id="festivalSection" style="display:none;margin-top:16px">
           <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Festival</h4>
           <div id="festivalContainer"></div>
           <button type="button" class="add-entry-btn" id="addFestivalBtn">+ Add festival</button>
         </div>
-
-        <!-- Live sub-section -->
         <div id="liveSection" style="display:none;margin-top:16px">
           <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Live</h4>
           <div id="liveContainer"></div>
           <button type="button" class="add-entry-btn" id="addLiveBtn">+ Add live performance</button>
         </div>
-
-        <!-- Media sub-section -->
         <div id="mediaSection" style="display:none;margin-top:16px">
           <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Media</h4>
           <div id="mediaContainer"></div>
           <button type="button" class="add-entry-btn" id="addMediaBtn">+ Add media</button>
         </div>
-
-        <!-- Other sub-section -->
         <div id="otherSection" style="display:none;margin-top:16px">
           <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Other</h4>
           <div id="otherContainer"></div>
@@ -502,98 +491,93 @@
         </div>
       </section>
 
-      <!-- Organizer -->
-      <section class="form-section">
-        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you organize events?</p>
-        <div style="display:flex;gap:14px;margin-bottom:16px">
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isOrganizer" value="yes" style="accent-color:var(--gold)"> Yes</label>
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isOrganizer" value="no" checked style="accent-color:var(--gold)"> No</label>
+      <!-- Awards / Organizer / Promoter (no separators) -->
+      <div style="padding:0 0 20px">
+        <div style="margin-bottom:20px">
+          <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px">Do you have any awards or achievements?</p>
+          <div style="display:flex;gap:14px;margin-bottom:12px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="hasAwards" value="yes" style="accent-color:var(--gold)"> Yes</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="hasAwards" value="no" checked style="accent-color:var(--gold)"> No</label>
+          </div>
+          <div id="awardsSection" style="display:none">
+            <div id="awardsContainer"></div>
+            <button type="button" class="add-entry-btn" id="addAwardBtn">+ Add award</button>
+          </div>
         </div>
-        <div id="organizerSection" style="display:none">
-          <div id="organizerContainer"></div>
-          <button type="button" class="add-entry-btn" id="addOrganizerBtn">+ Add event</button>
-        </div>
-      </section>
 
-      <!-- Promoter -->
-      <section class="form-section">
-        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Are you a promoter?</p>
-        <div style="display:flex;gap:14px;margin-bottom:16px">
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isPromoter" value="yes" style="accent-color:var(--gold)"> Yes</label>
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isPromoter" value="no" checked style="accent-color:var(--gold)"> No</label>
+        <div style="margin-bottom:20px">
+          <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px">Do you organize events?</p>
+          <div style="display:flex;gap:14px;margin-bottom:12px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isOrganizer" value="yes" style="accent-color:var(--gold)"> Yes</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isOrganizer" value="no" checked style="accent-color:var(--gold)"> No</label>
+          </div>
+          <div id="organizerSection" style="display:none">
+            <div id="organizerContainer"></div>
+            <button type="button" class="add-entry-btn" id="addOrganizerBtn">+ Add event</button>
+          </div>
         </div>
-        <div id="promoterSection" style="display:none">
-          <div id="promoterContainer"></div>
-          <button type="button" class="add-entry-btn" id="addPromoterBtn">+ Add promoted event</button>
-        </div>
-      </section>
 
-      <!-- Upcoming -->
+        <div>
+          <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px">Are you a promoter?</p>
+          <div style="display:flex;gap:14px;margin-bottom:12px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isPromoter" value="yes" style="accent-color:var(--gold)"> Yes</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isPromoter" value="no" checked style="accent-color:var(--gold)"> No</label>
+          </div>
+          <div id="promoterSection" style="display:none">
+            <div id="promoterContainer"></div>
+            <button type="button" class="add-entry-btn" id="addPromoterBtn">+ Add promoted event</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Shows -->
       <section class="form-section">
-        <h3>Upcoming Shows</h3>
+        <h3>Upcoming Shows <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Optional)</span></h3>
         <div id="upcomingSection">
           <div id="upcomingContainer"></div>
           <button type="button" class="add-entry-btn" id="addUpcomingBtn">+ Add upcoming show</button>
         </div>
       </section>
 
-      <!-- Awards -->
-      <section class="form-section">
-        <h3>Awards <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Optional)</span></h3>
-        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have any awards or achievements?</p>
-        <div style="display:flex;gap:14px;margin-bottom:16px">
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="hasAwards" value="yes" style="accent-color:var(--gold)"> Yes</label>
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="hasAwards" value="no" checked style="accent-color:var(--gold)"> No</label>
-        </div>
-        <div id="awardsSection" style="display:none">
-          <div id="awardsContainer"></div>
-          <button type="button" class="add-entry-btn" id="addAwardBtn">+ Add award</button>
-        </div>
-      </section>
-
-      <!-- Links -->
+      <!-- Links + Featured Links -->
       <section class="form-section">
         <h3>Links</h3>
+        <div class="hint" style="margin-bottom:12px">SoundCloud, Spotify, website, or anything else.</div>
         <div id="linksContainer"></div>
         <button type="button" class="add-entry-btn" id="addLinkBtn">+ Add a link</button>
-        <div class="hint" style="margin-top:6px">SoundCloud, Spotify, website, or anything else.</div>
-      </section>
 
-      <!-- Featured Links (with images) -->
-      <section class="form-section">
-        <h3>Featured Links</h3>
-        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Add up to 2 links with a custom banner image. Images will be displayed at the same size as a Spotify embed (landscape, 16:5 ratio).</p>
-        <div id="featuredLink1" style="margin-bottom:20px">
-          <div style="font-size:12px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Featured Link 1</div>
-          <div class="field"><label>Label</label><input type="text" id="featLink1Label" placeholder="e.g. My Latest Mix"></div>
-          <div class="field"><label>URL</label><input type="url" id="featLink1Url" placeholder="https://..."></div>
-          <div class="field">
-            <label>Banner Image</label>
-            <div class="image-upload" id="drop-featLink1Img" style="height:80px">
-              <input type="file" accept="image/*" data-field="featLink1Img">
-              <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
-              <img class="preview-img" id="preview-featLink1Img" alt="Featured link 1 preview">
-              <button type="button" class="remove-btn" data-field="featLink1Img">×</button>
+        <div style="margin-top:28px">
+          <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Add up to 2 links with a custom banner image.</p>
+          <div id="featuredLink1" style="margin-bottom:20px">
+            <div class="field"><label>Title</label><input type="text" id="featLink1Label" placeholder="e.g. My Latest Mix"></div>
+            <div class="field"><label>URL</label><input type="url" id="featLink1Url" placeholder="https://..."></div>
+            <div class="field">
+              <label>Banner Image</label>
+              <div class="image-upload" id="drop-featLink1Img" style="height:80px">
+                <input type="file" accept="image/*" data-field="featLink1Img">
+                <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+                <img class="preview-img" id="preview-featLink1Img" alt="Featured link 1 preview">
+                <button type="button" class="remove-btn" data-field="featLink1Img">×</button>
+              </div>
             </div>
           </div>
-        </div>
-        <div id="featuredLink2">
-          <div style="font-size:12px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Featured Link 2</div>
-          <div class="field"><label>Label</label><input type="text" id="featLink2Label" placeholder="e.g. Event Page"></div>
-          <div class="field"><label>URL</label><input type="url" id="featLink2Url" placeholder="https://..."></div>
-          <div class="field">
-            <label>Banner Image</label>
-            <div class="image-upload" id="drop-featLink2Img" style="height:80px">
-              <input type="file" accept="image/*" data-field="featLink2Img">
-              <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
-              <img class="preview-img" id="preview-featLink2Img" alt="Featured link 2 preview">
-              <button type="button" class="remove-btn" data-field="featLink2Img">×</button>
+          <div id="featuredLink2">
+            <div class="field"><label>Title</label><input type="text" id="featLink2Label" placeholder="e.g. Event Page"></div>
+            <div class="field"><label>URL</label><input type="url" id="featLink2Url" placeholder="https://..."></div>
+            <div class="field">
+              <label>Banner Image</label>
+              <div class="image-upload" id="drop-featLink2Img" style="height:80px">
+                <input type="file" accept="image/*" data-field="featLink2Img">
+                <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+                <img class="preview-img" id="preview-featLink2Img" alt="Featured link 2 preview">
+                <button type="button" class="remove-btn" data-field="featLink2Img">×</button>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Fees -->
+      <!-- Fees + Riders -->
       <section class="form-section">
         <h3>Fees <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private — never shown publicly)</span></h3>
         <div class="field" style="margin-bottom:14px">
@@ -642,12 +626,7 @@
             <input type="text" id="minimumFee" name="minimumFee" placeholder="Enter amount">
           </div>
         </div>
-      </section>
-
-      <!-- Riders -->
-      <section class="form-section">
-        <h3>Riders</h3>
-        <div class="field">
+        <div class="field" style="margin-top:20px">
           <label for="techRider">Tech Rider</label>
           <textarea id="techRider" name="techRider" placeholder="Equipment requirements, setup preferences..."></textarea>
         </div>
@@ -659,7 +638,7 @@
 
       <!-- Contact -->
       <section class="form-section">
-        <h3>Contact <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Shown on your profile)</span></h3>
+        <h3>Contact Information <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Shown on your profile)</span></h3>
         <div class="field-row">
           <div class="field">
             <label for="bookingEmail">Booking Email</label>
@@ -699,12 +678,12 @@
           </div>
           <div class="field">
             <label for="font">Font</label>
-            <select id="font" name="font">
-              <option value="Inter">Inter (Default)</option>
-              <option value="Oswald">Oswald</option>
-              <option value="Rajdhani">Rajdhani</option>
-              <option value="Space Grotesk">Space Grotesk</option>
-              <option value="DM Sans">DM Sans</option>
+            <select id="font" name="font" style="font-size:14px">
+              <option value="Montserrat" style="font-family:'Montserrat',sans-serif">Montserrat</option>
+              <option value="Poppins" style="font-family:'Poppins',sans-serif">Poppins</option>
+              <option value="Playfair Display" style="font-family:'Playfair Display',serif">Playfair Display</option>
+              <option value="Bebas Neue" style="font-family:'Bebas Neue',sans-serif">Bebas Neue</option>
+              <option value="Inter" style="font-family:'Inter',sans-serif">Inter</option>
             </select>
           </div>
         </div>
@@ -738,27 +717,27 @@
     <div class="step" id="stepDone">
       <!-- Phase 1: Preview -->
       <div id="donePreview" style="padding:40px 0">
-        <h2 style="font-size:22px;font-weight:700;margin-bottom:6px;text-align:center">Step 3: Pick your look</h2>
-        <p style="color:var(--text-dim);font-size:14px;margin-bottom:20px;text-align:center">Choose a design for your press kit. You can change this anytime.</p>
-
-        <!-- Design pattern selector -->
-        <div id="designSelector" style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
-          <button type="button" class="btn design-select-btn active" data-design="1" style="padding:10px 20px;font-size:12px;border:1px solid var(--gold);color:var(--gold);background:var(--gold-dim);border-radius:20px" onclick="switchDesignPreview(1)">Photo Fade</button>
-          <button type="button" class="btn design-select-btn" data-design="2" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="switchDesignPreview(2)">Background</button>
-          <button type="button" class="btn design-select-btn" data-design="3" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="switchDesignPreview(3)">Linktree</button>
+        <div style="text-align:center;margin-bottom:28px">
+          <p style="font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);margin-bottom:4px">STEP 3</p>
+          <h2 style="font-size:28px;font-weight:700;margin-bottom:16px">Pick your look</h2>
+          <!-- Design pattern selector -->
+          <div id="designSelector" style="display:flex;gap:8px;justify-content:center">
+            <button type="button" class="btn design-select-btn active" data-design="1" style="padding:10px 20px;font-size:12px;border:1px solid var(--gold);color:var(--gold);background:var(--gold-dim);border-radius:20px" onclick="switchDesignPreview(1)">Photo</button>
+            <button type="button" class="btn design-select-btn" data-design="2" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="switchDesignPreview(2)">BG</button>
+            <button type="button" class="btn design-select-btn" data-design="3" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="switchDesignPreview(3)">Icon</button>
+          </div>
         </div>
 
-        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;background:#000">
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;background:#000">
           <iframe id="previewFrame" style="width:100%;height:520px;border:none;background:#000" sandbox="allow-scripts allow-same-origin"></iframe>
         </div>
 
+        <p style="text-align:center;color:var(--text-dim);font-size:14px;margin-bottom:20px">Here's your press kit.</p>
+
         <div style="display:flex;gap:12px;justify-content:center">
-          <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="window.open(document.getElementById('doneUrl').value + '&design=' + selectedDesign,'_blank')">Open in new tab</button>
-          <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('donePreview').style.display='none';document.getElementById('doneActions').style.display='block'">Looks good!</button>
+          <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="window.open('dashboard.html','_self')">EDIT MORE</button>
+          <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('donePreview').style.display='none';document.getElementById('doneActions').style.display='block'">I'll take this</button>
         </div>
-        <p style="text-align:center;margin-top:12px">
-          <a href="dashboard.html" style="color:var(--text-muted);font-size:12px;text-decoration:none">Something wrong? Edit on the dashboard →</a>
-        </p>
       </div>
 
       <!-- Phase 2: Actions (after confirming preview) -->
