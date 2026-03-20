@@ -372,6 +372,20 @@
       </div>
     </section>
 
+    <!-- Awards -->
+    <section class="form-section">
+      <h3>Awards <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Optional)</span></h3>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have any awards or achievements?</p>
+      <div style="display:flex;gap:14px;margin-bottom:16px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasAwards" value="yes" style="accent-color:var(--gold)"> Yes</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasAwards" value="no" checked style="accent-color:var(--gold)"> No</label>
+      </div>
+      <div id="e-awardsSection" style="display:none">
+        <div id="e-awardsContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addAwardBtn">+ Add award</button>
+      </div>
+    </section>
+
     <!-- Links -->
     <section class="form-section">
       <h3>Links</h3>
@@ -527,7 +541,7 @@ const GENRE_LIST = [
   'Minimal / Deep Tech','Open Format','Psytrance','Techno','Trance','UK Garage'
 ];
 let eResidencyCounter = 0, eClubGigCounter = 0, eFestivalCounter = 0;
-let eOrganizerCounter = 0, ePromoterCounter = 0, eUpcomingCounter = 0;
+let eOrganizerCounter = 0, ePromoterCounter = 0, eUpcomingCounter = 0, eAwardCounter = 0;
 
 const COUNTRIES = [
   'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan',
@@ -859,6 +873,16 @@ function populateForm(d) {
     }
   } catch(e) {}
 
+  // Awards
+  try {
+    const awards = typeof d.awards === 'string' ? JSON.parse(d.awards) : d.awards;
+    if (Array.isArray(awards) && awards.length > 0) {
+      document.querySelector('input[name="e-hasAwards"][value="yes"]').checked = true;
+      document.getElementById('e-awardsSection').style.display = 'block';
+      awards.forEach(a => eAddAwardEntry(a));
+    }
+  } catch(e) {}
+
   // Links
   try {
     const links = JSON.parse(d.links);
@@ -1100,6 +1124,29 @@ function eAddUpcomingEntry(data) {
 }
 document.getElementById('e-addUpcomingBtn').addEventListener('click', () => eAddUpcomingEntry());
 
+// Awards
+document.querySelectorAll('input[name="e-hasAwards"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('e-awardsSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
+  });
+});
+
+function eAddAwardEntry(data) {
+  eAwardCounter++;
+  const id = eAwardCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-award-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Award Title</label><input type="text" data-award="${id}" data-award-field="title" value="${(data?.title||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-award="${id}" data-award-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-award-${id}')?.remove()">×</button>
+    </div>
+  `;
+  document.getElementById('e-awardsContainer').appendChild(div);
+}
+document.getElementById('e-addAwardBtn').addEventListener('click', () => eAddAwardEntry());
+
 // Collect functions
 function eCollectActivity() {
   const activities = [];
@@ -1151,6 +1198,18 @@ function eCollectUpcoming() {
     if (name) shows.push({ name, venue: entry.querySelector('[data-up-field="venue"]')?.value.trim()||'', date: entry.querySelector('[data-up-field="date"]')?.value||'', ticketUrl: entry.querySelector('[data-up-field="ticketUrl"]')?.value.trim()||'' });
   });
   return JSON.stringify({active:true,shows});
+}
+
+function eCollectAwards() {
+  const hasAwards = document.querySelector('input[name="e-hasAwards"][value="yes"]')?.checked||false;
+  if (!hasAwards) return JSON.stringify([]);
+  const awards = [];
+  document.querySelectorAll('#e-awardsContainer .entry-row').forEach(entry => {
+    const title = entry.querySelector('[data-award-field="title"]')?.value.trim();
+    const year = entry.querySelector('[data-award-field="year"]')?.value.trim()||'';
+    if (title) awards.push({ title, year });
+  });
+  return JSON.stringify(awards);
 }
 
 // ─── Links ───
@@ -1215,6 +1274,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     organizer: eCollectOrganizer(),
     promoter: eCollectPromoter(),
     upcoming: eCollectUpcoming(),
+    awards: eCollectAwards(),
     updatedAt: new Date().toISOString()
   };
 

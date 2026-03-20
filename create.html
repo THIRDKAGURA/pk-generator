@@ -506,6 +506,20 @@
         </div>
       </section>
 
+      <!-- Awards -->
+      <section class="form-section">
+        <h3>Awards <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Optional)</span></h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have any awards or achievements?</p>
+        <div style="display:flex;gap:14px;margin-bottom:16px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="hasAwards" value="yes" style="accent-color:var(--gold)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="hasAwards" value="no" checked style="accent-color:var(--gold)"> No</label>
+        </div>
+        <div id="awardsSection" style="display:none">
+          <div id="awardsContainer"></div>
+          <button type="button" class="add-entry-btn" id="addAwardBtn">+ Add award</button>
+        </div>
+      </section>
+
       <!-- Links -->
       <section class="form-section">
         <h3>Links</h3>
@@ -917,7 +931,7 @@ colorHex.addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(colorHex
 
 // ═══ ACTIVITY ═══
 let residencyCounter = 0, clubGigCounter = 0, festivalCounter = 0;
-let organizerCounter = 0, promoterCounter = 0, upcomingCounter = 0;
+let organizerCounter = 0, promoterCounter = 0, upcomingCounter = 0, awardCounter = 0;
 
 // Activity type toggle
 document.querySelectorAll('.act-type-cb').forEach(cb => {
@@ -1101,6 +1115,41 @@ function addUpcomingEntry() {
   document.getElementById('upcomingContainer').appendChild(div);
 }
 document.getElementById('addUpcomingBtn').addEventListener('click', addUpcomingEntry);
+
+// Awards toggle + entry
+document.querySelectorAll('input[name="hasAwards"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('awardsSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
+  });
+});
+
+function addAwardEntry() {
+  awardCounter++;
+  const id = awardCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'award-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Award Title <span class="req">*</span></label><input type="text" data-award="${id}" data-award-field="title" placeholder="e.g. Best DJ Award"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-award="${id}" data-award-field="year" placeholder="2025" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('award-${id}')?.remove()">×</button>
+    </div>
+  `;
+  document.getElementById('awardsContainer').appendChild(div);
+}
+document.getElementById('addAwardBtn').addEventListener('click', addAwardEntry);
+
+function collectAwards() {
+  const hasAwards = document.querySelector('input[name="hasAwards"][value="yes"]')?.checked || false;
+  if (!hasAwards) return JSON.stringify([]);
+  const awards = [];
+  document.querySelectorAll('#awardsContainer .entry-row').forEach(entry => {
+    const title = entry.querySelector('[data-award-field="title"]')?.value.trim();
+    const year = entry.querySelector('[data-award-field="year"]')?.value.trim() || '';
+    if (title) awards.push({ title, year });
+  });
+  return JSON.stringify(awards);
+}
 
 // Collect all activity data
 function collectActivity() {
@@ -1512,6 +1561,7 @@ async function submitForm() {
       organizer: collectOrganizer(),
       promoter: collectPromoter(),
       upcoming: collectUpcoming(),
+      awards: collectAwards(),
       consent: document.getElementById('consent').checked,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
