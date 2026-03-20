@@ -139,11 +139,17 @@
     .toast.error { background:var(--error); color:#fff; }
 
     /* Auth view */
-    .auth-box { max-width:400px; margin:60px auto; text-align:center; }
-    .auth-box h2 { font-size:20px; margin-bottom:8px; }
-    .auth-box p { color:var(--text-dim); font-size:14px; margin-bottom:24px; }
-    .auth-box input { margin-bottom:16px; }
+    .auth-box,.login-box { max-width:400px; margin:60px auto; text-align:center; }
+    .auth-box h2,.login-box h2 { font-size:20px; margin-bottom:8px; }
+    .auth-box p,.login-box p { color:var(--text-dim); font-size:14px; margin-bottom:24px; }
+    .auth-box input,.login-box input { margin-bottom:16px; }
     .auth-sent { color:var(--success); font-size:14px; margin-top:12px; }
+
+    /* Login form messages */
+    .error-msg { color:var(--error); font-size:13px; margin-bottom:12px; display:block; }
+    .success-msg { color:var(--success); font-size:13px; margin-bottom:12px; display:block; }
+    .login-box .field { text-align:left; }
+    .login-box .field input { margin-bottom:0; }
 
     /* Loading */
     .loading-view { text-align:center; padding:80px 24px; color:var(--text-dim); }
@@ -160,17 +166,64 @@
 
   <!-- ═══ AUTH VIEW ═══ -->
   <div class="view active" id="authView">
-    <div class="auth-box">
-      <h2>Sign in to edit</h2>
-      <p>We'll send a one-time link to your registered email.</p>
-      <div class="field">
-        <input type="email" id="authEmail" placeholder="Your booking or management email">
+    <div class="login-box">
+      <h2>Edit Your Press Kit</h2>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px">Sign in with your ID and password</p>
+
+      <div id="loginForm">
+        <div class="field">
+          <label for="loginSlug">Your ID</label>
+          <input type="text" id="loginSlug" placeholder="your-artist-id">
+        </div>
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Your password">
+        </div>
+        <div class="error-msg" id="loginError" style="display:none"></div>
+        <button type="button" class="btn btn-primary" id="loginBtn" style="width:100%;margin-top:12px">
+          <span class="btn-text">SIGN IN</span>
+          <span class="spinner"></span>
+        </button>
+        <div style="text-align:center;margin-top:12px">
+          <a href="#" id="forgotPasswordLink" style="color:var(--gold);font-size:12px;text-decoration:none">Forgot password?</a>
+        </div>
       </div>
-      <button class="btn btn-primary" id="authBtn" style="width:100%">
-        <span class="btn-text">SEND EDIT LINK</span>
-        <span class="spinner"></span>
-      </button>
-      <div class="auth-sent" id="authSent" style="display:none"></div>
+
+      <!-- Forgot password form (hidden by default) -->
+      <div id="forgotForm" style="display:none">
+        <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Enter your ID and we'll send a reset link to your registered email.</p>
+        <div class="field">
+          <label for="resetSlug">Your ID</label>
+          <input type="text" id="resetSlug" placeholder="your-artist-id">
+        </div>
+        <div class="error-msg" id="resetError" style="display:none"></div>
+        <div class="success-msg" id="resetSuccess" style="display:none;color:#4caf50;font-size:13px;margin-bottom:12px"></div>
+        <button type="button" class="btn btn-primary" id="resetBtn" style="width:100%;margin-top:12px">
+          <span class="btn-text">SEND RESET LINK</span>
+          <span class="spinner"></span>
+        </button>
+        <div style="text-align:center;margin-top:12px">
+          <a href="#" id="backToLoginLink" style="color:var(--gold);font-size:12px;text-decoration:none">Back to sign in</a>
+        </div>
+      </div>
+
+      <!-- Reset password form (shown when ?reset=TOKEN) -->
+      <div id="newPasswordForm" style="display:none">
+        <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Set your new password.</p>
+        <div class="field">
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" placeholder="At least 6 characters" minlength="6">
+        </div>
+        <div class="field">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" placeholder="Re-enter password">
+        </div>
+        <div class="error-msg" id="newPasswordError" style="display:none"></div>
+        <button type="button" class="btn btn-primary" id="setPasswordBtn" style="width:100%;margin-top:12px">
+          <span class="btn-text">SET PASSWORD</span>
+          <span class="spinner"></span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -434,14 +487,32 @@ const GENRE_LIST = [
 let eResidencyCounter = 0, eClubGigCounter = 0, eFestivalCounter = 0;
 let eOrganizerCounter = 0, ePromoterCounter = 0, eUpcomingCounter = 0;
 
-const COUNTRIES_BY_REGION = {
-  'Oceania':['Australia','Fiji','Kiribati','Marshall Islands','Micronesia','Nauru','New Zealand','Palau','Papua New Guinea','Samoa','Solomon Islands','Tonga','Tuvalu','Vanuatu'],
-  'Asia':['Afghanistan','Armenia','Azerbaijan','Bahrain','Bangladesh','Bhutan','Brunei','Cambodia','China','Georgia','Hong Kong','India','Indonesia','Iran','Iraq','Israel','Japan','Jordan','Kazakhstan','Kuwait','Kyrgyzstan','Laos','Lebanon','Macau','Malaysia','Maldives','Mongolia','Myanmar','Nepal','North Korea','Oman','Pakistan','Palestine','Philippines','Qatar','Saudi Arabia','Singapore','South Korea','Sri Lanka','Syria','Taiwan','Tajikistan','Thailand','Timor-Leste','Turkey','Turkmenistan','United Arab Emirates','Uzbekistan','Vietnam','Yemen'],
-  'Europe':['Albania','Andorra','Austria','Belarus','Belgium','Bosnia and Herzegovina','Bulgaria','Croatia','Cyprus','Czech Republic','Denmark','Estonia','Finland','France','Germany','Greece','Hungary','Iceland','Ireland','Italy','Kosovo','Latvia','Liechtenstein','Lithuania','Luxembourg','Malta','Moldova','Monaco','Montenegro','Netherlands','North Macedonia','Norway','Poland','Portugal','Romania','Russia','San Marino','Serbia','Slovakia','Slovenia','Spain','Sweden','Switzerland','Ukraine','United Kingdom','Vatican City'],
-  'North America':['Antigua and Barbuda','Bahamas','Barbados','Belize','Canada','Costa Rica','Cuba','Dominica','Dominican Republic','El Salvador','Grenada','Guatemala','Haiti','Honduras','Jamaica','Mexico','Nicaragua','Panama','Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Trinidad and Tobago','United States'],
-  'South America':['Argentina','Bolivia','Brazil','Chile','Colombia','Ecuador','Guyana','Paraguay','Peru','Suriname','Uruguay','Venezuela'],
-  'Africa':['Algeria','Angola','Benin','Botswana','Burkina Faso','Burundi','Cabo Verde','Cameroon','Central African Republic','Chad','Comoros','Congo','Congo (DRC)','Djibouti','Egypt','Equatorial Guinea','Eritrea','Eswatini','Ethiopia','Gabon','Gambia','Ghana','Guinea','Guinea-Bissau','Ivory Coast','Kenya','Lesotho','Liberia','Libya','Madagascar','Malawi','Mali','Mauritania','Mauritius','Morocco','Mozambique','Namibia','Niger','Nigeria','Rwanda','Sao Tome and Principe','Senegal','Seychelles','Sierra Leone','Somalia','South Africa','South Sudan','Sudan','Tanzania','Togo','Tunisia','Uganda','Zambia','Zimbabwe']
-};
+const COUNTRIES = [
+  'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan',
+  'Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
+  'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo','Congo (DRC)','Costa Rica','Croatia','Cuba','Cyprus','Czech Republic',
+  'Denmark','Djibouti','Dominica','Dominican Republic',
+  'Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini','Ethiopia',
+  'Fiji','Finland','France',
+  'Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana',
+  'Haiti','Honduras','Hong Kong','Hungary',
+  'Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Ivory Coast',
+  'Jamaica','Japan','Jordan',
+  'Kazakhstan','Kenya','Kiribati','Kosovo','Kuwait','Kyrgyzstan',
+  'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
+  'Macau','Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar',
+  'Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia','Norway',
+  'Oman',
+  'Pakistan','Palau','Palestine','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal',
+  'Qatar',
+  'Romania','Russia','Rwanda',
+  'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland','Syria',
+  'Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
+  'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan',
+  'Vanuatu','Vatican City','Venezuela','Vietnam',
+  'Yemen',
+  'Zambia','Zimbabwe'
+];
 
 const IMAGE_SPECS = {
   profilePhoto:{maxWidth:1200,quality:0.85,aspect:3/4},
@@ -460,11 +531,7 @@ let gigCounter = 0, linkCounter = 0;
   // Populate country select
   const sel = document.getElementById('e-location');
   const defOpt = document.createElement('option'); defOpt.value=''; defOpt.textContent='Select country'; sel.appendChild(defOpt);
-  Object.entries(COUNTRIES_BY_REGION).forEach(([region,countries]) => {
-    const g = document.createElement('optgroup'); g.label = region;
-    countries.forEach(c => { const o = document.createElement('option'); o.value=c; o.textContent=c; g.appendChild(o); });
-    sel.appendChild(g);
-  });
+  COUNTRIES.forEach(c => { const o = document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
 
   // Genre chips
   const grid = document.getElementById('e-genreGrid');
@@ -493,41 +560,166 @@ function showView(id) {
   document.getElementById(id).classList.add('active');
 }
 
-// ─── Auth: Send token ───
-document.getElementById('authBtn').addEventListener('click', async () => {
-  const email = document.getElementById('authEmail').value.trim();
-  if (!email) return;
-  const btn = document.getElementById('authBtn');
-  btn.classList.add('loading'); btn.disabled = true;
+// ─── Auth: Password Login ───
+document.getElementById('loginBtn').addEventListener('click', async function() {
+  const slug = document.getElementById('loginSlug').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+
+  if (!slug || !password) {
+    errEl.textContent = 'ID and password are required';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  this.disabled = true;
+  this.classList.add('loading');
 
   try {
     const res = await fetch(GAS_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ action:'request_token', email, dashboardUrl: window.location.origin + window.location.pathname })
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ action: 'password_login', slug, password })
     });
-    const json = await res.json();
-    if (json.success) {
-      document.getElementById('authSent').textContent = 'Edit link sent! Check your email.';
-      document.getElementById('authSent').style.display = 'block';
-    } else {
-      showToast(json.error || 'Error sending link', 'error');
+    const result = await res.json();
+    if (result.error) {
+      errEl.textContent = result.error;
+      errEl.style.display = 'block';
+    } else if (result.token) {
+      currentToken = result.token;
+      currentSlug = result.slug;
+      // Load artist data using the token
+      const verifyRes = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ action: 'verify_token', token: currentToken })
+      });
+      const verifyResult = await verifyRes.json();
+      if (verifyResult.success && verifyResult.artist) {
+        document.getElementById('headerSubtitle').textContent = 'Editing: ' + (verifyResult.artist.artistName || currentSlug);
+        populateForm(verifyResult.artist);
+        showView('editView');
+      } else {
+        errEl.textContent = 'Failed to load your data';
+        errEl.style.display = 'block';
+      }
     }
   } catch (e) {
-    // no-cors fallback
-    document.getElementById('authSent').textContent = 'If your email is registered, you will receive an edit link shortly.';
-    document.getElementById('authSent').style.display = 'block';
+    errEl.textContent = 'Connection error. Please try again.';
+    errEl.style.display = 'block';
+  } finally {
+    this.disabled = false;
+    this.classList.remove('loading');
   }
-  btn.classList.remove('loading'); btn.disabled = false;
 });
 
-// ─── Auth: Verify token ───
+// ─── Auth: Forgot Password UI ───
+document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
+  e.preventDefault();
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('forgotForm').style.display = 'block';
+});
+
+document.getElementById('backToLoginLink').addEventListener('click', function(e) {
+  e.preventDefault();
+  document.getElementById('forgotForm').style.display = 'none';
+  document.getElementById('loginForm').style.display = 'block';
+});
+
+// ─── Auth: Password Reset Request ───
+document.getElementById('resetBtn').addEventListener('click', async function() {
+  const slug = document.getElementById('resetSlug').value.trim().toLowerCase();
+  const errEl = document.getElementById('resetError');
+  const successEl = document.getElementById('resetSuccess');
+  errEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  if (!slug) {
+    errEl.textContent = 'ID is required';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  this.disabled = true;
+  this.classList.add('loading');
+
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ action: 'reset_password', slug })
+    });
+    const result = await res.json();
+    successEl.textContent = result.message || 'If this ID exists, a reset link has been sent.';
+    successEl.style.display = 'block';
+  } catch (e) {
+    errEl.textContent = 'Connection error';
+    errEl.style.display = 'block';
+  } finally {
+    this.disabled = false;
+    this.classList.remove('loading');
+  }
+});
+
+// ─── Auth: Password Reset (from token link) ───
+// Check for password reset token in URL
+const urlParams = new URLSearchParams(window.location.search);
+const resetToken = urlParams.get('reset');
+if (resetToken) {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('newPasswordForm').style.display = 'block';
+
+  document.getElementById('setPasswordBtn').addEventListener('click', async function() {
+    const newPw = document.getElementById('newPassword').value;
+    const confirmPw = document.getElementById('confirmPassword').value;
+    const errEl = document.getElementById('newPasswordError');
+    errEl.style.display = 'none';
+
+    if (newPw.length < 6) {
+      errEl.textContent = 'Password must be at least 6 characters';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (newPw !== confirmPw) {
+      errEl.textContent = 'Passwords do not match';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    this.disabled = true;
+    this.classList.add('loading');
+
+    try {
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ action: 'set_password', token: resetToken, newPassword: newPw })
+      });
+      const result = await res.json();
+      if (result.error) {
+        errEl.textContent = result.error;
+        errEl.style.display = 'block';
+      } else {
+        document.getElementById('newPasswordForm').innerHTML = '<p style="color:#4caf50;text-align:center;margin-top:24px">Password set successfully! <a href="dashboard.html" style="color:var(--gold);text-decoration:none">Sign in now</a></p>';
+      }
+    } catch (e) {
+      errEl.textContent = 'Connection error';
+      errEl.style.display = 'block';
+    } finally {
+      this.disabled = false;
+      this.classList.remove('loading');
+    }
+  });
+}
+
+// ─── Auth: Verify token (for backward compatibility) ───
 async function verifyToken(token) {
   try {
     const res = await fetch(GAS_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ action:'verify_token', token })
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ action: 'verify_token', token })
     });
     const json = await res.json();
     if (json.success && json.artist) {
@@ -738,10 +930,11 @@ function eAddResidencyEntry(data) {
   const id = eResidencyCounter;
   const div = document.createElement('div');
   div.className = 'entry-row'; div.id = 'e-residency-' + id; div.style.display = 'block';
-  const countryOptions = '<option value="">Select country</option>' + Object.entries(COUNTRIES_BY_REGION).map(([region, countries]) => '<optgroup label="' + region + '">' + countries.map(c => '<option value="' + c + '"' + (c === (data?.country||'') ? ' selected' : '') + '>' + c + '</option>').join('') + '</optgroup>').join('');
+  const countryOptions = '<option value="">Select country</option>' + COUNTRIES.map(c => '<option value="' + c + '"' + (c === (data?.country||'') ? ' selected' : '') + '>' + c + '</option>').join('');
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
       <div class="field" style="flex:1"><label>Venue / Club Name</label><input type="text" data-res="${id}" data-res-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-res="${id}" data-res-field="eventName" value="${(data?.eventName||'').replace(/"/g,'&quot;')}"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('e-residency-${id}')?.remove()">×</button>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:8px">
@@ -891,7 +1084,7 @@ function eCollectActivity() {
   const activities = [];
   document.querySelectorAll('#e-residencyContainer .entry-row').forEach(entry => {
     const venue = entry.querySelector('[data-res-field="venue"]')?.value.trim();
-    if (venue) activities.push({ type:'residency', venue, country: entry.querySelector('[data-res-field="country"]')?.value||'', startDate: entry.querySelector('[data-res-field="startDate"]')?.value||'', endDate: entry.querySelector('[data-res-field="endDate"]')?.value||'', currentlyRunning: entry.querySelector('[data-res-field="currentlyRunning"]')?.checked||false, description: entry.querySelector('[data-res-field="description"]')?.value.trim()||'' });
+    if (venue) activities.push({ type:'residency', venue, eventName: entry.querySelector('[data-res-field="eventName"]')?.value.trim()||'', country: entry.querySelector('[data-res-field="country"]')?.value||'', startDate: entry.querySelector('[data-res-field="startDate"]')?.value||'', endDate: entry.querySelector('[data-res-field="endDate"]')?.value||'', currentlyRunning: entry.querySelector('[data-res-field="currentlyRunning"]')?.checked||false, description: entry.querySelector('[data-res-field="description"]')?.value.trim()||'' });
   });
   document.querySelectorAll('#e-clubGigContainer .entry-row').forEach(entry => {
     const eventName = entry.querySelector('[data-cg-field="eventName"]')?.value.trim();

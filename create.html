@@ -284,8 +284,8 @@
     <!-- ═══════════════════════════════════════ -->
     <div class="step active" id="step1">
       <div class="step-header">
-        <h2>Step 1: The basics</h2>
-        <p>Just enough to get your profile live.</p>
+        <h2>Step 1: Create your account</h2>
+        <p>Set up your login credentials.</p>
       </div>
 
       <div class="validation-summary" id="validationSummary1">
@@ -299,74 +299,38 @@
         <div class="error-msg" id="err-artistName">Artist name is required</div>
       </div>
 
-      <div class="field-row">
-        <div class="field">
-          <label for="location">Country <span class="req">*</span></label>
-          <select id="location" name="location" required>
-            <option value="">Select country</option>
-          </select>
-          <div class="error-msg" id="err-location">Country is required</div>
-        </div>
-        <div class="field">
-          <label>Genre <span class="req">*</span></label>
-          <div class="genre-grid" id="genreGrid"></div>
-          <div class="error-msg" id="err-genre">Pick at least one genre</div>
-        </div>
+      <div class="field">
+        <label for="location">Country <span class="req">*</span></label>
+        <select id="location" name="location" required>
+          <option value="">Select country</option>
+        </select>
+        <div class="error-msg" id="err-location">Country is required</div>
       </div>
 
       <div class="field">
-        <label for="primarySoundLink">Primary Sound Link <span class="req">*</span></label>
-        <input type="url" id="primarySoundLink" name="primarySoundLink" required placeholder="https://soundcloud.com/... or any music link">
-        <div class="hint">Your best mix or track — any platform.</div>
-        <div class="error-msg" id="err-primarySoundLink">A sound link is required</div>
-      </div>
-
-      <div class="field">
-        <label for="instagram">Instagram <span class="req">*</span></label>
-        <input type="url" id="instagram" name="instagram" required placeholder="https://instagram.com/...">
-        <div class="error-msg" id="err-instagram">Instagram is required</div>
-      </div>
-
-      <div class="field">
-        <label for="email">Your Email <span class="req">*</span></label>
-        <input type="email" id="email" name="email" required placeholder="you@example.com">
-        <div class="hint">Used to sign in and edit your profile later. Never shown publicly.</div>
-        <div class="error-msg" id="err-email">Email is required</div>
-      </div>
-
-      <div class="field">
-        <label for="bio">Bio <span class="req">*</span></label>
-        <textarea id="bio" name="bio" required maxlength="1000" placeholder="Tell us about yourself and your sound"></textarea>
-        <div class="bio-counter" id="bioCounter">0 / 1000</div>
-        <div class="error-msg" id="err-bio">Bio must be at least 100 characters</div>
-      </div>
-
-      <div class="field">
-        <label>Profile Photo <span class="req">*</span></label>
-        <div class="image-upload" id="drop-profilePhoto">
-          <input type="file" accept="image/*" data-field="profilePhoto">
-          <div class="upload-label">
-            <strong>Click or drag to upload</strong>
-            Portrait recommended
-          </div>
-          <img class="preview-img" id="preview-profilePhoto" alt="Profile preview">
-          <button type="button" class="remove-btn" data-field="profilePhoto">×</button>
+        <label for="slug">Your Profile ID <span class="req">*</span></label>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <input type="text" id="slug" name="slug" maxlength="30" placeholder="auto-generated-from-name" style="flex:1;">
+          <button type="button" id="generateSlugBtn" style="padding:8px 12px;background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);cursor:pointer;font-size:13px;white-space:nowrap;">Auto-generate</button>
         </div>
-        <div class="error-msg" id="err-profilePhoto">Profile photo is required</div>
+        <div class="hint">This is your login ID and public profile URL. 3-30 characters, lowercase letters, numbers, hyphens, and underscores only.</div>
+        <div id="slugStatus" style="margin-top:8px;font-size:13px;display:none;"></div>
+        <div class="error-msg" id="err-slug"></div>
       </div>
 
-      <!-- Consent -->
-      <div class="form-section" style="margin-top:24px">
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;opacity:0.7">
-          We respect your privacy. Your data is used to create your profile and connect you with opportunities. We do not sell your data. You can request removal anytime. <a href="https://thirdkagura.com/home/privacy-policy" target="_blank" style="color:var(--gold)">Privacy Policy</a>
-        </div>
-
-        <div class="consent-field">
-          <input type="checkbox" id="consent" name="consent" required>
-          <label for="consent">I agree to submit my profile to THIRD KAGURA for internal use and artist opportunities. <span class="req">*</span></label>
-        </div>
-        <div class="error-msg" id="err-consent">Required to proceed</div>
+      <div class="field">
+        <label for="password">Password <span class="req">*</span></label>
+        <input type="password" id="password" name="password" required minlength="6" placeholder="At least 6 characters">
+        <div class="hint">Used to sign in and edit your profile later.</div>
+        <div class="error-msg" id="err-password">Password must be at least 6 characters</div>
       </div>
+
+      <div class="field">
+        <label for="email">Your Email (Recommended)</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com">
+        <div class="hint">Used to reset your password if forgotten. Never shown publicly.</div>
+      </div>
+
 
       <div class="btn-row">
         <button type="button" class="btn btn-primary" id="toStep2Btn">
@@ -382,9 +346,64 @@
     <!-- ═══════════════════════════════════════ -->
     <div class="step" id="step2">
       <div class="step-header">
-        <h2>Step 2: Add more details</h2>
-        <p>All optional — you can always come back and edit later.</p>
+        <h2>Step 2: Build your profile</h2>
+        <p>Add more details to stand out. You can always edit later.</p>
       </div>
+
+      <!-- Genre -->
+      <section class="form-section">
+        <div class="field">
+          <label>Genre <span class="req">*</span></label>
+          <div class="genre-grid" id="genreGrid"></div>
+          <div class="error-msg" id="err-genre">Pick at least one genre</div>
+        </div>
+      </section>
+
+      <!-- Primary Sound Link -->
+      <section class="form-section">
+        <div class="field">
+          <label for="primarySoundLink">Primary Sound Link <span class="req">*</span></label>
+          <input type="url" id="primarySoundLink" name="primarySoundLink" placeholder="https://soundcloud.com/... or any music link">
+          <div class="hint">Your best mix or track — any platform.</div>
+          <div class="error-msg" id="err-primarySoundLink">A sound link is required</div>
+        </div>
+      </section>
+
+      <!-- Instagram -->
+      <section class="form-section">
+        <div class="field">
+          <label for="instagram">Instagram <span class="req">*</span></label>
+          <input type="url" id="instagram" name="instagram" placeholder="https://instagram.com/...">
+          <div class="error-msg" id="err-instagram">Instagram is required</div>
+        </div>
+      </section>
+
+      <!-- Bio -->
+      <section class="form-section">
+        <div class="field">
+          <label for="bio">Bio <span class="req">*</span></label>
+          <textarea id="bio" name="bio" maxlength="1000" placeholder="Tell us about yourself and your sound"></textarea>
+          <div class="bio-counter" id="bioCounter">0 / 1000</div>
+          <div class="error-msg" id="err-bio">Bio must be at least 100 characters</div>
+        </div>
+      </section>
+
+      <!-- Profile Photo -->
+      <section class="form-section">
+        <div class="field">
+          <label>Profile Photo <span class="req">*</span></label>
+          <div class="image-upload" id="drop-profilePhoto">
+            <input type="file" accept="image/*" data-field="profilePhoto">
+            <div class="upload-label">
+              <strong>Click or drag to upload</strong>
+              Portrait recommended
+            </div>
+            <img class="preview-img" id="preview-profilePhoto" alt="Profile preview">
+            <button type="button" class="remove-btn" data-field="profilePhoto">×</button>
+          </div>
+          <div class="error-msg" id="err-profilePhoto">Profile photo is required</div>
+        </div>
+      </section>
 
       <!-- Images -->
       <section class="form-section">
@@ -611,6 +630,19 @@
         </div>
       </section>
 
+      <!-- Consent -->
+      <div class="form-section" style="margin-top:24px">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;opacity:0.7">
+          We respect your privacy. Your data is used to create your profile and connect you with opportunities. We do not sell your data. You can request removal anytime. <a href="https://thirdkagura.com/home/privacy-policy" target="_blank" style="color:var(--gold)">Privacy Policy</a>
+        </div>
+
+        <div class="consent-field">
+          <input type="checkbox" id="consent" name="consent" required>
+          <label for="consent">I agree to submit my profile to THIRD KAGURA for internal use and artist opportunities. <span class="req">*</span></label>
+        </div>
+        <div class="error-msg" id="err-consent">Required to proceed</div>
+      </div>
+
       <div class="btn-row">
         <button type="button" class="btn btn-secondary" id="backBtn">BACK</button>
         <button type="submit" class="btn btn-primary" id="submitBtn">
@@ -669,66 +701,39 @@
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxnbN1GV9QYwsya8E_Q1mYU_ZpIauhikkcmAcAgJWn7QHTrJgcXk-HKyW7BS3fDWz5b/exec';
 
 // ─── Country List ───
-const COUNTRIES_BY_REGION = {
-  'Oceania': [
-    'Australia','Fiji','Kiribati','Marshall Islands','Micronesia','Nauru',
-    'New Zealand','Palau','Papua New Guinea','Samoa','Solomon Islands',
-    'Tonga','Tuvalu','Vanuatu'
-  ],
-  'Asia': [
-    'Afghanistan','Armenia','Azerbaijan','Bahrain','Bangladesh','Bhutan','Brunei',
-    'Cambodia','China','Georgia','Hong Kong','India','Indonesia','Iran','Iraq',
-    'Israel','Japan','Jordan','Kazakhstan','Kuwait','Kyrgyzstan','Laos','Lebanon',
-    'Macau','Malaysia','Maldives','Mongolia','Myanmar','Nepal','North Korea',
-    'Oman','Pakistan','Palestine','Philippines','Qatar','Saudi Arabia','Singapore',
-    'South Korea','Sri Lanka','Syria','Taiwan','Tajikistan','Thailand',
-    'Timor-Leste','Turkey','Turkmenistan','United Arab Emirates','Uzbekistan',
-    'Vietnam','Yemen'
-  ],
-  'Europe': [
-    'Albania','Andorra','Austria','Belarus','Belgium','Bosnia and Herzegovina',
-    'Bulgaria','Croatia','Cyprus','Czech Republic','Denmark','Estonia','Finland',
-    'France','Germany','Greece','Hungary','Iceland','Ireland','Italy','Kosovo',
-    'Latvia','Liechtenstein','Lithuania','Luxembourg','Malta','Moldova','Monaco',
-    'Montenegro','Netherlands','North Macedonia','Norway','Poland','Portugal',
-    'Romania','Russia','San Marino','Serbia','Slovakia','Slovenia','Spain',
-    'Sweden','Switzerland','Ukraine','United Kingdom','Vatican City'
-  ],
-  'North America': [
-    'Antigua and Barbuda','Bahamas','Barbados','Belize','Canada','Costa Rica',
-    'Cuba','Dominica','Dominican Republic','El Salvador','Grenada','Guatemala',
-    'Haiti','Honduras','Jamaica','Mexico','Nicaragua','Panama',
-    'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines',
-    'Trinidad and Tobago','United States'
-  ],
-  'South America': [
-    'Argentina','Bolivia','Brazil','Chile','Colombia','Ecuador','Guyana',
-    'Paraguay','Peru','Suriname','Uruguay','Venezuela'
-  ],
-  'Africa': [
-    'Algeria','Angola','Benin','Botswana','Burkina Faso','Burundi','Cabo Verde',
-    'Cameroon','Central African Republic','Chad','Comoros','Congo','Congo (DRC)',
-    'Djibouti','Egypt','Equatorial Guinea','Eritrea','Eswatini','Ethiopia',
-    'Gabon','Gambia','Ghana','Guinea','Guinea-Bissau','Ivory Coast','Kenya',
-    'Lesotho','Liberia','Libya','Madagascar','Malawi','Mali','Mauritania',
-    'Mauritius','Morocco','Mozambique','Namibia','Niger','Nigeria','Rwanda',
-    'Sao Tome and Principe','Senegal','Seychelles','Sierra Leone','Somalia',
-    'South Africa','South Sudan','Sudan','Tanzania','Togo','Tunisia','Uganda',
-    'Zambia','Zimbabwe'
-  ]
-};
+const COUNTRIES = [
+  'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan',
+  'Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
+  'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo','Congo (DRC)','Costa Rica','Croatia','Cuba','Cyprus','Czech Republic',
+  'Denmark','Djibouti','Dominica','Dominican Republic',
+  'Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini','Ethiopia',
+  'Fiji','Finland','France',
+  'Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana',
+  'Haiti','Honduras','Hong Kong','Hungary',
+  'Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Ivory Coast',
+  'Jamaica','Japan','Jordan',
+  'Kazakhstan','Kenya','Kiribati','Kosovo','Kuwait','Kyrgyzstan',
+  'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
+  'Macau','Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar',
+  'Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia','Norway',
+  'Oman',
+  'Pakistan','Palau','Palestine','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal',
+  'Qatar',
+  'Romania','Russia','Rwanda',
+  'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland','Syria',
+  'Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
+  'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan',
+  'Vanuatu','Vatican City','Venezuela','Vietnam',
+  'Yemen',
+  'Zambia','Zimbabwe'
+];
 
 (function populateCountries() {
   const sel = document.getElementById('location');
-  Object.entries(COUNTRIES_BY_REGION).forEach(([region, countries]) => {
-    const group = document.createElement('optgroup');
-    group.label = region;
-    countries.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c; opt.textContent = c;
-      group.appendChild(opt);
-    });
-    sel.appendChild(group);
+  COUNTRIES.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    sel.appendChild(opt);
   });
 })();
 
@@ -924,10 +929,11 @@ function addResidencyEntry() {
   const id = residencyCounter;
   const div = document.createElement('div');
   div.className = 'entry-row'; div.id = 'residency-' + id; div.style.display = 'block';
-  const countryOptions = '<option value="">Select country</option>' + Object.entries(COUNTRIES_BY_REGION).map(([region, countries]) => '<optgroup label="' + region + '">' + countries.map(c => '<option value="' + c + '">' + c + '</option>').join('') + '</optgroup>').join('');
+  const countryOptions = '<option value="">Select country</option>' + COUNTRIES.map(c => '<option value="' + c + '">' + c + '</option>').join('');
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
       <div class="field" style="flex:1"><label>Venue / Club Name <span class="req">*</span></label><input type="text" data-res="${id}" data-res-field="venue" placeholder="e.g. Club XYZ"></div>
+      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-res="${id}" data-res-field="eventName" placeholder="e.g. Friday Night Residency"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('residency-${id}')?.remove()">×</button>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:8px">
@@ -1085,12 +1091,13 @@ function collectActivity() {
   // Residencies
   document.querySelectorAll('#residencyContainer .entry-row').forEach(entry => {
     const venue = entry.querySelector('[data-res-field="venue"]')?.value.trim();
+    const eventName = entry.querySelector('[data-res-field="eventName"]')?.value.trim() || '';
     const country = entry.querySelector('[data-res-field="country"]')?.value || '';
     const startDate = entry.querySelector('[data-res-field="startDate"]')?.value || '';
     const endDate = entry.querySelector('[data-res-field="endDate"]')?.value || '';
     const currentlyRunning = entry.querySelector('[data-res-field="currentlyRunning"]')?.checked || false;
     const description = entry.querySelector('[data-res-field="description"]')?.value.trim() || '';
-    if (venue) activities.push({ type: 'residency', venue, country, startDate, endDate, currentlyRunning, description });
+    if (venue) activities.push({ type: 'residency', venue, eventName, country, startDate, endDate, currentlyRunning, description });
   });
   // Club Gigs
   document.querySelectorAll('#clubGigContainer .entry-row').forEach(entry => {
@@ -1196,10 +1203,14 @@ function isValidUrl(str) {
 const STEP1_RULES = [
   { field: 'artistName', test: () => document.getElementById('artistName').value.trim().length > 0, message: 'Artist name is required' },
   { field: 'location', test: () => document.getElementById('location').value !== '', message: 'Country is required' },
+  { field: 'slug', test: () => { const s = document.getElementById('slug').value.trim(); return s.length >= 3 && s.length <= 30 && /^[a-z0-9\-_]+$/.test(s); }, message: 'Profile ID must be 3-30 characters, lowercase letters, numbers, hyphens, and underscores only' },
+  { field: 'password', test: () => document.getElementById('password').value.length >= 6, message: 'Password must be at least 6 characters' },
+];
+
+const STEP2_RULES = [
   { field: 'genre', test: () => selectedGenres.size > 0, message: 'Pick at least one genre' },
   { field: 'primarySoundLink', test: () => { const v = document.getElementById('primarySoundLink').value.trim(); return v.length > 0 && isValidUrl(v); }, message: 'A valid sound link is required' },
   { field: 'instagram', test: () => { const v = document.getElementById('instagram').value.trim(); return v.length > 0 && isValidUrl(v); }, message: 'Instagram link is required' },
-  { field: 'email', test: () => { const v = document.getElementById('email').value.trim(); return v.length > 0 && v.includes('@') && v.includes('.'); }, message: 'Email is required' },
   { field: 'bio', test: () => document.getElementById('bio').value.trim().length >= 100, message: 'Bio must be at least 100 characters' },
   { field: 'profilePhoto', test: () => imageData.profilePhoto !== null, message: 'Profile photo is required' },
   { field: 'consent', test: () => document.getElementById('consent').checked, message: 'You must agree to proceed' },
@@ -1208,6 +1219,25 @@ const STEP1_RULES = [
 function validateStep1() {
   const errors = [];
   STEP1_RULES.forEach(rule => {
+    const errEl = document.getElementById('err-' + rule.field);
+    const input = document.getElementById(rule.field);
+    if (!rule.test()) {
+      errors.push(rule);
+      errEl?.classList.add('visible');
+      if (input) input.classList.add('error');
+      if (rule.field === 'profilePhoto') document.getElementById('drop-profilePhoto').classList.add('error-border');
+    } else {
+      errEl?.classList.remove('visible');
+      if (input) input.classList.remove('error');
+      if (rule.field === 'profilePhoto') document.getElementById('drop-profilePhoto').classList.remove('error-border');
+    }
+  });
+  return errors;
+}
+
+function validateStep2() {
+  const errors = [];
+  STEP2_RULES.forEach(rule => {
     const errEl = document.getElementById('err-' + rule.field);
     const input = document.getElementById(rule.field);
     if (!rule.test()) {
@@ -1250,6 +1280,21 @@ STEP1_RULES.forEach(rule => {
         const errEl = document.getElementById('err-' + rule.field);
         if (rule.test()) { errEl?.classList.remove('visible'); el.classList.remove('error'); }
         else if (el.value !== '' || el.type === 'checkbox') { errEl?.classList.add('visible'); el.classList.add('error'); }
+      });
+    });
+  }
+});
+
+// Inline validation for Step 2 rules
+STEP2_RULES.forEach(rule => {
+  const el = document.getElementById(rule.field);
+  if (el && el.tagName) {
+    const evts = ['blur', 'change'];
+    evts.forEach(evt => {
+      el.addEventListener(evt, () => {
+        const errEl = document.getElementById('err-' + rule.field);
+        if (rule.test()) { errEl?.classList.remove('visible'); el.classList.remove('error'); }
+        else if (el.value !== '' || rule.field === 'genre') { errEl?.classList.add('visible'); el.classList.add('error'); }
       });
     });
   }
@@ -1298,18 +1343,129 @@ function generateSlug(name) {
   return name.trim().toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 }
 
+// Validate slug format
+function validateSlugFormat(slug) {
+  if (!slug || slug.length < 3 || slug.length > 30) return false;
+  return /^[a-z0-9\-_]+$/.test(slug);
+}
+
+// Show slug validation status
+function updateSlugStatus(message, isError = false) {
+  const statusEl = document.getElementById('slugStatus');
+  statusEl.textContent = message;
+  statusEl.style.color = isError ? 'var(--error)' : 'var(--success)';
+  statusEl.style.display = message ? 'block' : 'none';
+}
+
+// Debounce slug availability check
+let slugCheckTimeout;
+async function checkSlugAvailability(slug) {
+  if (!validateSlugFormat(slug)) {
+    updateSlugStatus('Invalid format: 3-30 characters, lowercase letters, numbers, hyphens, underscores', true);
+    return;
+  }
+
+  updateSlugStatus('Checking availability...', false);
+
+  try {
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'check_slug', slug })
+    });
+
+    const result = await response.json();
+    if (result.available) {
+      updateSlugStatus('✓ Slug available', false);
+    } else {
+      updateSlugStatus('✗ Slug already taken, try another', true);
+    }
+  } catch (err) {
+    updateSlugStatus('Could not verify availability', true);
+  }
+}
+
+// Slug input handlers
+document.addEventListener('DOMContentLoaded', () => {
+  const artistNameEl = document.getElementById('artistName');
+  const slugEl = document.getElementById('slug');
+  const generateBtn = document.getElementById('generateSlugBtn');
+
+  if (generateBtn) {
+    generateBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const generated = generateSlug(artistNameEl.value);
+      if (generated) {
+        slugEl.value = generated;
+        checkSlugAvailability(generated);
+      }
+    });
+  }
+
+  if (slugEl) {
+    slugEl.addEventListener('input', (e) => {
+      clearTimeout(slugCheckTimeout);
+      const raw = e.target.value.toLowerCase();
+      const formatted = raw.replace(/\s+/g, '-').replace(/[^a-z0-9\-_]/g, '').substring(0, 30);
+      const cursorPos = e.target.selectionStart - (raw.length - formatted.length);
+      slugEl.value = formatted;
+      slugEl.setSelectionRange(cursorPos, cursorPos);
+
+      if (formatted.length >= 3) {
+        slugCheckTimeout = setTimeout(() => {
+          checkSlugAvailability(formatted);
+        }, 500);
+      } else if (formatted.length > 0) {
+        updateSlugStatus('Too short (3+ characters required)', true);
+      } else {
+        updateSlugStatus('', false);
+      }
+    });
+
+    // Auto-generate slug from artist name on blur if slug is empty
+    if (artistNameEl) {
+      artistNameEl.addEventListener('blur', () => {
+        if (!slugEl.value.trim() && artistNameEl.value.trim()) {
+          const generated = generateSlug(artistNameEl.value);
+          slugEl.value = generated;
+          checkSlugAvailability(generated);
+        }
+      });
+    }
+  }
+});
+
 
 // ═══ SUBMIT ═══
 
 async function submitForm() {
   if (isSubmitting) return;
 
+  // Validate Step 2 before submitting
+  const step2Errors = validateStep2();
+  if (step2Errors.length > 0) {
+    // Create validation summary if it doesn't exist
+    let summary = document.getElementById('validationSummary2');
+    if (!summary) {
+      summary = document.createElement('div');
+      summary.id = 'validationSummary2';
+      summary.className = 'validation-summary';
+      summary.innerHTML = '<h3>Please fix the following:</h3><ul id="errorList2"></ul>';
+      const step2 = document.getElementById('step2');
+      const firstSection = step2.querySelector('section');
+      if (firstSection) step2.insertBefore(summary, firstSection);
+      else step2.appendChild(summary);
+    }
+    showErrors(step2Errors, document.getElementById('errorList2'), summary);
+    return;
+  }
+
   isSubmitting = true;
   const btn = document.getElementById('submitBtn') || document.getElementById('toStep2Btn');
   btn.classList.add('loading'); btn.disabled = true;
 
   try {
-    const slug = generateSlug(document.getElementById('artistName').value);
+    const slug = document.getElementById('slug').value.trim();
     const payload = {
       slug,
       artistName: document.getElementById('artistName').value.trim(),
@@ -1317,6 +1473,8 @@ async function submitForm() {
       genre: JSON.stringify([...selectedGenres]),
       primarySoundLink: document.getElementById('primarySoundLink').value.trim(),
       instagram: document.getElementById('instagram').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      password: document.getElementById('password').value,
       bio: bioEl.value.trim().substring(0, 1000),
       profilePhoto: imageData.profilePhoto || '',
       perfPhoto: imageData.perfPhoto || '',
@@ -1331,7 +1489,7 @@ async function submitForm() {
       techRider: document.getElementById('techRider')?.value.trim() || '',
       hospRider: document.getElementById('hospRider')?.value.trim() || '',
       links: JSON.stringify(collectLinks()),
-      bookingEmail: document.getElementById('bookingEmail')?.value.trim() || document.getElementById('email').value.trim(),
+      bookingEmail: document.getElementById('bookingEmail')?.value.trim() || '',
       mgmtEmail: document.getElementById('mgmtEmail')?.value.trim() || '',
       agencyName: document.getElementById('agencyName')?.value.trim() || '',
       agencyEmail: document.getElementById('agencyEmail')?.value.trim() || '',
