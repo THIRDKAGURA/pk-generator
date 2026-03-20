@@ -657,10 +657,29 @@
     <!-- DONE: Success screen                 -->
     <!-- ═══════════════════════════════════════ -->
     <div class="step" id="stepDone">
-      <div style="text-align:center;padding:60px 0 40px">
+      <!-- Phase 1: Preview -->
+      <div id="donePreview" style="padding:40px 0">
+        <h2 style="font-size:22px;font-weight:700;margin-bottom:6px;text-align:center">Does this look right?</h2>
+        <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;text-align:center">Here's a preview of your press kit.</p>
+
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;background:#000">
+          <iframe id="previewFrame" style="width:100%;height:520px;border:none;background:#000" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:center">
+          <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="window.open(document.getElementById('doneUrl').value,'_blank')">Open in new tab</button>
+          <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('donePreview').style.display='none';document.getElementById('doneActions').style.display='block'">Looks good!</button>
+        </div>
+        <p style="text-align:center;margin-top:12px">
+          <a href="dashboard.html" style="color:var(--text-muted);font-size:12px;text-decoration:none">Something wrong? Edit on the dashboard →</a>
+        </p>
+      </div>
+
+      <!-- Phase 2: Actions (after confirming preview) -->
+      <div id="doneActions" style="display:none;text-align:center;padding:60px 0 40px">
         <div style="font-size:48px;margin-bottom:16px">✓</div>
         <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">Your press kit is live!</h2>
-        <p style="color:var(--text-dim);font-size:14px;margin-bottom:32px">Here's what you need to know.</p>
+        <p style="color:var(--text-dim);font-size:14px;margin-bottom:32px">Share it with the world.</p>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:left;margin-bottom:20px">
           <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Your profile URL</div>
@@ -670,17 +689,15 @@
           </div>
         </div>
 
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:left;margin-bottom:20px">
-          <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Edit your profile later</div>
-          <p style="font-size:13px;color:var(--text-dim);line-height:1.6">
-            Go to <a href="dashboard.html" style="color:var(--gold)">the dashboard</a> and enter your email. We'll send you a one-time link to edit your profile.
-          </p>
+        <div style="display:flex;gap:10px;margin-bottom:20px">
+          <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="window.open(document.getElementById('doneUrl').value,'_blank')">View Press Kit</button>
+          <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="var u=document.getElementById('doneUrl').value;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Link copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
         </div>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:left;margin-bottom:32px">
-          <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Want to add more details?</div>
+          <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Edit anytime</div>
           <p style="font-size:13px;color:var(--text-dim);line-height:1.6">
-            You can add gigs, links, fees, riders, and customization from the dashboard at any time.
+            Sign in to <a href="dashboard.html" style="color:var(--gold)">the dashboard</a> with your ID and password to update your press kit.
           </p>
         </div>
 
@@ -1502,10 +1519,14 @@ async function submitForm() {
 
     await postViaIframe(GAS_URL, payload);
 
-    // Show success screen
+    // Show preview screen
+    var profileUrl = window.location.origin + '/pk-generator/view.html?id=' + slug;
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.getElementById('stepDone').classList.add('active');
-    document.getElementById('doneUrl').value = window.location.origin + '/pk-generator/view.html?id=' + slug;
+    document.getElementById('doneUrl').value = profileUrl;
+    document.getElementById('previewFrame').src = profileUrl;
+    document.getElementById('donePreview').style.display = 'block';
+    document.getElementById('doneActions').style.display = 'none';
     document.querySelectorAll('.step-dot').forEach(d => d.classList.add('done'));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {

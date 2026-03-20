@@ -470,6 +470,49 @@
     </div>
   </div>
 
+  <!-- ═══ PREVIEW VIEW (after save) ═══ -->
+  <div class="view" id="previewView">
+    <!-- Phase 1: Preview check -->
+    <div id="e-previewPhase" style="padding:40px 0">
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:6px;text-align:center">Does this look right?</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;text-align:center">Here's your updated press kit.</p>
+
+      <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;background:#000">
+        <iframe id="e-previewFrame" style="width:100%;height:520px;border:none;background:#000" sandbox="allow-scripts allow-same-origin"></iframe>
+      </div>
+
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">Edit more</button>
+        <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('e-previewPhase').style.display='none';document.getElementById('e-actionsPhase').style.display='block'">Looks good!</button>
+      </div>
+      <p style="text-align:center;margin-top:12px">
+        <button type="button" style="background:none;border:none;color:var(--text-muted);font-size:12px;cursor:pointer;text-decoration:none" onclick="window.open(document.getElementById('e-doneUrl').value,'_blank')">Open in new tab</button>
+      </p>
+    </div>
+
+    <!-- Phase 2: Actions -->
+    <div id="e-actionsPhase" style="display:none;text-align:center;padding:60px 0 40px">
+      <div style="font-size:48px;margin-bottom:16px">✓</div>
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">Changes saved!</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:32px">Your press kit is up to date.</p>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:left;margin-bottom:20px">
+        <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Your profile URL</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="text" id="e-doneUrl" readonly style="flex:1;background:var(--bg);cursor:text;font-size:13px">
+          <button type="button" class="btn btn-primary" style="padding:10px 16px;font-size:12px" onclick="navigator.clipboard.writeText(document.getElementById('e-doneUrl').value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)">Copy</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:20px">
+        <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="window.open(document.getElementById('e-doneUrl').value,'_blank')">View Press Kit</button>
+        <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="var u=document.getElementById('e-doneUrl').value;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Link copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
+      </div>
+
+      <button type="button" class="btn" style="padding:12px 48px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">Back to editing</button>
+    </div>
+  </div>
+
 </main>
 
 <div class="toast" id="toast"></div>
@@ -576,11 +619,7 @@ document.getElementById('loginBtn').addEventListener('click', async function() {
   this.classList.add('loading');
 
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ action: 'password_login', slug, password })
-    });
+    const res = await fetch(GAS_URL + '?action=password_login&slug=' + encodeURIComponent(slug) + '&password=' + encodeURIComponent(password));
     const result = await res.json();
     if (result.error) {
       errEl.textContent = result.error;
@@ -589,11 +628,7 @@ document.getElementById('loginBtn').addEventListener('click', async function() {
       currentToken = result.token;
       currentSlug = result.slug;
       // Load artist data using the token
-      const verifyRes = await fetch(GAS_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ action: 'verify_token', token: currentToken })
-      });
+      const verifyRes = await fetch(GAS_URL + '?action=verify_token&token=' + encodeURIComponent(currentToken));
       const verifyResult = await verifyRes.json();
       if (verifyResult.success && verifyResult.artist) {
         document.getElementById('headerSubtitle').textContent = 'Editing: ' + (verifyResult.artist.artistName || currentSlug);
@@ -644,11 +679,7 @@ document.getElementById('resetBtn').addEventListener('click', async function() {
   this.classList.add('loading');
 
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ action: 'reset_password', slug })
-    });
+    const res = await fetch(GAS_URL + '?action=reset_password&slug=' + encodeURIComponent(slug));
     const result = await res.json();
     successEl.textContent = result.message || 'If this ID exists, a reset link has been sent.';
     successEl.style.display = 'block';
@@ -690,11 +721,7 @@ if (resetToken) {
     this.classList.add('loading');
 
     try {
-      const res = await fetch(GAS_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ action: 'set_password', token: resetToken, newPassword: newPw })
-      });
+      const res = await fetch(GAS_URL + '?action=set_password&token=' + encodeURIComponent(resetToken) + '&newPassword=' + encodeURIComponent(newPw));
       const result = await res.json();
       if (result.error) {
         errEl.textContent = result.error;
@@ -715,11 +742,7 @@ if (resetToken) {
 // ─── Auth: Verify token (for backward compatibility) ───
 async function verifyToken(token) {
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ action: 'verify_token', token })
-    });
+    const res = await fetch(GAS_URL + '?action=verify_token&token=' + encodeURIComponent(token));
     const json = await res.json();
     if (json.success && json.artist) {
       currentSlug = json.slug;
@@ -1197,7 +1220,14 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
 
   try {
     await postViaIframe(GAS_URL, payload);
-    showToast('Changes saved!','success');
+    // Show preview after save
+    var profileUrl = 'https://thirdkagura.github.io/pk-generator/view.html?id=' + currentSlug;
+    showView('previewView');
+    document.getElementById('e-previewFrame').src = profileUrl;
+    document.getElementById('e-doneUrl').value = profileUrl;
+    document.getElementById('e-previewPhase').style.display = 'block';
+    document.getElementById('e-actionsPhase').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch(e) {
     showToast('Error saving','error');
   }
