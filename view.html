@@ -224,7 +224,7 @@
 
   <!-- Footer -->
   <div class="footer">
-    <span>Powered by</span>
+    <span>&copy;</span>
     <a href="https://thirdkagura.com" target="_blank">THIRD KAGURA Pty Ltd</a>
     <a href="https://www.instagram.com/third_kagura_pty_ltd/" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
   </div>
@@ -386,9 +386,9 @@ function renderProfile(d) {
     const cel = document.getElementById('vContact');
     cel.style.display = 'block';
     let ch = '';
-    if (d.agencyName) ch += '<div style="font-weight:600;color:var(--text);margin-bottom:2px;">'+esc(d.agencyName)+'</div>';
-    if (d.agencyWebsite) ch += '<div><a href="'+esc(d.agencyWebsite)+'" target="_blank">'+esc(d.agencyWebsite.replace(/^https?:\/\//,''))+'</a></div>';
     if (d.bookingEmail) ch += '<div><a href="mailto:'+esc(d.bookingEmail)+'">'+esc(d.bookingEmail)+'</a></div>';
+    if (d.agencyName) ch += '<div style="font-weight:600;color:var(--text);margin-top:6px;margin-bottom:2px;">'+esc(d.agencyName)+'</div>';
+    if (d.agencyWebsite) ch += '<div><a href="'+esc(d.agencyWebsite)+'" target="_blank">'+esc(d.agencyWebsite.replace(/^https?:\/\//,''))+'</a></div>';
     cel.innerHTML = ch;
   }
 
@@ -449,8 +449,12 @@ function renderProfile(d) {
       const dateStr = s.date ? formatDate(s.date) : '';
       const url = s.ticketUrl || '#';
       gel.innerHTML += '<a class="gig-link" href="'+esc(url)+'" target="_blank">' +
-        '<div class="gig-info"><div class="gig-name">'+esc(s.name || '')+'</div><div class="gig-detail">'+esc(s.venue || '')+'</div></div>' +
-        '<div class="gig-right"><div class="gig-date">'+esc(dateStr)+'</div>'+(s.ticketUrl?'<div class="gig-arrow">→</div>':'')+'</div></a>';
+        '<div class="gig-info"><div class="gig-name">'+esc(s.name || '')+'</div>' +
+        (s.venue ? '<div class="gig-detail">'+esc(s.venue)+'</div>' : '') +
+        (dateStr ? '<div class="gig-detail">'+esc(dateStr)+'</div>' : '') +
+        '</div>' +
+        (s.ticketUrl ? '<div class="gig-right"><div class="gig-arrow">→</div></div>' : '') +
+        '</a>';
     });
   }
 
@@ -471,8 +475,8 @@ function renderProfile(d) {
       thumbsEl.style.display = 'flex';
       const dlFiles = [];
       if (hasLogo) { thumbsEl.innerHTML += thumbHtml(d.artistLogo, 'Logo'); dlFiles.push({url:d.artistLogo, name:'logo'}); }
-      if (hasProfile) { thumbsEl.innerHTML += thumbHtml(d.profilePhoto, 'Profile'); dlFiles.push({url:d.profilePhoto, name:'profile'}); }
-      if (hasPerf) { thumbsEl.innerHTML += thumbHtml(d.perfPhoto, 'Performance'); dlFiles.push({url:d.perfPhoto, name:'performance'}); }
+      if (hasProfile) { thumbsEl.innerHTML += thumbHtml(d.profilePhoto, 'Press Photo'); dlFiles.push({url:d.profilePhoto, name:'press_photo'}); }
+      if (hasPerf) { thumbsEl.innerHTML += thumbHtml(d.perfPhoto, 'Live Photo'); dlFiles.push({url:d.perfPhoto, name:'live_photo'}); }
 
       // Show download button
       document.getElementById('dlAllBtn').style.display = 'block';
@@ -523,11 +527,8 @@ function buildEmbed(url) {
 function formatDate(dateStr) {
   try {
     const d = new Date(dateStr);
-    const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-    const dd = String(d.getDate()).padStart(2,'0');
-    const m = String(d.getMonth()+1).padStart(2,'0');
-    const y = d.getFullYear();
-    return dd+'.'+m+'.'+y+' '+days[d.getDay()];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
   } catch(e) { return dateStr; }
 }
 
