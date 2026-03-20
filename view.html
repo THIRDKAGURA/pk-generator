@@ -184,6 +184,7 @@
         <button class="bio-toggle" id="bioToggle" onclick="toggleBio()">Read more</button>
         <div id="vHistory"></div>
         <div id="vOrganize"></div>
+        <div id="vPromoter"></div>
         <div id="vAward"></div>
         <div class="contact-title" id="contactTitle" style="display:none">Contact</div>
         <div class="contact-always" id="vContact" style="display:none"></div>
@@ -365,6 +366,19 @@ function renderProfile(d) {
     });
     html += '</div></div>';
     el.innerHTML = html;
+  }
+
+  // === ABOUT: PROMOTER ===
+  const promo = jp(d.promoter);
+  if (promo && promo.active && promo.events && promo.events.length > 0) {
+    const pel = document.getElementById('vPromoter');
+    let html = '<div class="sub-acc"><div class="sub-acc-header" onclick="toggleSubAcc(this)"><span class="sub-acc-icon"></span><span class="sub-acc-label">Promoter</span></div><div class="sub-acc-body">';
+    promo.events.forEach(e => {
+      const meta = [e.venue, e.size ? e.size+' capacity' : ''].filter(Boolean).join(' · ');
+      html += '<div class="act-item"><div class="act-title">'+esc(e.name || '')+'</div>'+(meta?'<div class="act-meta">'+esc(meta)+'</div>':'')+'</div>';
+    });
+    html += '</div></div>';
+    pel.innerHTML = html;
   }
 
   // === ABOUT: AWARD ===
