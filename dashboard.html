@@ -252,11 +252,72 @@
       </div>
     </section>
 
-    <!-- Gigs -->
+    <!-- Activity -->
     <section class="form-section">
-      <h3>Gigs / Residencies</h3>
-      <div id="e-gigsContainer"></div>
-      <button type="button" class="add-entry-btn" id="e-addGigBtn">+ Add a gig</button>
+      <h3>Activity</h3>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have experience as:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+        <label class="genre-chip" id="e-actType-residency" style="cursor:pointer"><input type="checkbox" value="residency" class="e-act-type-cb" style="display:none"> Residency</label>
+        <label class="genre-chip" id="e-actType-clubGig" style="cursor:pointer"><input type="checkbox" value="clubGig" class="e-act-type-cb" style="display:none"> Club Gigs</label>
+        <label class="genre-chip" id="e-actType-festival" style="cursor:pointer"><input type="checkbox" value="festival" class="e-act-type-cb" style="display:none"> Festival / Tour</label>
+      </div>
+      <div id="e-residencySection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Residency</h4>
+        <div id="e-residencyContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addResidencyBtn">+ Add residency</button>
+      </div>
+      <div id="e-clubGigSection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Club Gigs</h4>
+        <div id="e-clubGigContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addClubGigBtn">+ Add club gig</button>
+      </div>
+      <div id="e-festivalSection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Festival / Tour</h4>
+        <div id="e-festivalContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addFestivalBtn">+ Add festival / tour</button>
+      </div>
+    </section>
+
+    <!-- Organizer -->
+    <section class="form-section">
+      <h3>Organizer</h3>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you organize events?</p>
+      <div style="display:flex;gap:14px;margin-bottom:16px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isOrganizer" value="yes" style="accent-color:var(--gold)"> Yes</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isOrganizer" value="no" checked style="accent-color:var(--gold)"> No</label>
+      </div>
+      <div id="e-organizerSection" style="display:none">
+        <div id="e-organizerContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addOrganizerBtn">+ Add event</button>
+      </div>
+    </section>
+
+    <!-- Promoter -->
+    <section class="form-section">
+      <h3>Promoter</h3>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Are you a promoter?</p>
+      <div style="display:flex;gap:14px;margin-bottom:16px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isPromoter" value="yes" style="accent-color:var(--gold)"> Yes</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isPromoter" value="no" checked style="accent-color:var(--gold)"> No</label>
+      </div>
+      <div id="e-promoterSection" style="display:none">
+        <div id="e-promoterContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addPromoterBtn">+ Add promoted event</button>
+      </div>
+    </section>
+
+    <!-- Upcoming -->
+    <section class="form-section">
+      <h3>Upcoming Shows</h3>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have upcoming shows?</p>
+      <div style="display:flex;gap:14px;margin-bottom:16px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasUpcoming" value="yes" style="accent-color:var(--gold)"> Yes</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasUpcoming" value="no" checked style="accent-color:var(--gold)"> No</label>
+      </div>
+      <div id="e-upcomingSection" style="display:none">
+        <div id="e-upcomingContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addUpcomingBtn">+ Add upcoming show</button>
+      </div>
     </section>
 
     <!-- Links -->
@@ -370,7 +431,8 @@ const GENRE_LIST = [
   'Hard Techno','Hardstyle','Hip Hop','House','Melodic Techno',
   'Minimal / Deep Tech','Open Format','Psytrance','Techno','Trance','UK Garage'
 ];
-const GIG_TAGS = ['Organiser','Headliner','Resident'];
+let eResidencyCounter = 0, eClubGigCounter = 0, eFestivalCounter = 0;
+let eOrganizerCounter = 0, ePromoterCounter = 0, eUpcomingCounter = 0;
 
 const COUNTRIES_BY_REGION = {
   'Oceania':['Australia','Fiji','Kiribati','Marshall Islands','Micronesia','Nauru','New Zealand','Palau','Papua New Guinea','Samoa','Solomon Islands','Tonga','Tuvalu','Vanuatu'],
@@ -532,11 +594,54 @@ function populateForm(d) {
     }
   });
 
-  // Gigs
+  // Activity
   try {
-    const gigs = JSON.parse(d.gigs);
-    if (Array.isArray(gigs)) {
-      gigs.forEach(g => addGigEntry(g));
+    const activities = typeof d.activity === 'string' ? JSON.parse(d.activity) : d.activity;
+    if (Array.isArray(activities)) {
+      const types = new Set();
+      activities.forEach(a => {
+        types.add(a.type);
+        if (a.type === 'residency') eAddResidencyEntry(a);
+        else if (a.type === 'clubGig') eAddClubGigEntry(a);
+        else if (a.type === 'festival') eAddFestivalEntry(a);
+      });
+      types.forEach(t => {
+        const cb = document.querySelector(`.e-act-type-cb[value="${t}"]`);
+        if (cb) { cb.checked = true; cb.closest('label').classList.add('selected'); }
+        if (t === 'residency') document.getElementById('e-residencySection').style.display = 'block';
+        if (t === 'clubGig') document.getElementById('e-clubGigSection').style.display = 'block';
+        if (t === 'festival') document.getElementById('e-festivalSection').style.display = 'block';
+      });
+    }
+  } catch(e) {}
+
+  // Organizer
+  try {
+    const org = typeof d.organizer === 'string' ? JSON.parse(d.organizer) : d.organizer;
+    if (org && org.active) {
+      document.querySelector('input[name="e-isOrganizer"][value="yes"]').checked = true;
+      document.getElementById('e-organizerSection').style.display = 'block';
+      if (Array.isArray(org.events)) org.events.forEach(e => eAddOrganizerEntry(e));
+    }
+  } catch(e) {}
+
+  // Promoter
+  try {
+    const promo = typeof d.promoter === 'string' ? JSON.parse(d.promoter) : d.promoter;
+    if (promo && promo.active) {
+      document.querySelector('input[name="e-isPromoter"][value="yes"]').checked = true;
+      document.getElementById('e-promoterSection').style.display = 'block';
+      if (Array.isArray(promo.events)) promo.events.forEach(e => eAddPromoterEntry(e));
+    }
+  } catch(e) {}
+
+  // Upcoming
+  try {
+    const up = typeof d.upcoming === 'string' ? JSON.parse(d.upcoming) : d.upcoming;
+    if (up && up.active) {
+      document.querySelector('input[name="e-hasUpcoming"][value="yes"]').checked = true;
+      document.getElementById('e-upcomingSection').style.display = 'block';
+      if (Array.isArray(up.shows)) up.shows.forEach(s => eAddUpcomingEntry(s));
     }
   } catch(e) {}
 
@@ -615,62 +720,215 @@ Object.keys(IMAGE_SPECS).forEach(field => {
   });
 });
 
-// ─── Gigs ───
-function addGigEntry(data) {
-  gigCounter++;
-  const id = gigCounter;
+// ─── Activity type toggles ───
+document.querySelectorAll('.e-act-type-cb').forEach(cb => {
+  cb.closest('label').addEventListener('click', () => {
+    setTimeout(() => {
+      const label = cb.closest('label');
+      if (cb.checked) label.classList.add('selected'); else label.classList.remove('selected');
+      if (cb.value === 'residency') document.getElementById('e-residencySection').style.display = cb.checked ? 'block' : 'none';
+      if (cb.value === 'clubGig') document.getElementById('e-clubGigSection').style.display = cb.checked ? 'block' : 'none';
+      if (cb.value === 'festival') document.getElementById('e-festivalSection').style.display = cb.checked ? 'block' : 'none';
+    }, 0);
+  });
+});
+
+function eAddResidencyEntry(data) {
+  eResidencyCounter++;
+  const id = eResidencyCounter;
   const div = document.createElement('div');
-  div.className='entry-row'; div.id='gig-'+id;
-  div.style.display='block';
-
-  // Determine frequency for radio pre-selection
-  const freq = data?.frequency || '';
-  const isWeekly = freq === 'Weekly';
-  const isMonthly = freq === 'Monthly';
-  const isOther = freq && !isWeekly && !isMonthly;
-  const otherVal = isOther ? freq : '';
-
-  div.innerHTML=`
+  div.className = 'entry-row'; div.id = 'e-residency-' + id; div.style.display = 'block';
+  div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
-      <div class="field" style="flex:1"><label>Party / Event</label><input type="text" data-gig="${id}" data-gig-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
-      <button type="button" class="remove-entry" onclick="document.getElementById('gig-${id}')?.remove()">×</button>
+      <div class="field" style="flex:1"><label>Venue / Club Name</label><input type="text" data-res="${id}" data-res-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-residency-${id}')?.remove()">×</button>
     </div>
-    <div style="display:flex;gap:14px;align-items:center;margin-bottom:8px">
-      ${GIG_TAGS.map(t => `<label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="checkbox" data-gig="${id}" data-gig-tag="${t}" style="accent-color:var(--gold);width:15px;height:15px;cursor:pointer"${(data?.tags||[]).includes(t)?' checked':''}>${t}</label>`).join('')}
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Start Date</label><input type="month" data-res="${id}" data-res-field="startDate" value="${data?.startDate||''}"></div>
+      <div class="field" style="flex:1"><label>End Date</label><input type="month" data-res="${id}" data-res-field="endDate" id="e-resEnd-${id}" value="${data?.endDate||''}"${data?.currentlyRunning?' disabled':''}></div>
     </div>
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;margin-bottom:4px"><input type="checkbox" data-res="${id}" data-res-field="currentlyRunning" style="accent-color:var(--gold)"${data?.currentlyRunning?' checked':''} onchange="document.getElementById('e-resEnd-${id}').disabled=this.checked;if(this.checked)document.getElementById('e-resEnd-${id}').value=''"> Currently running</label>
+  `;
+  document.getElementById('e-residencyContainer').appendChild(div);
+}
+document.getElementById('e-addResidencyBtn').addEventListener('click', () => eAddResidencyEntry());
+
+function eAddClubGigEntry(data) {
+  eClubGigCounter++;
+  const id = eClubGigCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-clubgig-' + id; div.style.display = 'block';
+  div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
-      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Weekly" style="accent-color:var(--gold);cursor:pointer"${isWeekly?' checked':''} onchange="document.getElementById('freq-other-${id}').style.display='none'"> Weekly</label>
-      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Monthly" style="accent-color:var(--gold);cursor:pointer"${isMonthly?' checked':''} onchange="document.getElementById('freq-other-${id}').style.display='none'"> Monthly</label>
-      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Other" style="accent-color:var(--gold);cursor:pointer"${isOther?' checked':''} onchange="document.getElementById('freq-other-${id}').style.display='block'"> Other</label>
-      <div class="field" id="freq-other-${id}" style="flex:1;display:${isOther?'block':'none'}"><input type="text" data-gig="${id}" data-gig-field="frequencyOther" placeholder="e.g. Every 2 weeks, Irregular" value="${otherVal.replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-cg="${id}" data-cg-field="eventName" value="${(data?.eventName||'').replace(/"/g,'&quot;')}"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-clubgig-${id}')?.remove()">×</button>
     </div>
-    <div class="field">
-      <label>Ticket / Event URL</label><input type="url" data-gig="${id}" data-gig-field="ticketUrl" value="${(data?.ticketUrl||'').replace(/"/g,'&quot;')}">
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Venue</label><input type="text" data-cg="${id}" data-cg-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="flex:1">
+        <label>Role</label>
+        <div style="display:flex;gap:10px;padding-top:6px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="checkbox" data-cg="${id}" data-cg-role="Headliner" style="accent-color:var(--gold)"${(data?.role||'').includes('Headliner')?' checked':''}> Headliner</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="checkbox" data-cg="${id}" data-cg-role="Support" style="accent-color:var(--gold)"${(data?.role||'').includes('Support')?' checked':''}> Support</label>
+        </div>
+      </div>
     </div>
   `;
-  document.getElementById('e-gigsContainer').appendChild(div);
+  document.getElementById('e-clubGigContainer').appendChild(div);
 }
-document.getElementById('e-addGigBtn').addEventListener('click', () => addGigEntry());
+document.getElementById('e-addClubGigBtn').addEventListener('click', () => eAddClubGigEntry());
 
-function collectGigs() {
-  const gigs=[];
-  document.querySelectorAll('#e-gigsContainer .entry-row').forEach(entry => {
-    const name=entry.querySelector('[data-gig-field="name"]').value.trim();
-    const ticketUrl=entry.querySelector('[data-gig-field="ticketUrl"]')?.value.trim()||'';
-    let frequency='';
-    const radios=entry.querySelectorAll('[data-gig-freq]');
-    radios.forEach(r => { if(r.checked) frequency=r.dataset.gigFreq; });
-    if(frequency==='Other') {
-      frequency=entry.querySelector('[data-gig-field="frequencyOther"]')?.value.trim()||'Other';
-    }
-    const tags=[];
-    GIG_TAGS.forEach(t => {
-      const cb=entry.querySelector(`[data-gig-tag="${t}"]`);
-      if(cb&&cb.checked) tags.push(t);
-    });
-    if(name) gigs.push({name,frequency,ticketUrl,tags});
+function eAddFestivalEntry(data) {
+  eFestivalCounter++;
+  const id = eFestivalCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-festival-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Name</label><input type="text" data-fest="${id}" data-fest-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:120px"><label>Year</label><input type="text" data-fest="${id}" data-fest-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-festival-${id}')?.remove()">×</button>
+    </div>
+  `;
+  document.getElementById('e-festivalContainer').appendChild(div);
+}
+document.getElementById('e-addFestivalBtn').addEventListener('click', () => eAddFestivalEntry());
+
+// Organizer
+document.querySelectorAll('input[name="e-isOrganizer"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('e-organizerSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
   });
-  return gigs;
+});
+
+function eAddOrganizerEntry(data) {
+  eOrganizerCounter++;
+  const id = eOrganizerCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-org-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-org="${id}" data-org-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-org-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>Venue / Location</label><input type="text" data-org="${id}" data-org-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Start Date</label><input type="month" data-org="${id}" data-org-field="startDate" value="${data?.startDate||''}"></div>
+      <div class="field" style="flex:1"><label>End Date</label><input type="month" data-org="${id}" data-org-field="endDate" id="e-orgEnd-${id}" value="${data?.endDate||''}"${data?.currentlyRunning?' disabled':''}></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;margin-bottom:8px"><input type="checkbox" data-org="${id}" data-org-field="currentlyRunning" style="accent-color:var(--gold)"${data?.currentlyRunning?' checked':''} onchange="document.getElementById('e-orgEnd-${id}').disabled=this.checked;if(this.checked)document.getElementById('e-orgEnd-${id}').value=''"> Currently running</label>
+    <div class="field" style="margin-bottom:8px"><label>Event Size</label><select data-org="${id}" data-org-field="size" style="width:auto;min-width:160px"><option value="">Select</option><option value="<100"${data?.size==='<100'?' selected':''}>&lt;100</option><option value="100-300"${data?.size==='100-300'?' selected':''}>100–300</option><option value="300-1000"${data?.size==='300-1000'?' selected':''}>300–1000</option><option value="1000+"${data?.size==='1000+'?' selected':''}>1000+</option></select></div>
+    <div class="field" style="margin-bottom:8px"><label>Event URL</label><input type="url" data-org="${id}" data-org-field="url" value="${(data?.url||'').replace(/"/g,'&quot;')}"></div>
+    <div class="field"><label>Description</label><textarea data-org="${id}" data-org-field="description" style="min-height:60px">${data?.description||''}</textarea></div>
+  `;
+  document.getElementById('e-organizerContainer').appendChild(div);
+}
+document.getElementById('e-addOrganizerBtn').addEventListener('click', () => eAddOrganizerEntry());
+
+// Promoter
+document.querySelectorAll('input[name="e-isPromoter"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('e-promoterSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
+  });
+});
+
+function eAddPromoterEntry(data) {
+  ePromoterCounter++;
+  const id = ePromoterCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-promo-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-promo="${id}" data-promo-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-promo-${id}')?.remove()">×</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Venue / Location</label><input type="text" data-promo="${id}" data-promo-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="flex:1"><label>Event URL</label><input type="url" data-promo="${id}" data-promo-field="url" value="${(data?.url||'').replace(/"/g,'&quot;')}"></div>
+    </div>
+  `;
+  document.getElementById('e-promoterContainer').appendChild(div);
+}
+document.getElementById('e-addPromoterBtn').addEventListener('click', () => eAddPromoterEntry());
+
+// Upcoming
+document.querySelectorAll('input[name="e-hasUpcoming"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('e-upcomingSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
+  });
+});
+
+function eAddUpcomingEntry(data) {
+  eUpcomingCounter++;
+  const id = eUpcomingCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-upcoming-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-up="${id}" data-up-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-upcoming-${id}')?.remove()">×</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Venue</label><input type="text" data-up="${id}" data-up-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="flex:1"><label>Date</label><input type="date" data-up="${id}" data-up-field="date" value="${data?.date||''}"></div>
+    </div>
+    <div class="field"><label>Ticket URL</label><input type="url" data-up="${id}" data-up-field="ticketUrl" value="${(data?.ticketUrl||'').replace(/"/g,'&quot;')}"></div>
+  `;
+  document.getElementById('e-upcomingContainer').appendChild(div);
+}
+document.getElementById('e-addUpcomingBtn').addEventListener('click', () => eAddUpcomingEntry());
+
+// Collect functions
+function eCollectActivity() {
+  const activities = [];
+  document.querySelectorAll('#e-residencyContainer .entry-row').forEach(entry => {
+    const venue = entry.querySelector('[data-res-field="venue"]')?.value.trim();
+    if (venue) activities.push({ type:'residency', venue, startDate: entry.querySelector('[data-res-field="startDate"]')?.value||'', endDate: entry.querySelector('[data-res-field="endDate"]')?.value||'', currentlyRunning: entry.querySelector('[data-res-field="currentlyRunning"]')?.checked||false });
+  });
+  document.querySelectorAll('#e-clubGigContainer .entry-row').forEach(entry => {
+    const eventName = entry.querySelector('[data-cg-field="eventName"]')?.value.trim();
+    const roles = [];
+    entry.querySelectorAll('[data-cg-role]').forEach(cb => { if(cb.checked) roles.push(cb.dataset.cgRole); });
+    if (eventName) activities.push({ type:'clubGig', eventName, venue: entry.querySelector('[data-cg-field="venue"]')?.value.trim()||'', role: roles.join(', ') });
+  });
+  document.querySelectorAll('#e-festivalContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-fest-field="name"]')?.value.trim();
+    if (name) activities.push({ type:'festival', name, year: entry.querySelector('[data-fest-field="year"]')?.value.trim()||'' });
+  });
+  return activities;
+}
+
+function eCollectOrganizer() {
+  const active = document.querySelector('input[name="e-isOrganizer"][value="yes"]')?.checked||false;
+  if (!active) return JSON.stringify({active:false,events:[]});
+  const events = [];
+  document.querySelectorAll('#e-organizerContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-org-field="name"]')?.value.trim();
+    if (name) events.push({ name, venue: entry.querySelector('[data-org-field="venue"]')?.value.trim()||'', startDate: entry.querySelector('[data-org-field="startDate"]')?.value||'', endDate: entry.querySelector('[data-org-field="endDate"]')?.value||'', currentlyRunning: entry.querySelector('[data-org-field="currentlyRunning"]')?.checked||false, size: entry.querySelector('[data-org-field="size"]')?.value||'', url: entry.querySelector('[data-org-field="url"]')?.value.trim()||'', description: entry.querySelector('[data-org-field="description"]')?.value.trim()||'' });
+  });
+  return JSON.stringify({active:true,events});
+}
+
+function eCollectPromoter() {
+  const active = document.querySelector('input[name="e-isPromoter"][value="yes"]')?.checked||false;
+  if (!active) return JSON.stringify({active:false,events:[]});
+  const events = [];
+  document.querySelectorAll('#e-promoterContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-promo-field="name"]')?.value.trim();
+    if (name) events.push({ name, venue: entry.querySelector('[data-promo-field="venue"]')?.value.trim()||'', url: entry.querySelector('[data-promo-field="url"]')?.value.trim()||'' });
+  });
+  return JSON.stringify({active:true,events});
+}
+
+function eCollectUpcoming() {
+  const active = document.querySelector('input[name="e-hasUpcoming"][value="yes"]')?.checked||false;
+  if (!active) return JSON.stringify({active:false,shows:[]});
+  const shows = [];
+  document.querySelectorAll('#e-upcomingContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-up-field="name"]')?.value.trim();
+    if (name) shows.push({ name, venue: entry.querySelector('[data-up-field="venue"]')?.value.trim()||'', date: entry.querySelector('[data-up-field="date"]')?.value||'', ticketUrl: entry.querySelector('[data-up-field="ticketUrl"]')?.value.trim()||'' });
+  });
+  return JSON.stringify({active:true,shows});
 }
 
 // ─── Links ───
@@ -731,7 +989,10 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     agencyName: document.getElementById('e-agencyName').value.trim(),
     agencyEmail: document.getElementById('e-agencyEmail').value.trim(),
     agencyWebsite: document.getElementById('e-agencyWebsite').value.trim(),
-    gigs: JSON.stringify(collectGigs()),
+    activity: JSON.stringify(eCollectActivity()),
+    organizer: eCollectOrganizer(),
+    promoter: eCollectPromoter(),
+    upcoming: eCollectUpcoming(),
     updatedAt: new Date().toISOString()
   };
 

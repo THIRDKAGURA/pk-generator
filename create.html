@@ -411,12 +411,79 @@
         </div>
       </section>
 
-      <!-- Gigs -->
+      <!-- Activity (required: at least 1) -->
       <section class="form-section">
-        <h3>Gigs / Residencies</h3>
-        <div id="gigsContainer"></div>
-        <button type="button" class="add-entry-btn" id="addGigBtn">+ Add a gig</button>
-        <div class="hint" style="margin-top:6px">Leave empty if you're just starting out.</div>
+        <h3>Activity <span class="req">*</span></h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have experience as:</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+          <label class="genre-chip" id="actType-residency" style="cursor:pointer"><input type="checkbox" value="residency" class="act-type-cb" style="display:none"> Residency</label>
+          <label class="genre-chip" id="actType-clubGig" style="cursor:pointer"><input type="checkbox" value="clubGig" class="act-type-cb" style="display:none"> Club Gigs</label>
+          <label class="genre-chip" id="actType-festival" style="cursor:pointer"><input type="checkbox" value="festival" class="act-type-cb" style="display:none"> Festival / Tour</label>
+        </div>
+        <div class="error-msg" id="err-activity">Select at least one activity type</div>
+
+        <!-- Residency sub-section -->
+        <div id="residencySection" style="display:none;margin-top:16px">
+          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Residency</h4>
+          <div id="residencyContainer"></div>
+          <button type="button" class="add-entry-btn" id="addResidencyBtn">+ Add residency</button>
+        </div>
+
+        <!-- Club Gigs sub-section -->
+        <div id="clubGigSection" style="display:none;margin-top:16px">
+          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Club Gigs</h4>
+          <div id="clubGigContainer"></div>
+          <button type="button" class="add-entry-btn" id="addClubGigBtn">+ Add club gig</button>
+        </div>
+
+        <!-- Festival / Tour sub-section -->
+        <div id="festivalSection" style="display:none;margin-top:16px">
+          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Festival / Tour</h4>
+          <div id="festivalContainer"></div>
+          <button type="button" class="add-entry-btn" id="addFestivalBtn">+ Add festival / tour</button>
+        </div>
+      </section>
+
+      <!-- Organizer -->
+      <section class="form-section">
+        <h3>Organizer</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you organize events?</p>
+        <div style="display:flex;gap:14px;margin-bottom:16px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isOrganizer" value="yes" style="accent-color:var(--gold)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isOrganizer" value="no" checked style="accent-color:var(--gold)"> No</label>
+        </div>
+        <div id="organizerSection" style="display:none">
+          <div id="organizerContainer"></div>
+          <button type="button" class="add-entry-btn" id="addOrganizerBtn">+ Add event</button>
+        </div>
+      </section>
+
+      <!-- Promoter -->
+      <section class="form-section">
+        <h3>Promoter</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Are you a promoter?</p>
+        <div style="display:flex;gap:14px;margin-bottom:16px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isPromoter" value="yes" style="accent-color:var(--gold)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="isPromoter" value="no" checked style="accent-color:var(--gold)"> No</label>
+        </div>
+        <div id="promoterSection" style="display:none">
+          <div id="promoterContainer"></div>
+          <button type="button" class="add-entry-btn" id="addPromoterBtn">+ Add promoted event</button>
+        </div>
+      </section>
+
+      <!-- Upcoming -->
+      <section class="form-section">
+        <h3>Upcoming Shows</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Do you have upcoming shows?</p>
+        <div style="display:flex;gap:14px;margin-bottom:16px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="hasUpcoming" value="yes" style="accent-color:var(--gold)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="hasUpcoming" value="no" checked style="accent-color:var(--gold)"> No</label>
+        </div>
+        <div id="upcomingSection" style="display:none">
+          <div id="upcomingContainer"></div>
+          <button type="button" class="add-entry-btn" id="addUpcomingBtn">+ Add upcoming show</button>
+        </div>
       </section>
 
       <!-- Links -->
@@ -825,62 +892,257 @@ colorPicker.addEventListener('input', () => { colorHex.value = colorPicker.value
 colorHex.addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(colorHex.value)) colorPicker.value = colorHex.value; });
 
 
-// ═══ GIGS ═══
-const GIG_TAGS = ['Organiser', 'Headliner', 'Resident'];
-let gigCounter = 0;
+// ═══ ACTIVITY ═══
+let residencyCounter = 0, clubGigCounter = 0, festivalCounter = 0;
+let organizerCounter = 0, promoterCounter = 0, upcomingCounter = 0;
 
-function addGigEntry() {
-  gigCounter++;
-  const id = gigCounter;
+// Activity type toggle
+document.querySelectorAll('.act-type-cb').forEach(cb => {
+  cb.closest('label').addEventListener('click', () => {
+    setTimeout(() => {
+      const label = cb.closest('label');
+      if (cb.checked) { label.classList.add('selected'); } else { label.classList.remove('selected'); }
+      document.getElementById('residencySection').style.display = cb.value === 'residency' && cb.checked ? 'block' : document.getElementById('residencySection').style.display;
+      document.getElementById('clubGigSection').style.display = cb.value === 'clubGig' && cb.checked ? 'block' : document.getElementById('clubGigSection').style.display;
+      document.getElementById('festivalSection').style.display = cb.value === 'festival' && cb.checked ? 'block' : document.getElementById('festivalSection').style.display;
+      if (!cb.checked) {
+        if (cb.value === 'residency') document.getElementById('residencySection').style.display = 'none';
+        if (cb.value === 'clubGig') document.getElementById('clubGigSection').style.display = 'none';
+        if (cb.value === 'festival') document.getElementById('festivalSection').style.display = 'none';
+      }
+      // Clear activity error when at least one selected
+      if (document.querySelectorAll('.act-type-cb:checked').length > 0) {
+        document.getElementById('err-activity')?.classList.remove('visible');
+      }
+    }, 0);
+  });
+});
+
+// Residency entry
+function addResidencyEntry() {
+  residencyCounter++;
+  const id = residencyCounter;
   const div = document.createElement('div');
-  div.className = 'entry-row'; div.id = 'gig-' + id;
-  div.style.display = 'block';
+  div.className = 'entry-row'; div.id = 'residency-' + id; div.style.display = 'block';
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
-      <div class="field" style="flex:1"><label>Party / Event</label><input type="text" data-gig="${id}" data-gig-field="name" placeholder="e.g. Techno Tuesday"></div>
-      <button type="button" class="remove-entry" onclick="document.getElementById('gig-${id}')?.remove()">×</button>
+      <div class="field" style="flex:1"><label>Venue / Club Name <span class="req">*</span></label><input type="text" data-res="${id}" data-res-field="venue" placeholder="e.g. Club XYZ"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('residency-${id}')?.remove()">×</button>
     </div>
-    <div style="display:flex;gap:14px;align-items:center;margin-bottom:8px">
-      ${GIG_TAGS.map(t => `<label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="checkbox" data-gig="${id}" data-gig-tag="${t}" style="accent-color:var(--gold);width:15px;height:15px;cursor:pointer">${t}</label>`).join('')}
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Start Date <span class="req">*</span></label><input type="month" data-res="${id}" data-res-field="startDate"></div>
+      <div class="field" style="flex:1"><label>End Date</label><input type="month" data-res="${id}" data-res-field="endDate" id="resEnd-${id}"></div>
     </div>
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;margin-bottom:4px"><input type="checkbox" data-res="${id}" data-res-field="currentlyRunning" style="accent-color:var(--gold)" onchange="document.getElementById('resEnd-${id}').disabled=this.checked;if(this.checked)document.getElementById('resEnd-${id}').value=''"> Currently running</label>
+  `;
+  document.getElementById('residencyContainer').appendChild(div);
+}
+document.getElementById('addResidencyBtn').addEventListener('click', addResidencyEntry);
+
+// Club Gig entry
+function addClubGigEntry() {
+  clubGigCounter++;
+  const id = clubGigCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'clubgig-' + id; div.style.display = 'block';
+  div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
-      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Weekly" style="accent-color:var(--gold);cursor:pointer" onchange="document.getElementById('freq-other-${id}').style.display='none'"> Weekly</label>
-      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Monthly" style="accent-color:var(--gold);cursor:pointer" onchange="document.getElementById('freq-other-${id}').style.display='none'"> Monthly</label>
-      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Other" style="accent-color:var(--gold);cursor:pointer" onchange="document.getElementById('freq-other-${id}').style.display='block'"> Other</label>
-      <div class="field" id="freq-other-${id}" style="flex:1;display:none"><input type="text" data-gig="${id}" data-gig-field="frequencyOther" placeholder="e.g. Every 2 weeks, Irregular"></div>
+      <div class="field" style="flex:1"><label>Event Name <span class="req">*</span></label><input type="text" data-cg="${id}" data-cg-field="eventName" placeholder="e.g. Techno Tuesday"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('clubgig-${id}')?.remove()">×</button>
     </div>
-    <div class="field">
-      <label>Ticket / Event URL</label><input type="url" data-gig="${id}" data-gig-field="ticketUrl" placeholder="https://...">
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Venue <span class="req">*</span></label><input type="text" data-cg="${id}" data-cg-field="venue" placeholder="e.g. Warehouse Club"></div>
+      <div class="field" style="flex:1">
+        <label>Role</label>
+        <div style="display:flex;gap:10px;padding-top:6px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="checkbox" data-cg="${id}" data-cg-role="Headliner" style="accent-color:var(--gold)"> Headliner</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="checkbox" data-cg="${id}" data-cg-role="Support" style="accent-color:var(--gold)"> Support</label>
+        </div>
+      </div>
     </div>
   `;
-  document.getElementById('gigsContainer').appendChild(div);
+  document.getElementById('clubGigContainer').appendChild(div);
 }
+document.getElementById('addClubGigBtn').addEventListener('click', addClubGigEntry);
 
-function collectGigs() {
-  const gigs = [];
-  document.querySelectorAll('#gigsContainer .entry-row').forEach(entry => {
-    const name = entry.querySelector('[data-gig-field="name"]').value.trim();
-    const ticketUrl = entry.querySelector('[data-gig-field="ticketUrl"]')?.value.trim() || '';
+// Festival entry
+function addFestivalEntry() {
+  festivalCounter++;
+  const id = festivalCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'festival-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Festival / Tour Name <span class="req">*</span></label><input type="text" data-fest="${id}" data-fest-field="name" placeholder="e.g. Defqon.1"></div>
+      <div class="field" style="width:120px"><label>Year</label><input type="text" data-fest="${id}" data-fest-field="year" placeholder="2025" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('festival-${id}')?.remove()">×</button>
+    </div>
+  `;
+  document.getElementById('festivalContainer').appendChild(div);
+}
+document.getElementById('addFestivalBtn').addEventListener('click', addFestivalEntry);
 
-    // Frequency: radio (Weekly/Monthly/Other) + freetext
-    let frequency = '';
-    const radios = entry.querySelectorAll('[data-gig-freq]');
-    radios.forEach(r => { if (r.checked) frequency = r.dataset.gigFreq; });
-    if (frequency === 'Other') {
-      frequency = entry.querySelector('[data-gig-field="frequencyOther"]')?.value.trim() || 'Other';
-    }
-
-    // Tags: checkboxes
-    const tags = [];
-    GIG_TAGS.forEach(t => {
-      const cb = entry.querySelector(`[data-gig-tag="${t}"]`);
-      if (cb && cb.checked) tags.push(t);
-    });
-    if (name) gigs.push({ name, frequency, ticketUrl, tags });
+// Organizer toggle + entry
+document.querySelectorAll('input[name="isOrganizer"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('organizerSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
   });
-  return gigs;
+});
+
+function addOrganizerEntry() {
+  organizerCounter++;
+  const id = organizerCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'org-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event Name <span class="req">*</span></label><input type="text" data-org="${id}" data-org-field="name" placeholder="e.g. Bass Nation"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('org-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>Venue / Location <span class="req">*</span></label><input type="text" data-org="${id}" data-org-field="venue" placeholder="e.g. Sydney, The Metro"></div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Start Date <span class="req">*</span></label><input type="month" data-org="${id}" data-org-field="startDate"></div>
+      <div class="field" style="flex:1"><label>End Date</label><input type="month" data-org="${id}" data-org-field="endDate" id="orgEnd-${id}"></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;margin-bottom:8px"><input type="checkbox" data-org="${id}" data-org-field="currentlyRunning" style="accent-color:var(--gold)" onchange="document.getElementById('orgEnd-${id}').disabled=this.checked;if(this.checked)document.getElementById('orgEnd-${id}').value=''"> Currently running</label>
+    <div class="field" style="margin-bottom:8px">
+      <label>Event Size</label>
+      <select data-org="${id}" data-org-field="size" style="width:auto;min-width:160px">
+        <option value="">Select</option><option value="<100">&lt;100</option><option value="100-300">100–300</option><option value="300-1000">300–1000</option><option value="1000+">1000+</option>
+      </select>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>Event URL</label><input type="url" data-org="${id}" data-org-field="url" placeholder="https://..."></div>
+    <div class="field"><label>Description</label><textarea data-org="${id}" data-org-field="description" placeholder="Brief description of the event..." style="min-height:60px"></textarea></div>
+  `;
+  document.getElementById('organizerContainer').appendChild(div);
 }
-document.getElementById('addGigBtn').addEventListener('click', addGigEntry);
+document.getElementById('addOrganizerBtn').addEventListener('click', addOrganizerEntry);
+
+// Promoter toggle + entry
+document.querySelectorAll('input[name="isPromoter"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('promoterSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
+  });
+});
+
+function addPromoterEntry() {
+  promoterCounter++;
+  const id = promoterCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'promo-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event Name <span class="req">*</span></label><input type="text" data-promo="${id}" data-promo-field="name" placeholder="e.g. Underground Sessions"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('promo-${id}')?.remove()">×</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Venue / Location</label><input type="text" data-promo="${id}" data-promo-field="venue" placeholder="e.g. Club XYZ"></div>
+      <div class="field" style="flex:1"><label>Event URL</label><input type="url" data-promo="${id}" data-promo-field="url" placeholder="https://..."></div>
+    </div>
+  `;
+  document.getElementById('promoterContainer').appendChild(div);
+}
+document.getElementById('addPromoterBtn').addEventListener('click', addPromoterEntry);
+
+// Upcoming toggle + entry
+document.querySelectorAll('input[name="hasUpcoming"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('upcomingSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
+  });
+});
+
+function addUpcomingEntry() {
+  upcomingCounter++;
+  const id = upcomingCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'upcoming-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event Name <span class="req">*</span></label><input type="text" data-up="${id}" data-up-field="name" placeholder="e.g. NYE Rave"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('upcoming-${id}')?.remove()">×</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Venue <span class="req">*</span></label><input type="text" data-up="${id}" data-up-field="venue" placeholder="e.g. Warehouse Club"></div>
+      <div class="field" style="flex:1"><label>Date</label><input type="date" data-up="${id}" data-up-field="date"></div>
+    </div>
+    <div class="field"><label>Ticket URL</label><input type="url" data-up="${id}" data-up-field="ticketUrl" placeholder="https://..."></div>
+  `;
+  document.getElementById('upcomingContainer').appendChild(div);
+}
+document.getElementById('addUpcomingBtn').addEventListener('click', addUpcomingEntry);
+
+// Collect all activity data
+function collectActivity() {
+  const activities = [];
+  // Residencies
+  document.querySelectorAll('#residencyContainer .entry-row').forEach(entry => {
+    const venue = entry.querySelector('[data-res-field="venue"]')?.value.trim();
+    const startDate = entry.querySelector('[data-res-field="startDate"]')?.value || '';
+    const endDate = entry.querySelector('[data-res-field="endDate"]')?.value || '';
+    const currentlyRunning = entry.querySelector('[data-res-field="currentlyRunning"]')?.checked || false;
+    if (venue) activities.push({ type: 'residency', venue, startDate, endDate, currentlyRunning });
+  });
+  // Club Gigs
+  document.querySelectorAll('#clubGigContainer .entry-row').forEach(entry => {
+    const eventName = entry.querySelector('[data-cg-field="eventName"]')?.value.trim();
+    const venue = entry.querySelector('[data-cg-field="venue"]')?.value.trim() || '';
+    const roles = [];
+    entry.querySelectorAll('[data-cg-role]').forEach(cb => { if (cb.checked) roles.push(cb.dataset.cgRole); });
+    if (eventName) activities.push({ type: 'clubGig', eventName, venue, role: roles.join(', ') });
+  });
+  // Festivals
+  document.querySelectorAll('#festivalContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-fest-field="name"]')?.value.trim();
+    const year = entry.querySelector('[data-fest-field="year"]')?.value.trim() || '';
+    if (name) activities.push({ type: 'festival', name, year });
+  });
+  return activities;
+}
+
+function collectOrganizer() {
+  const active = document.querySelector('input[name="isOrganizer"][value="yes"]')?.checked || false;
+  if (!active) return JSON.stringify({ active: false, events: [] });
+  const events = [];
+  document.querySelectorAll('#organizerContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-org-field="name"]')?.value.trim();
+    const venue = entry.querySelector('[data-org-field="venue"]')?.value.trim() || '';
+    const startDate = entry.querySelector('[data-org-field="startDate"]')?.value || '';
+    const endDate = entry.querySelector('[data-org-field="endDate"]')?.value || '';
+    const currentlyRunning = entry.querySelector('[data-org-field="currentlyRunning"]')?.checked || false;
+    const size = entry.querySelector('[data-org-field="size"]')?.value || '';
+    const url = entry.querySelector('[data-org-field="url"]')?.value.trim() || '';
+    const description = entry.querySelector('[data-org-field="description"]')?.value.trim() || '';
+    if (name) events.push({ name, venue, startDate, endDate, currentlyRunning, size, url, description });
+  });
+  return JSON.stringify({ active: true, events });
+}
+
+function collectPromoter() {
+  const active = document.querySelector('input[name="isPromoter"][value="yes"]')?.checked || false;
+  if (!active) return JSON.stringify({ active: false, events: [] });
+  const events = [];
+  document.querySelectorAll('#promoterContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-promo-field="name"]')?.value.trim();
+    const venue = entry.querySelector('[data-promo-field="venue"]')?.value.trim() || '';
+    const url = entry.querySelector('[data-promo-field="url"]')?.value.trim() || '';
+    if (name) events.push({ name, venue, url });
+  });
+  return JSON.stringify({ active: true, events });
+}
+
+function collectUpcoming() {
+  const active = document.querySelector('input[name="hasUpcoming"][value="yes"]')?.checked || false;
+  if (!active) return JSON.stringify({ active: false, shows: [] });
+  const shows = [];
+  document.querySelectorAll('#upcomingContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-up-field="name"]')?.value.trim();
+    const venue = entry.querySelector('[data-up-field="venue"]')?.value.trim() || '';
+    const date = entry.querySelector('[data-up-field="date"]')?.value || '';
+    const ticketUrl = entry.querySelector('[data-up-field="ticketUrl"]')?.value.trim() || '';
+    if (name) shows.push({ name, venue, date, ticketUrl });
+  });
+  return JSON.stringify({ active: true, shows });
+}
 
 
 // ═══ LINKS ═══
@@ -1061,7 +1323,10 @@ async function submitForm() {
       agencyName: document.getElementById('agencyName')?.value.trim() || '',
       agencyEmail: document.getElementById('agencyEmail')?.value.trim() || '',
       agencyWebsite: document.getElementById('agencyWebsite')?.value.trim() || '',
-      gigs: JSON.stringify(collectGigs()),
+      activity: JSON.stringify(collectActivity()),
+      organizer: collectOrganizer(),
+      promoter: collectPromoter(),
+      upcoming: collectUpcoming(),
       consent: document.getElementById('consent').checked,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
