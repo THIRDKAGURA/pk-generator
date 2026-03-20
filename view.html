@@ -88,6 +88,15 @@
     .listen-item:last-child { margin-bottom:0; }
     .listen-item iframe { width:100%; border-radius:var(--radius); }
 
+    /* Featured Links */
+    .feat-link { display:block; border-radius:var(--radius); overflow:hidden; margin-bottom:12px; text-decoration:none; transition:opacity 0.2s; }
+    .feat-link:last-child { margin-bottom:0; }
+    .feat-link:hover { opacity:0.85; }
+    .feat-link img { width:100%; aspect-ratio:16/5; object-fit:cover; display:block; }
+    .feat-link .feat-label { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--surface); border:1px solid var(--border); border-top:none; border-radius:0 0 var(--radius) var(--radius); font-size:13px; font-weight:600; color:var(--text); }
+    body.pat2 .feat-link .feat-label { background:rgba(20,20,20,0.4); border-color:var(--border-a); }
+    .feat-link .feat-arrow { color:var(--accent); font-size:14px; }
+
     /* Next gig — linkable */
     .gig-link { display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--border); text-decoration:none; color:inherit; transition:opacity 0.2s; }
     body.pat2 .gig-link { border-color:var(--border-a); }
@@ -187,6 +196,11 @@
     <div class="parent-block" id="secListen" style="display:none">
       <div class="parent-header">Listen</div>
       <div class="parent-body" id="vListen"></div>
+    </div>
+
+    <!-- ===== FEATURED LINKS ===== -->
+    <div class="parent-block" id="secFeatLinks" style="display:none">
+      <div class="parent-body" id="vFeatLinks"></div>
     </div>
 
     <!-- ===== NEXT GIG ===== -->
@@ -406,6 +420,26 @@ function renderProfile(d) {
     spots.forEach(url => {
       if (!url) return;
       lel.innerHTML += '<div class="listen-item">' + buildEmbed(url) + '</div>';
+    });
+  }
+
+  // === FEATURED LINKS ===
+  const fl1Label = (d.featLink1Label || '').trim();
+  const fl1Url = (d.featLink1Url || '').trim();
+  const fl1Img = (d.featLink1Img || '').trim();
+  const fl2Label = (d.featLink2Label || '').trim();
+  const fl2Url = (d.featLink2Url || '').trim();
+  const fl2Img = (d.featLink2Img || '').trim();
+  if (fl1Label || fl2Label) {
+    document.getElementById('secFeatLinks').style.display = 'block';
+    const fel = document.getElementById('vFeatLinks');
+    [{ label: fl1Label, url: fl1Url, img: fl1Img }, { label: fl2Label, url: fl2Url, img: fl2Img }].forEach(fl => {
+      if (!fl.label) return;
+      const href = fl.url ? esc(fl.url) : '#';
+      const imgHtml = fl.img ? '<img src="'+esc(fl.img)+'" alt="'+esc(fl.label)+'">' : '';
+      fel.innerHTML += '<a class="feat-link" href="'+href+'" target="_blank">' +
+        imgHtml +
+        '<div class="feat-label"><span>'+esc(fl.label)+'</span><span class="feat-arrow">→</span></div></a>';
     });
   }
 
