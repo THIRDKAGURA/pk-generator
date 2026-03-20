@@ -119,7 +119,6 @@
     .bio-counter { font-size: 12px; margin-top: 4px; text-align: right; }
     .bio-counter.under { color: var(--error); }
     .bio-counter.ok { color: var(--success); }
-    .bio-counter.over { color: var(--warning); }
 
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     @media (max-width: 540px) { .field-row { grid-template-columns: 1fr; } }
@@ -337,7 +336,7 @@
 
       <div class="field">
         <label for="bio">Bio <span class="req">*</span></label>
-        <textarea id="bio" name="bio" required maxlength="1100" placeholder="Tell us about yourself and your sound (100–1000 characters)"></textarea>
+        <textarea id="bio" name="bio" required maxlength="1000" placeholder="Tell us about yourself and your sound"></textarea>
         <div class="bio-counter" id="bioCounter">0 / 1000</div>
         <div class="error-msg" id="err-bio">Bio must be at least 100 characters</div>
       </div>
@@ -814,7 +813,7 @@ const bioCounter = document.getElementById('bioCounter');
 bioEl.addEventListener('input', () => {
   const len = bioEl.value.length;
   bioCounter.textContent = `${len} / 1000`;
-  bioCounter.className = 'bio-counter ' + (len < 100 ? 'under' : len <= 1000 ? 'ok' : 'over');
+  bioCounter.className = 'bio-counter ' + (len < 100 ? 'under' : 'ok');
   if (len >= 100) { document.getElementById('err-bio').classList.remove('visible'); bioEl.classList.remove('error'); }
 });
 
@@ -1029,10 +1028,6 @@ function generateSlug(name) {
 
 async function submitForm() {
   if (isSubmitting) return;
-
-  // Bio truncation warning
-  const bioLen = bioEl.value.length;
-  if (bioLen > 1000 && !confirm(`Your bio is ${bioLen} characters. It will be truncated to 1000. Continue?`)) return;
 
   isSubmitting = true;
   const btn = document.getElementById('submitBtn') || document.getElementById('toStep2Btn');

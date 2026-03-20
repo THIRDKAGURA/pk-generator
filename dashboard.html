@@ -222,8 +222,8 @@
       </div>
       <div class="field">
         <label for="e-bio">Bio</label>
-        <textarea id="e-bio" maxlength="350"></textarea>
-        <div class="bio-counter" id="e-bioCounter">0 / 300</div>
+        <textarea id="e-bio" maxlength="1000"></textarea>
+        <div class="bio-counter" id="e-bioCounter">0 / 1000</div>
       </div>
     </section>
 
@@ -269,13 +269,38 @@
     <!-- Fees -->
     <section class="form-section">
       <h3>Fees <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private)</span></h3>
-      <div class="field-row">
-        <div class="field"><label>Local Fee</label><input type="text" id="e-localFee" placeholder="Enter range (AUD)"></div>
-        <div class="field"><label>Club Fee</label><input type="text" id="e-clubFee" placeholder="Enter range (AUD)"></div>
+      <div class="field" style="margin-bottom:14px">
+        <label for="e-feeCurrency">Currency</label>
+        <select id="e-feeCurrency" style="width:auto;min-width:160px">
+          <option value="AUD">AUD — Australian Dollar</option>
+          <option value="USD">USD — US Dollar</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="GBP">GBP — British Pound</option>
+          <option value="JPY">JPY — Japanese Yen</option>
+          <option value="KRW">KRW — Korean Won</option>
+          <option value="CNY">CNY — Chinese Yuan</option>
+          <option value="NZD">NZD — New Zealand Dollar</option>
+          <option value="SGD">SGD — Singapore Dollar</option>
+          <option value="THB">THB — Thai Baht</option>
+          <option value="IDR">IDR — Indonesian Rupiah</option>
+          <option value="PHP">PHP — Philippine Peso</option>
+          <option value="INR">INR — Indian Rupee</option>
+          <option value="BRL">BRL — Brazilian Real</option>
+          <option value="ZAR">ZAR — South African Rand</option>
+          <option value="AED">AED — UAE Dirham</option>
+          <option value="CAD">CAD — Canadian Dollar</option>
+          <option value="SEK">SEK — Swedish Krona</option>
+          <option value="CHF">CHF — Swiss Franc</option>
+          <option value="MXN">MXN — Mexican Peso</option>
+        </select>
       </div>
       <div class="field-row">
-        <div class="field"><label>Festival Fee</label><input type="text" id="e-festivalFee" placeholder="Enter range (AUD)"></div>
-        <div class="field"><label>Minimum Fee</label><input type="text" id="e-minimumFee" placeholder="Enter amount (AUD)"></div>
+        <div class="field"><label>Local Fee</label><input type="text" id="e-localFee" placeholder="Enter range"></div>
+        <div class="field"><label>Club Fee</label><input type="text" id="e-clubFee" placeholder="Enter range"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Festival Fee</label><input type="text" id="e-festivalFee" placeholder="Enter range"></div>
+        <div class="field"><label>Minimum Fee</label><input type="text" id="e-minimumFee" placeholder="Enter amount"></div>
       </div>
     </section>
 
@@ -345,8 +370,7 @@ const GENRE_LIST = [
   'Hard Techno','Hardstyle','Hip Hop','House','Melodic Techno',
   'Minimal / Deep Tech','Open Format','Psytrance','Techno','Trance','UK Garage'
 ];
-const GIG_ROLES = ['Resident','Organiser','Spot / Guest'];
-const GIG_FREQUENCIES = ['Weekly','Fortnightly','Monthly','Irregular / One-off'];
+const GIG_TAGS = ['Organiser','Headliner','Resident'];
 
 const COUNTRIES_BY_REGION = {
   'Oceania':['Australia','Fiji','Kiribati','Marshall Islands','Micronesia','Nauru','New Zealand','Palau','Papua New Guinea','Samoa','Solomon Islands','Tonga','Tuvalu','Vanuatu'],
@@ -467,6 +491,7 @@ function populateForm(d) {
   document.getElementById('e-instagram').value = d.instagram || '';
   document.getElementById('e-bio').value = d.bio || '';
   updateBioCounter();
+  document.getElementById('e-feeCurrency').value = d.feeCurrency || 'AUD';
   document.getElementById('e-localFee').value = d.localFee || '';
   document.getElementById('e-clubFee').value = d.clubFee || '';
   document.getElementById('e-festivalFee').value = d.festivalFee || '';
@@ -530,7 +555,7 @@ bioEl.addEventListener('input', updateBioCounter);
 function updateBioCounter() {
   const len = bioEl.value.length;
   const c = document.getElementById('e-bioCounter');
-  c.textContent = `${len} / 300`;
+  c.textContent = `${len} / 1000`;
   c.className = 'bio-counter ' + (len < 100 ? 'under' : 'ok');
 }
 
@@ -595,13 +620,33 @@ function addGigEntry(data) {
   gigCounter++;
   const id = gigCounter;
   const div = document.createElement('div');
-  div.className='entry-row gig-grid'; div.id='gig-'+id;
+  div.className='entry-row'; div.id='gig-'+id;
+  div.style.display='block';
+
+  // Determine frequency for radio pre-selection
+  const freq = data?.frequency || '';
+  const isWeekly = freq === 'Weekly';
+  const isMonthly = freq === 'Monthly';
+  const isOther = freq && !isWeekly && !isMonthly;
+  const otherVal = isOther ? freq : '';
+
   div.innerHTML=`
-    <div class="field"><label>Party / Event</label><input type="text" data-gig="${id}" data-gig-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
-    <div class="field"><label>Role</label><select data-gig="${id}" data-gig-field="role">${GIG_ROLES.map(r=>`<option value="${r}"${r===data?.role?' selected':''}>${r}</option>`).join('')}</select></div>
-    <div class="field"><label>Frequency</label><select data-gig="${id}" data-gig-field="frequency">${GIG_FREQUENCIES.map(f=>`<option value="${f}"${f===data?.frequency?' selected':''}>${f}</option>`).join('')}</select></div>
-    <div class="field"><label>Ticket URL</label><input type="url" data-gig="${id}" data-gig-field="ticketUrl" value="${(data?.ticketUrl||'').replace(/"/g,'&quot;')}"></div>
-    <button type="button" class="remove-entry" onclick="document.getElementById('gig-${id}')?.remove()">×</button>
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Party / Event</label><input type="text" data-gig="${id}" data-gig-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('gig-${id}')?.remove()">×</button>
+    </div>
+    <div style="display:flex;gap:14px;align-items:center;margin-bottom:8px">
+      ${GIG_TAGS.map(t => `<label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="checkbox" data-gig="${id}" data-gig-tag="${t}" style="accent-color:var(--gold);width:15px;height:15px;cursor:pointer"${(data?.tags||[]).includes(t)?' checked':''}>${t}</label>`).join('')}
+    </div>
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Weekly" style="accent-color:var(--gold);cursor:pointer"${isWeekly?' checked':''} onchange="document.getElementById('freq-other-${id}').style.display='none'"> Weekly</label>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Monthly" style="accent-color:var(--gold);cursor:pointer"${isMonthly?' checked':''} onchange="document.getElementById('freq-other-${id}').style.display='none'"> Monthly</label>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer;white-space:nowrap"><input type="radio" name="freq-${id}" data-gig="${id}" data-gig-freq="Other" style="accent-color:var(--gold);cursor:pointer"${isOther?' checked':''} onchange="document.getElementById('freq-other-${id}').style.display='block'"> Other</label>
+      <div class="field" id="freq-other-${id}" style="flex:1;display:${isOther?'block':'none'}"><input type="text" data-gig="${id}" data-gig-field="frequencyOther" placeholder="e.g. Every 2 weeks, Irregular" value="${otherVal.replace(/"/g,'&quot;')}"></div>
+    </div>
+    <div class="field">
+      <label>Ticket / Event URL</label><input type="url" data-gig="${id}" data-gig-field="ticketUrl" value="${(data?.ticketUrl||'').replace(/"/g,'&quot;')}">
+    </div>
   `;
   document.getElementById('e-gigsContainer').appendChild(div);
 }
@@ -611,10 +656,19 @@ function collectGigs() {
   const gigs=[];
   document.querySelectorAll('#e-gigsContainer .entry-row').forEach(entry => {
     const name=entry.querySelector('[data-gig-field="name"]').value.trim();
-    const role=entry.querySelector('[data-gig-field="role"]').value;
-    const frequency=entry.querySelector('[data-gig-field="frequency"]').value;
-    const ticketUrl=entry.querySelector('[data-gig-field="ticketUrl"]').value.trim();
-    if(name) gigs.push({name,role,frequency,ticketUrl});
+    const ticketUrl=entry.querySelector('[data-gig-field="ticketUrl"]')?.value.trim()||'';
+    let frequency='';
+    const radios=entry.querySelectorAll('[data-gig-freq]');
+    radios.forEach(r => { if(r.checked) frequency=r.dataset.gigFreq; });
+    if(frequency==='Other') {
+      frequency=entry.querySelector('[data-gig-field="frequencyOther"]')?.value.trim()||'Other';
+    }
+    const tags=[];
+    GIG_TAGS.forEach(t => {
+      const cb=entry.querySelector(`[data-gig-tag="${t}"]`);
+      if(cb&&cb.checked) tags.push(t);
+    });
+    if(name) gigs.push({name,frequency,ticketUrl,tags});
   });
   return gigs;
 }
@@ -658,12 +712,13 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     genre: JSON.stringify([...selectedGenres]),
     primarySoundLink: document.getElementById('e-primarySoundLink').value.trim(),
     instagram: document.getElementById('e-instagram').value.trim(),
-    bio: document.getElementById('e-bio').value.trim().substring(0,300),
+    bio: document.getElementById('e-bio').value.trim().substring(0, 1000),
     profilePhoto: imageData.profilePhoto || '',
     perfPhoto: imageData.perfPhoto || '',
     artistLogo: imageData.artistLogo || '',
     accentColor: document.getElementById('e-accentColor').value,
     font: document.getElementById('e-font').value,
+    feeCurrency: document.getElementById('e-feeCurrency').value,
     localFee: document.getElementById('e-localFee').value.trim(),
     clubFee: document.getElementById('e-clubFee').value.trim(),
     festivalFee: document.getElementById('e-festivalFee').value.trim(),
