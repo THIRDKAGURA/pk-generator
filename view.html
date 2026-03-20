@@ -8,83 +8,128 @@
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --bg:#0a0a0a; --surface:#141414; --border:#2a2a2a;
-      --gold:#c4a265; --gold-dim:rgba(196,162,101,0.15);
-      --text:#f0f0f0; --text-dim:#999; --text-muted:#666;
-      --radius:8px;
+      --bg:#0a0a0a; --surface:#141414;
+      --border:#2a2a2a; --border-a:rgba(255,255,255,0.1);
+      --accent:#c4a265;
+      --text:#f0f0f0; --text-dim:#aaa; --text-muted:#666;
+      --radius:6px;
     }
+    html { scroll-behavior:smooth; }
     body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; min-height:100vh; }
 
-    /* Hero */
-    .hero { position:relative; text-align:center; padding:80px 24px 48px; overflow:hidden; }
-    .hero::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(196,162,101,0.06) 0%, transparent 60%); pointer-events:none; }
-    .hero-photo { width:140px; height:140px; border-radius:50%; object-fit:cover; border:3px solid var(--gold); margin-bottom:20px; position:relative; }
-    .hero h1 { font-size:32px; font-weight:800; margin-bottom:6px; position:relative; }
-    .hero .location { color:var(--text-dim); font-size:14px; margin-bottom:4px; position:relative; }
-    .hero .genre-tag { display:inline-block; padding:4px 14px; border:1px solid var(--gold); border-radius:20px; font-size:12px; color:var(--gold); margin-top:8px; position:relative; }
+    /* =============== PATTERN 1 — Photo fade =============== */
+    .p1-hero { position:relative; width:100%; max-width:480px; margin:0 auto; aspect-ratio:3/4; overflow:hidden; }
+    .p1-hero img { width:100%; height:100%; object-fit:cover; display:block; }
+    .p1-hero .hero-overlay { position:absolute; inset:0; background:linear-gradient(180deg, transparent 10%, rgba(10,10,10,0.15) 30%, rgba(10,10,10,0.6) 55%, rgba(10,10,10,0.92) 75%, #0a0a0a 100%); }
+    .p1-hero .hero-content { position:absolute; bottom:0; left:0; right:0; padding:0 28px 32px; text-align:center; }
 
-    /* Container */
-    .container { max-width:680px; margin:0 auto; padding:0 24px 64px; }
+    /* =============== PATTERN 2 — Background image =============== */
+    body.pat2 .bg-layer { position:fixed; inset:0; z-index:0; background-size:cover; background-position:center top; filter:brightness(0.35) blur(1px); }
+    body.pat2 .bg-overlay { position:fixed; inset:0; z-index:1; background:linear-gradient(180deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.5) 40%, rgba(10,10,10,0.7) 100%); }
+    body.pat2 .content-wrap { position:relative; z-index:2; }
+    body.pat2 .parent-block { background:rgba(20,20,20,0.25); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); border-color:var(--border-a); }
+    body.pat2 .hero-content { text-align:center; padding:56px 0 24px; }
+    body.pat2 .hero-name { text-shadow:0 2px 12px rgba(0,0,0,0.6); }
+    body.pat2 .hero-subtitle { text-shadow:0 1px 6px rgba(0,0,0,0.5); }
+    body.pat2 .genre-tag { background:rgba(0,0,0,0.3); }
 
-    /* Section */
-    .section { margin-bottom:36px; }
-    .section-title {
-      font-size:11px; font-weight:600; color:var(--gold);
-      text-transform:uppercase; letter-spacing:1.5px;
-      margin-bottom:14px; padding-bottom:6px; border-bottom:1px solid var(--border);
-    }
+    /* =============== PATTERN 3 — Linktree round icon =============== */
+    .p3-hero { text-align:center; padding:52px 0 20px; }
+    .p3-hero img { width:120px; height:120px; border-radius:50%; object-fit:cover; border:3px solid var(--accent); margin-bottom:16px; }
+
+    /* =============== SHARED STYLES =============== */
+    .content-wrap { max-width:480px; margin:0 auto; padding:0 20px; }
+    .container { max-width:480px; margin:0 auto; padding:8px 20px 0; }
+    .hero-name { font-size:36px; font-weight:800; letter-spacing:2px; display:inline-flex; align-items:center; gap:10px; justify-content:center; }
+    .ig-icon { width:22px; height:22px; opacity:0.7; transition:opacity 0.2s; cursor:pointer; color:var(--text); }
+    .ig-icon:hover { opacity:1; }
+    .hero-subtitle { font-size:13px; color:var(--text-dim); margin-bottom:12px; letter-spacing:0.5px; }
+    .genre-tags { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+    .genre-tag { padding:4px 16px; border:1px solid var(--accent); border-radius:20px; font-size:11px; color:var(--accent); letter-spacing:0.5px; font-weight:500; }
+
+    /* Parent block */
+    .parent-block { border:1px solid var(--border); border-radius:var(--radius); margin-bottom:12px; overflow:hidden; background:var(--surface); }
+    .parent-header { padding:14px 16px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:var(--text); }
+    .parent-body { padding:16px; }
+
+    /* Sub accordion */
+    .sub-acc-header { display:flex; align-items:center; gap:8px; padding:10px 0; cursor:pointer; user-select:none; }
+    .sub-acc-icon { font-size:0; color:var(--accent); width:16px; text-align:center; font-family:monospace; }
+    .sub-acc.open .sub-acc-icon::after { content:'+'; font-size:14px; }
+    .sub-acc:not(.open) .sub-acc-icon::after { content:'\2212'; font-size:14px; }
+    .sub-acc-label { font-size:13px; font-weight:500; color:var(--text-dim); letter-spacing:0.5px; text-transform:uppercase; }
+    .sub-acc-body { display:none; padding:0 0 8px 24px; }
+    .sub-acc.open .sub-acc-body { display:block; }
 
     /* Bio */
-    .bio { font-size:15px; color:var(--text-dim); line-height:1.8; }
-    .bio-toggle { background:none; border:none; color:var(--gold); cursor:pointer; font-size:13px; margin-top:6px; font-family:inherit; }
-
-    /* Sound embed */
-    .sound-link { display:block; margin-top:8px; }
-    .sound-link iframe { width:100%; border-radius:var(--radius); }
-
-    /* Activity cards */
-    .activity-card {
-      background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-      padding:16px; margin-bottom:10px;
-    }
-    .activity-card .card-title { font-size:14px; font-weight:600; margin-bottom:4px; }
-    .activity-card .card-meta { font-size:12px; color:var(--text-muted); }
-    .activity-card .card-desc { font-size:13px; color:var(--text-dim); margin-top:6px; }
-
-    /* Links */
-    .link-list { display:flex; flex-direction:column; gap:8px; }
-    .link-item {
-      display:flex; align-items:center; gap:12px;
-      background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-      padding:12px 16px; text-decoration:none; color:var(--text);
-      transition:border-color 0.2s;
-    }
-    .link-item:hover { border-color:var(--gold); }
-    .link-item .link-label { font-size:14px; }
-    .link-item .link-arrow { margin-left:auto; color:var(--text-muted); font-size:12px; }
+    .bio-text { font-size:14px; color:var(--text-dim); line-height:1.8; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .bio-text.expanded { display:block; -webkit-line-clamp:unset; }
+    .bio-toggle { background:none; border:none; color:var(--accent); cursor:pointer; font-size:12px; font-family:inherit; margin-top:6px; padding:0; display:none; }
 
     /* Contact */
-    .contact-row { display:flex; gap:10px; flex-wrap:wrap; }
-    .contact-item {
-      flex:1; min-width:200px;
-      background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-      padding:14px 16px;
-    }
-    .contact-item .contact-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
-    .contact-item a { color:var(--gold); text-decoration:none; font-size:14px; word-break:break-all; }
+    .contact-title { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-top:14px; margin-bottom:10px; }
+    .contact-always { font-size:13px; color:var(--text-dim); line-height:2; }
+    .contact-always a { color:var(--accent); text-decoration:none; }
+    .contact-always a:hover { text-decoration:underline; }
+    .social-links { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+    .social-link { padding:6px 12px; border:1px solid var(--border); border-radius:var(--radius); color:var(--text-dim); text-decoration:none; font-size:12px; transition:border-color 0.2s, color 0.2s; }
+    body.pat2 .social-link { border-color:var(--border-a); }
+    .social-link:hover { border-color:var(--accent); color:var(--accent); }
 
-    /* Instagram */
-    .ig-link { color:var(--gold); text-decoration:none; font-size:14px; }
-    .ig-link:hover { text-decoration:underline; }
+    /* Activity */
+    .act-item { font-size:13px; color:var(--text-dim); line-height:1.7; margin-bottom:6px; }
+    .act-item .act-title { font-weight:600; color:var(--text); font-size:14px; }
+    .act-item .act-meta { font-size:12px; color:var(--text-muted); }
 
-    /* Powered by */
-    .powered { text-align:center; padding:32px; color:var(--text-muted); font-size:11px; border-top:1px solid var(--border); margin-top:40px; }
-    .powered a { color:var(--gold); text-decoration:none; }
+    /* Listen */
+    .listen-item { margin-bottom:12px; }
+    .listen-item:last-child { margin-bottom:0; }
+    .listen-item iframe { width:100%; border-radius:var(--radius); }
 
-    /* Loading */
-    .loading-screen { display:flex; align-items:center; justify-content:center; min-height:60vh; color:var(--text-dim); }
+    /* Next gig — linkable */
+    .gig-link { display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--border); text-decoration:none; color:inherit; transition:opacity 0.2s; }
+    body.pat2 .gig-link { border-color:var(--border-a); }
+    .gig-link:last-child { border-bottom:none; }
+    .gig-link:hover { opacity:0.8; }
+    .gig-link .gig-name { font-weight:600; color:var(--text); font-size:14px; }
+    .gig-link .gig-detail { font-size:12px; color:var(--text-muted); margin-top:1px; }
+    .gig-link .gig-right { text-align:right; margin-left:12px; white-space:nowrap; }
+    .gig-link .gig-date { font-size:11px; color:var(--text-muted); }
+    .gig-link .gig-arrow { font-size:14px; color:var(--accent); margin-top:2px; }
+
+    /* Download */
+    .dl-header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; }
+    .dl-header .dl-title { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:var(--text); display:flex; align-items:center; gap:8px; }
+    .dl-header .dl-title svg { width:16px; height:16px; }
+    .dl-all-btn { padding:5px 12px; border:1px solid var(--accent); border-radius:16px; color:var(--accent); font-size:10px; font-weight:600; letter-spacing:0.5px; cursor:pointer; background:none; transition:background 0.2s, color 0.2s; }
+    .dl-all-btn:hover { background:var(--accent); color:#0a0a0a; }
+    .dl-thumbs { display:flex; gap:8px; margin-bottom:14px; }
+    .dl-thumb-wrap { flex:1; }
+    .dl-thumb { aspect-ratio:1; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
+    body.pat2 .dl-thumb { border-color:var(--border-a); }
+    .dl-thumb img { width:100%; height:100%; object-fit:cover; display:block; opacity:0.85; }
+    .dl-thumb-label { font-size:10px; color:var(--text-muted); text-align:center; margin-top:4px; }
+    .dl-separator { border:none; border-top:1px solid var(--border); margin:10px 0; }
+    body.pat2 .dl-separator { border-color:var(--border-a); }
+
+    /* Footer */
+    .footer { max-width:480px; margin:0 auto; display:flex; align-items:center; justify-content:center; gap:8px; padding:24px 20px 40px; color:var(--text-muted); font-size:10px; letter-spacing:0.5px; }
+    body.pat2 .footer { position:relative; z-index:2; }
+    .footer a { color:var(--text-muted); text-decoration:none; }
+    .footer a:hover { color:var(--accent); }
+    .footer svg { width:14px; height:14px; }
+
+    /* Loading / Error */
+    .loading-screen { display:flex; align-items:center; justify-content:center; min-height:60vh; color:var(--text-dim); font-size:14px; }
     .error-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; color:var(--text-dim); text-align:center; padding:24px; }
     .error-screen h2 { margin-bottom:12px; color:var(--text); }
+
+    /* Hide by default */
+    .bg-layer, .bg-overlay { display:none; }
+    body.pat2 .bg-layer, body.pat2 .bg-overlay { display:block; }
+    .p1-hero, .p3-hero { display:none; }
+
+    @media (max-width:520px) { .hero-name { font-size:28px; } .content-wrap, .container { max-width:100%; } .p1-hero { max-width:100%; } }
   </style>
 </head>
 <body>
@@ -95,67 +140,86 @@
   <p>This profile may not exist or may have been removed.</p>
 </div>
 
-<div id="content" style="display:none">
-  <div class="hero">
-    <img class="hero-photo" id="v-photo" src="" alt="Artist photo">
-    <h1 id="v-name"></h1>
-    <div class="location" id="v-location"></div>
-    <div id="v-genres"></div>
+<!-- Background (pattern 2 only) -->
+<div class="bg-layer" id="bgLayer"></div>
+<div class="bg-overlay"></div>
+
+<!-- Hero: Pattern 1 -->
+<div class="p1-hero" id="p1Hero">
+  <img id="p1Photo" src="" alt="">
+  <div class="hero-overlay"></div>
+  <div class="hero-content" id="p1Content"></div>
+</div>
+
+<!-- Hero: Pattern 3 -->
+<div class="p3-hero" id="p3Hero"></div>
+
+<div id="mainContent" style="display:none">
+
+  <!-- Hero: Pattern 2 (inside content-wrap) -->
+  <div class="content-wrap" id="contentWrap">
+    <div class="hero-content" id="p2Content" style="display:none"></div>
+
+    <!-- ===== ABOUT ===== -->
+    <div class="parent-block" id="secAbout">
+      <div class="parent-header">About</div>
+      <div class="parent-body">
+        <div class="bio-text" id="vBio"></div>
+        <button class="bio-toggle" id="bioToggle" onclick="toggleBio()">Read more</button>
+        <div id="vHistory"></div>
+        <div id="vOrganize"></div>
+        <div id="vAward"></div>
+        <div class="contact-title" id="contactTitle" style="display:none">Contact</div>
+        <div class="contact-always" id="vContact" style="display:none"></div>
+        <div class="social-links" id="vSocial"></div>
+      </div>
+    </div>
+
+    <!-- ===== LISTEN ===== -->
+    <div class="parent-block" id="secListen" style="display:none">
+      <div class="parent-header">Listen</div>
+      <div class="parent-body" id="vListen"></div>
+    </div>
+
+    <!-- ===== NEXT GIG ===== -->
+    <div class="parent-block" id="secGig" style="display:none">
+      <div class="parent-header">Next Gig</div>
+      <div class="parent-body" id="vGig" style="padding:0 16px;"></div>
+    </div>
+
+    <!-- ===== DOWNLOAD ===== -->
+    <div class="parent-block" id="secDl" style="display:none">
+      <div class="dl-header">
+        <span class="dl-title">Download <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+        <button class="dl-all-btn" id="dlAllBtn" style="display:none">SAVE ALL</button>
+      </div>
+      <div class="parent-body">
+        <div class="dl-thumbs" id="vDlThumbs" style="display:none"></div>
+        <hr class="dl-separator" id="dlSep" style="display:none">
+        <div id="vDlFiles"></div>
+      </div>
+    </div>
   </div>
 
-  <div class="container">
-
-    <!-- Bio -->
-    <div class="section" id="sec-bio">
-      <div class="section-title">About</div>
-      <div class="bio" id="v-bio"></div>
-    </div>
-
-    <!-- Primary Sound -->
-    <div class="section" id="sec-sound" style="display:none">
-      <div class="section-title">Listen</div>
-      <div id="v-sound"></div>
-    </div>
-
-    <!-- Instagram -->
-    <div class="section" id="sec-ig" style="display:none">
-      <div class="section-title">Instagram</div>
-      <a class="ig-link" id="v-ig" href="#" target="_blank"></a>
-    </div>
-
-    <!-- Activity -->
-    <div class="section" id="sec-activity" style="display:none">
-      <div class="section-title">Activity</div>
-      <div id="v-activity"></div>
-    </div>
-
-    <!-- Links -->
-    <div class="section" id="sec-links" style="display:none">
-      <div class="section-title">Links</div>
-      <div class="link-list" id="v-links"></div>
-    </div>
-
-    <!-- Contact -->
-    <div class="section" id="sec-contact" style="display:none">
-      <div class="section-title">Contact</div>
-      <div class="contact-row" id="v-contact"></div>
-    </div>
-
-    <div class="powered">Powered by <a href="https://thirdkagura.com" target="_blank">THIRD KAGURA</a></div>
+  <!-- Footer -->
+  <div class="footer">
+    <span>Powered by</span>
+    <a href="https://thirdkagura.com" target="_blank">THIRD KAGURA Pty Ltd</a>
+    <a href="https://www.instagram.com/third_kagura_pty_ltd/" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
   </div>
 </div>
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxnbN1GV9QYwsya8E_Q1mYU_ZpIauhikkcmAcAgJWn7QHTrJgcXk-HKyW7BS3fDWz5b/exec';
-
-const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(location.search);
 const slug = params.get('id');
+const designParam = parseInt(params.get('design')) || 2;
 
-if (!slug) {
+if (!slug) { showError(); } else { loadProfile(slug); }
+
+function showError() {
   document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('errorScreen').style.display = 'flex';
-} else {
-  loadProfile(slug);
 }
 
 async function loadProfile(id) {
@@ -164,180 +228,248 @@ async function loadProfile(id) {
     const d = await res.json();
     if (d.error) throw new Error(d.error);
     renderProfile(d);
-  } catch (e) {
-    document.getElementById('loadingScreen').style.display = 'none';
-    document.getElementById('errorScreen').style.display = 'flex';
-  }
+  } catch (e) { showError(); }
 }
 
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function jp(s) { try { return JSON.parse(s); } catch(e) { return null; } }
+
 function renderProfile(d) {
+  const pattern = designParam;
   document.title = (d.artistName || 'Press Kit') + ' — THIRD KAGURA';
 
-  // Hero
-  if (d.profilePhoto) document.getElementById('v-photo').src = d.profilePhoto;
-  else document.getElementById('v-photo').style.display = 'none';
-  document.getElementById('v-name').textContent = d.artistName || '';
-  document.getElementById('v-location').textContent = d.location || '';
+  // Accent color
+  if (d.accentColor) document.documentElement.style.setProperty('--accent', d.accentColor);
+
+  // Instagram SVG
+  const igSvg = '<svg class="ig-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>';
+  const igUrl = d.instagram ? (d.instagram.includes('http') ? d.instagram : 'https://instagram.com/' + d.instagram.replace('@','')) : '';
+  const igLink = igUrl ? '<a href="'+esc(igUrl)+'" target="_blank">'+igSvg+'</a>' : '';
 
   // Genres
   let genres = [];
   try { genres = JSON.parse(d.genre || '[]'); } catch(e) {}
   if (typeof d.genre === 'string' && !d.genre.startsWith('[')) genres = [d.genre];
-  const genresEl = document.getElementById('v-genres');
-  genres.forEach(g => {
-    if (!g) return;
-    const span = document.createElement('span');
-    span.className = 'genre-tag';
-    span.textContent = g;
-    span.style.marginRight = '6px';
-    genresEl.appendChild(span);
-  });
+  const genreHtml = genres.map(g => '<span class="genre-tag">'+esc(g)+'</span>').join('');
 
-  // Bio
+  // Hero HTML
+  const heroInner = '<div class="hero-name">'+esc(d.artistName || '')+' '+igLink+'</div>' +
+    '<div class="hero-subtitle">based '+ esc(d.location || '') +'</div>' +
+    '<div class="genre-tags">'+genreHtml+'</div>';
+
+  // Pattern setup
+  if (pattern === 1) {
+    document.getElementById('p1Hero').style.display = 'block';
+    if (d.profilePhoto) document.getElementById('p1Photo').src = d.profilePhoto;
+    document.getElementById('p1Content').innerHTML = heroInner;
+  } else if (pattern === 2) {
+    document.body.classList.add('pat2');
+    if (d.profilePhoto) document.getElementById('bgLayer').style.backgroundImage = 'url('+d.profilePhoto+')';
+    document.getElementById('p2Content').style.display = 'block';
+    document.getElementById('p2Content').innerHTML = heroInner;
+  } else {
+    document.getElementById('p3Hero').style.display = 'block';
+    const photoHtml = d.profilePhoto ? '<img src="'+esc(d.profilePhoto)+'" alt="'+esc(d.artistName || '')+'">' : '';
+    document.getElementById('p3Hero').innerHTML = photoHtml + '<div>' + heroInner + '</div>';
+  }
+
+  // === ABOUT: BIO ===
   const bio = (d.bio || '').trim();
   if (bio) {
-    const bioEl = document.getElementById('v-bio');
-    if (bio.length > 450) {
-      bioEl.textContent = bio.substring(0, 450) + '...';
-      const btn = document.createElement('button');
-      btn.className = 'bio-toggle';
-      btn.textContent = 'Read more';
-      btn.addEventListener('click', () => {
-        if (btn.textContent === 'Read more') {
-          bioEl.textContent = bio;
-          bioEl.appendChild(btn);
-          btn.textContent = 'Show less';
-        } else {
-          bioEl.textContent = bio.substring(0, 450) + '...';
-          bioEl.appendChild(btn);
-          btn.textContent = 'Read more';
-        }
-      });
-      bioEl.appendChild(btn);
-    } else {
-      bioEl.textContent = bio;
-    }
-  } else {
-    document.getElementById('sec-bio').style.display = 'none';
+    document.getElementById('vBio').textContent = bio;
+    // Show toggle if text is long enough to be clamped (rough check: >200 chars)
+    if (bio.length > 200) document.getElementById('bioToggle').style.display = 'block';
   }
 
-  // Primary Sound
-  const sound = (d.primarySoundLink || '').trim();
-  if (sound) {
-    document.getElementById('sec-sound').style.display = 'block';
-    const soundEl = document.getElementById('v-sound');
-    if (sound.includes('soundcloud.com')) {
-      soundEl.innerHTML = '<iframe height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=' + encodeURIComponent(sound) + '&color=%23c4a265&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>';
-    } else if (sound.includes('spotify.com')) {
-      const spotifyUri = sound.replace('https://open.spotify.com/', 'https://open.spotify.com/embed/');
-      soundEl.innerHTML = '<iframe style="border-radius:12px" src="' + spotifyUri + '" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
-    } else if (sound.includes('youtube.com') || sound.includes('youtu.be')) {
-      let vid = '';
-      if (sound.includes('youtu.be/')) vid = sound.split('youtu.be/')[1]?.split('?')[0];
-      else vid = new URL(sound).searchParams.get('v');
-      if (vid) soundEl.innerHTML = '<iframe width="100%" height="200" src="https://www.youtube.com/embed/' + vid + '" frameborder="0" allowfullscreen style="border-radius:8px"></iframe>';
-      else soundEl.innerHTML = '<a href="' + sound + '" target="_blank" style="color:var(--gold)">' + sound + '</a>';
-    } else {
-      soundEl.innerHTML = '<a href="' + sound + '" target="_blank" style="color:var(--gold)">' + sound + '</a>';
-    }
-  }
-
-  // Instagram
-  const ig = (d.instagram || '').trim();
-  if (ig) {
-    document.getElementById('sec-ig').style.display = 'block';
-    const igEl = document.getElementById('v-ig');
-    const handle = ig.startsWith('@') ? ig : (ig.includes('instagram.com') ? '@' + ig.split('/').filter(Boolean).pop() : '@' + ig);
-    const url = ig.includes('http') ? ig : 'https://instagram.com/' + ig.replace('@','');
-    igEl.href = url;
-    igEl.textContent = handle;
-  }
-
-  // Activity
-  let activities = [];
-  try { activities = JSON.parse(d.activity || '[]'); } catch(e) {}
+  // === ABOUT: HISTORY (from activity) ===
+  const activities = jp(d.activity) || [];
   if (activities.length > 0) {
-    document.getElementById('sec-activity').style.display = 'block';
-    const actEl = document.getElementById('v-activity');
+    const el = document.getElementById('vHistory');
+    let html = '<div class="sub-acc"><div class="sub-acc-header" onclick="toggleSubAcc(this)"><span class="sub-acc-icon"></span><span class="sub-acc-label">History</span></div><div class="sub-acc-body">';
     activities.forEach(a => {
-      const card = document.createElement('div');
-      card.className = 'activity-card';
-      let title = '', meta = '', desc = '';
+      let title = '', meta = '';
       if (a.type === 'residency') {
         title = a.venue || '';
-        const parts = [];
-        if (a.country) parts.push(a.country);
-        if (a.startDate) parts.push(a.startDate + (a.currentlyRunning ? ' — Present' : (a.endDate ? ' — ' + a.endDate : '')));
-        meta = parts.join(' · ');
-        desc = a.description || '';
+        const p = []; if (a.country) p.push(a.country);
+        if (a.startDate) p.push(a.startDate + (a.currentlyRunning ? ' — Present' : (a.endDate ? ' — ' + a.endDate : '')));
+        meta = p.join(' · ');
       } else if (a.type === 'clubGig') {
         title = a.eventName || '';
-        const parts = [];
-        if (a.venue) parts.push(a.venue);
-        if (a.year) parts.push(a.year);
-        if (a.role) parts.push(a.role);
-        meta = parts.join(' · ');
-        desc = a.description || '';
+        const p = []; if (a.venue) p.push(a.venue); if (a.year) p.push(a.year); if (a.role) p.push(a.role);
+        meta = p.join(' · ');
       } else if (a.type === 'festival') {
         title = a.name || '';
         if (a.year) meta = a.year;
-        desc = a.description || '';
       }
-      card.innerHTML = '<div class="card-title">' + escHtml(title) + '</div>' +
-        (meta ? '<div class="card-meta">' + escHtml(meta) + '</div>' : '') +
-        (desc ? '<div class="card-desc">' + escHtml(desc) + '</div>' : '');
-      actEl.appendChild(card);
+      if (title) html += '<div class="act-item"><div class="act-title">'+esc(title)+'</div>'+(meta?'<div class="act-meta">'+esc(meta)+'</div>':'')+'</div>';
     });
+    html += '</div></div>';
+    el.innerHTML = html;
   }
 
-  // Links
-  let links = [];
-  try { links = JSON.parse(d.links || '[]'); } catch(e) {}
+  // === ABOUT: ORGANIZE ===
+  const org = jp(d.organizer);
+  if (org && org.active && org.events && org.events.length > 0) {
+    const el = document.getElementById('vOrganize');
+    let html = '<div class="sub-acc"><div class="sub-acc-header" onclick="toggleSubAcc(this)"><span class="sub-acc-icon"></span><span class="sub-acc-label">Organize</span></div><div class="sub-acc-body">';
+    org.events.forEach(e => {
+      const meta = [e.venue, e.size ? e.size+' capacity' : ''].filter(Boolean).join(' · ');
+      html += '<div class="act-item"><div class="act-title">'+esc(e.name || '')+'</div>'+(meta?'<div class="act-meta">'+esc(meta)+'</div>':'')+'</div>';
+    });
+    html += '</div></div>';
+    el.innerHTML = html;
+  }
+
+  // === ABOUT: AWARD ===
+  const awards = jp(d.awards) || [];
+  if (awards.length > 0) {
+    const el = document.getElementById('vAward');
+    let html = '<div class="sub-acc"><div class="sub-acc-header" onclick="toggleSubAcc(this)"><span class="sub-acc-icon"></span><span class="sub-acc-label">Award</span></div><div class="sub-acc-body">';
+    awards.forEach(a => {
+      html += '<div class="act-item"><div class="act-title">'+esc(a.title || '')+'</div><div class="act-meta">'+esc(a.year || '')+'</div></div>';
+    });
+    html += '</div></div>';
+    el.innerHTML = html;
+  }
+
+  // === ABOUT: CONTACT ===
+  const hasContact = d.agencyName || d.agencyWebsite || d.bookingEmail;
+  if (hasContact) {
+    document.getElementById('contactTitle').style.display = 'block';
+    const cel = document.getElementById('vContact');
+    cel.style.display = 'block';
+    let ch = '';
+    if (d.agencyName) ch += '<div style="font-weight:600;color:var(--text);margin-bottom:2px;">'+esc(d.agencyName)+'</div>';
+    if (d.agencyWebsite) ch += '<div><a href="'+esc(d.agencyWebsite)+'" target="_blank">'+esc(d.agencyWebsite.replace(/^https?:\/\//,''))+'</a></div>';
+    if (d.bookingEmail) ch += '<div><a href="mailto:'+esc(d.bookingEmail)+'">'+esc(d.bookingEmail)+'</a></div>';
+    cel.innerHTML = ch;
+  }
+
+  // === ABOUT: SOCIAL LINKS ===
+  const links = jp(d.links) || [];
   if (links.length > 0) {
-    document.getElementById('sec-links').style.display = 'block';
-    const linksEl = document.getElementById('v-links');
+    const sel = document.getElementById('vSocial');
     links.forEach(l => {
       if (!l.url) return;
       const a = document.createElement('a');
-      a.className = 'link-item';
+      a.className = 'social-link';
       a.href = l.url;
       a.target = '_blank';
-      a.innerHTML = '<span class="link-label">' + escHtml(l.label || l.url) + '</span><span class="link-arrow">→</span>';
-      linksEl.appendChild(a);
+      a.textContent = l.label || l.url;
+      sel.appendChild(a);
     });
   }
 
-  // Contact
-  const contacts = [];
-  if (d.bookingEmail) contacts.push({ label: 'Booking', value: d.bookingEmail, type: 'email' });
-  if (d.mgmtEmail) contacts.push({ label: 'Management', value: d.mgmtEmail, type: 'email' });
-  if (d.agencyName || d.agencyEmail) {
-    contacts.push({ label: d.agencyName || 'Agency', value: d.agencyEmail || '', type: 'email', extra: d.agencyWebsite });
-  }
-  if (contacts.length > 0) {
-    document.getElementById('sec-contact').style.display = 'block';
-    const contactEl = document.getElementById('v-contact');
-    contacts.forEach(c => {
-      const div = document.createElement('div');
-      div.className = 'contact-item';
-      let html = '<div class="contact-label">' + escHtml(c.label) + '</div>';
-      if (c.type === 'email' && c.value) html += '<a href="mailto:' + escHtml(c.value) + '">' + escHtml(c.value) + '</a>';
-      if (c.extra) html += '<br><a href="' + escHtml(c.extra) + '" target="_blank" style="font-size:12px">' + escHtml(c.extra) + '</a>';
-      div.innerHTML = html;
-      contactEl.appendChild(div);
+  // === LISTEN ===
+  const sound = (d.primarySoundLink || '').trim();
+  const spots = jp(d.spotifyTracks) || [];
+  if (sound || spots.length > 0) {
+    document.getElementById('secListen').style.display = 'block';
+    const lel = document.getElementById('vListen');
+    if (sound) lel.innerHTML += '<div class="listen-item">' + buildEmbed(sound) + '</div>';
+    spots.forEach(url => {
+      if (!url) return;
+      lel.innerHTML += '<div class="listen-item">' + buildEmbed(url) + '</div>';
     });
   }
 
-  // Show content
+  // === NEXT GIG ===
+  const upcoming = jp(d.upcoming);
+  if (upcoming && upcoming.active && upcoming.shows && upcoming.shows.length > 0) {
+    document.getElementById('secGig').style.display = 'block';
+    const gel = document.getElementById('vGig');
+    upcoming.shows.forEach(s => {
+      const dateStr = s.date ? formatDate(s.date) : '';
+      const url = s.ticketUrl || '#';
+      gel.innerHTML += '<a class="gig-link" href="'+esc(url)+'" target="_blank">' +
+        '<div class="gig-info"><div class="gig-name">'+esc(s.name || '')+'</div><div class="gig-detail">'+esc(s.venue || '')+'</div></div>' +
+        '<div class="gig-right"><div class="gig-date">'+esc(dateStr)+'</div>'+(s.ticketUrl?'<div class="gig-arrow">→</div>':'')+'</div></a>';
+    });
+  }
+
+  // === DOWNLOAD ===
+  const hasLogo = d.artistLogo;
+  const hasProfile = d.profilePhoto;
+  const hasPerf = d.perfPhoto;
+  const hasTech = d.techRider;
+  const hasHosp = d.hospRider;
+  const hasAnyDl = hasLogo || hasProfile || hasPerf || hasTech || hasHosp;
+
+  if (hasAnyDl) {
+    document.getElementById('secDl').style.display = 'block';
+
+    // Thumbnails
+    if (hasLogo || hasProfile || hasPerf) {
+      const thumbsEl = document.getElementById('vDlThumbs');
+      thumbsEl.style.display = 'flex';
+      const dlFiles = [];
+      if (hasLogo) { thumbsEl.innerHTML += thumbHtml(d.artistLogo, 'Logo'); dlFiles.push({url:d.artistLogo, name:'logo'}); }
+      if (hasProfile) { thumbsEl.innerHTML += thumbHtml(d.profilePhoto, 'Profile'); dlFiles.push({url:d.profilePhoto, name:'profile'}); }
+      if (hasPerf) { thumbsEl.innerHTML += thumbHtml(d.perfPhoto, 'Performance'); dlFiles.push({url:d.perfPhoto, name:'performance'}); }
+
+      // Show SAVE ALL
+      document.getElementById('dlAllBtn').style.display = 'block';
+      document.getElementById('dlAllBtn').onclick = () => { dlFiles.forEach(f => { const a=document.createElement('a'); a.href=f.url; a.download=f.name; a.click(); }); };
+    }
+
+    // Riders
+    if (hasTech || hasHosp) {
+      if (hasLogo || hasProfile || hasPerf) document.getElementById('dlSep').style.display = 'block';
+      const dfel = document.getElementById('vDlFiles');
+      if (hasTech) dfel.innerHTML += subAccHtml('Rider', '<a href="'+esc(d.techRider)+'" target="_blank" style="color:var(--accent);text-decoration:none;font-size:13px;">Tech Rider (PDF)</a>');
+      if (hasHosp) dfel.innerHTML += subAccHtml('Hospitality', '<a href="'+esc(d.hospRider)+'" target="_blank" style="color:var(--accent);text-decoration:none;font-size:13px;">Hospitality Rider (PDF)</a>');
+    }
+  }
+
+  // Show
   document.getElementById('loadingScreen').style.display = 'none';
-  document.getElementById('content').style.display = 'block';
+  document.getElementById('mainContent').style.display = 'block';
 }
 
-function escHtml(str) {
-  const d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
+function thumbHtml(src, label) {
+  return '<div class="dl-thumb-wrap"><div class="dl-thumb"><img src="'+esc(src)+'" alt="'+esc(label)+'"></div><div class="dl-thumb-label">'+esc(label)+'</div></div>';
 }
+
+function subAccHtml(label, body) {
+  return '<div class="sub-acc"><div class="sub-acc-header" onclick="toggleSubAcc(this)"><span class="sub-acc-icon"></span><span class="sub-acc-label">'+esc(label)+'</span></div><div class="sub-acc-body">'+body+'</div></div>';
+}
+
+function buildEmbed(url) {
+  if (url.includes('soundcloud.com')) {
+    return '<iframe height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%23c4a265&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>';
+  } else if (url.includes('spotify.com')) {
+    const embedUrl = url.replace('https://open.spotify.com/', 'https://open.spotify.com/embed/');
+    return '<iframe style="border-radius:12px" src="'+embedUrl+'" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
+  } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    let vid = '';
+    if (url.includes('youtu.be/')) vid = url.split('youtu.be/')[1]?.split('?')[0];
+    else try { vid = new URL(url).searchParams.get('v'); } catch(e){}
+    if (vid) return '<iframe width="100%" height="200" src="https://www.youtube.com/embed/'+vid+'" frameborder="0" allowfullscreen style="border-radius:8px"></iframe>';
+    return '<a href="'+esc(url)+'" target="_blank" style="color:var(--accent)">'+esc(url)+'</a>';
+  } else if (url.includes('mixcloud.com')) {
+    return '<iframe width="100%" height="120" src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed='+encodeURIComponent(url)+'" frameborder="0"></iframe>';
+  }
+  return '<a href="'+esc(url)+'" target="_blank" style="color:var(--accent)">'+esc(url)+'</a>';
+}
+
+function formatDate(dateStr) {
+  try {
+    const d = new Date(dateStr);
+    const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    return y+'.'+m+'.'+dd+' '+days[d.getDay()];
+  } catch(e) { return dateStr; }
+}
+
+function toggleBio() {
+  const t = document.getElementById('vBio');
+  const b = document.getElementById('bioToggle');
+  t.classList.toggle('expanded');
+  b.textContent = t.classList.contains('expanded') ? 'Show less' : 'Read more';
+}
+function toggleSubAcc(h) { h.parentElement.classList.toggle('open'); }
 </script>
 </body>
 </html>
