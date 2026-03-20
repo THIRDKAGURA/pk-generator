@@ -535,9 +535,8 @@
   <div class="view" id="previewView">
     <!-- Phase 1: Preview check -->
     <div id="e-previewPhase" style="padding:40px 0">
-      <div style="text-align:center;margin-bottom:28px">
-        <p style="font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);margin-bottom:4px">PREVIEW</p>
-        <h2 style="font-size:28px;font-weight:700;margin-bottom:16px">Pick your look</h2>
+      <div style="text-align:center;margin-bottom:16px">
+        <h2 style="font-size:28px;font-weight:700;margin-bottom:12px">Pick your look</h2>
         <div id="e-designSelector" style="display:flex;gap:8px;justify-content:center">
           <button type="button" class="btn e-design-btn active" data-design="1" style="padding:10px 20px;font-size:12px;border:1px solid var(--gold);color:var(--gold);background:var(--gold-dim);border-radius:20px" onclick="eSwitchDesignPreview(1)">Photo</button>
           <button type="button" class="btn e-design-btn" data-design="2" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="eSwitchDesignPreview(2)">BG</button>
@@ -545,38 +544,32 @@
         </div>
       </div>
 
-      <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;background:#000">
+      <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;background:#000">
         <iframe id="e-previewFrame" style="width:100%;height:520px;border:none;background:#000" sandbox="allow-scripts allow-same-origin"></iframe>
       </div>
 
-      <p style="text-align:center;color:var(--text-dim);font-size:14px;margin-bottom:20px">Here's your press kit.</p>
-
       <div style="display:flex;gap:12px;justify-content:center">
         <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">EDIT MORE</button>
-        <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('e-previewPhase').style.display='none';document.getElementById('e-actionsPhase').style.display='block'">I'll take this</button>
+        <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('e-previewPhase').style.display='none';document.getElementById('e-actionsPhase').style.display='block'">Use this layout</button>
       </div>
     </div>
 
     <!-- Phase 2: Actions -->
     <div id="e-actionsPhase" style="display:none;text-align:center;padding:60px 0 40px">
-      <div style="font-size:48px;margin-bottom:16px">✓</div>
-      <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">Changes saved!</h2>
-      <p style="color:var(--text-dim);font-size:14px;margin-bottom:32px">Your press kit is up to date.</p>
+      <div style="font-size:40px;margin-bottom:16px">🔗</div>
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">Your press kit is live</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:32px">Share it with the world.</p>
 
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:left;margin-bottom:20px">
-        <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Your profile URL</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="text" id="e-doneUrl" readonly style="flex:1;background:var(--bg);cursor:text;font-size:13px">
-          <button type="button" class="btn btn-primary" style="padding:10px 16px;font-size:12px" onclick="navigator.clipboard.writeText(document.getElementById('e-doneUrl').value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)">Copy</button>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;text-align:left;margin-bottom:24px">
+        <input type="text" id="e-doneUrl" readonly style="width:100%;background:var(--bg);cursor:text;font-size:13px;margin-bottom:12px">
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn btn-primary" style="flex:1;padding:10px;font-size:13px" onclick="window.open(document.getElementById('e-doneUrl').value,'_blank')">View press kit</button>
+          <button type="button" class="btn" style="flex:1;padding:10px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="navigator.clipboard.writeText(document.getElementById('e-doneUrl').value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy link',2000)">Copy link</button>
+          <button type="button" class="btn" style="flex:1;padding:10px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="var u=document.getElementById('e-doneUrl').value;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
         </div>
       </div>
 
-      <div style="display:flex;gap:10px;margin-bottom:20px">
-        <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="window.open(document.getElementById('e-doneUrl').value,'_blank')">View Press Kit</button>
-        <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="var u=document.getElementById('e-doneUrl').value;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Link copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
-      </div>
-
-      <button type="button" class="btn" style="padding:12px 48px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">Back to editing</button>
+      <button type="button" class="btn" style="padding:12px 48px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">Back to editing</button>
     </div>
   </div>
 
@@ -681,6 +674,7 @@ let gigCounter = 0, linkCounter = 0;
 function showView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  document.querySelector('.page-header').style.display = (id === 'previewView') ? 'none' : '';
 }
 
 // ─── Auth: Password Login ───
