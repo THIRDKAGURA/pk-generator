@@ -233,13 +233,17 @@ async function loadProfile(id) {
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 function jp(s) { try { return JSON.parse(s); } catch(e) { return null; } }
+let currentAccent = '#c4a265';
 
 function renderProfile(d) {
   const pattern = designParam;
   document.title = (d.artistName || 'Press Kit') + ' — THIRD KAGURA';
 
   // Accent color
-  if (d.accentColor) document.documentElement.style.setProperty('--accent', d.accentColor);
+  if (d.accentColor) {
+    currentAccent = d.accentColor;
+    document.documentElement.style.setProperty('--accent', d.accentColor);
+  }
 
   // Instagram SVG
   const igSvg = '<svg class="ig-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>';
@@ -436,7 +440,7 @@ function subAccHtml(label, body) {
 
 function buildEmbed(url) {
   if (url.includes('soundcloud.com')) {
-    return '<iframe height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%23c4a265&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>';
+    return '<iframe height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%23'+currentAccent.replace('#','')+'&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>';
   } else if (url.includes('spotify.com')) {
     const embedUrl = url.replace('https://open.spotify.com/', 'https://open.spotify.com/embed/');
     return '<iframe style="border-radius:12px" src="'+embedUrl+'" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>';
