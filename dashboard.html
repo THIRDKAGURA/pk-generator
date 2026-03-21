@@ -1487,9 +1487,11 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
   btn.classList.remove('loading'); btn.disabled=false;
 });
 
-// ─── POST via fetch (no-cors) — works on mobile Safari ───
+// ─── POST via fetch (no-cors) + updatedAt verification ───
 function postViaIframe(url, payload) {
   return new Promise(function(resolve, reject) {
+    var sentAt = Date.now();
+
     var timer = setTimeout(function() {
       reject(new Error('Request timed out. Please try again.'));
     }, 45000);
@@ -1504,7 +1506,38 @@ function postViaIframe(url, payload) {
       redirect: 'follow'
     }).then(function() {
       clearTimeout(timer);
-      resolve({ success: true });
+
+      // slugがない場合は検証スキップ
+      if (!payload.slug) { resolve({ success: true }); return; }
+
+      // 3秒後にGETでupdatedAtを確認（no-corsでは応答が読めないため）
+      var verifyTimer = setTimeout(function() {
+        resolve({ success: true }); // 検証タイムアウトは成功扱い
+      }, 10000);
+
+      setTimeout(function() {
+        fetch(url + '?id=' + encodeURIComponent(payload.slug))
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            clearTimeout(verifyTimer);
+            if (data.updatedAt) {
+              var sheetUpdatedMs = new Date(data.updatedAt).getTime();
+              // 送信前2分以内にupdatedAtが更新されていれば保存成功
+              if (sheetUpdatedMs >= sentAt - 120000) {
+                resolve({ success: true });
+              } else {
+                reject(new Error('Session expired. Please log in again.'));
+              }
+            } else {
+              reject(new Error(data.error || 'Save failed. Please log in again.'));
+            }
+          })
+          .catch(function() {
+            clearTimeout(verifyTimer);
+            resolve({ success: true }); // 検証自体が失敗した場合は成功扱い
+          });
+      }, 3000);
+
     }).catch(function(err) {
       clearTimeout(timer);
       reject(new Error('Network error: ' + err.message));
