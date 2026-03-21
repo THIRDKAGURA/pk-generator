@@ -1487,83 +1487,28 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
   btn.classList.remove('loading'); btn.disabled=false;
 });
 
-// ─── Iframe POST with postMessage + onload fallback ───
+// ─── POST via fetch (no-cors) — works on mobile Safari ───
 function postViaIframe(url, payload) {
-  return new Promise((resolve, reject) => {
-    const msgId = 'pk_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
-    payload._messageId = msgId;
-
-    const iframeName = 'pkSubmitFrame_' + Date.now();
-    const iframe = document.createElement('iframe');
-    iframe.name = iframeName;
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-
-    let settled = false;
-    let loadCount = 0;
-
-    // Hard timeout: 45s (GAS PRE-MERGE + redirect chain can be slow on mobile)
-    const timeout = setTimeout(() => {
-      if (!settled) { settled = true; cleanup(); reject(new Error('Request timed out. Please try again.')); }
+  return new Promise(function(resolve, reject) {
+    var timer = setTimeout(function() {
+      reject(new Error('Request timed out. Please try again.'));
     }, 45000);
 
-    // Best case: postMessage from GAS response
-    function onMessage(event) {
-      if (!event.data || event.data._messageId !== msgId) return;
-      if (settled) return;
-      settled = true;
-      clearTimeout(timeout);
-      cleanup();
-      if (event.data.error) { reject(new Error(event.data.error)); }
-      else { resolve(event.data); }
-    }
+    var formData = new URLSearchParams();
+    formData.append('payload', JSON.stringify(payload));
 
-    // Fallback: iframe onload (for mobile where postMessage may be blocked)
-    function onLoad() {
-      loadCount++;
-      // GAS redirects: first load is redirect, second is final response
-      // Wait 3s after load for postMessage; if none, assume success
-      if (loadCount >= 1) {
-        setTimeout(() => {
-          if (!settled) {
-            settled = true;
-            clearTimeout(timeout);
-            cleanup();
-            resolve({ success: true, _fallback: true });
-          }
-        }, 3000);
-      }
-    }
-
-    var formEl = null;
-
-    function cleanup() {
-      window.removeEventListener('message', onMessage);
-      try { iframe.removeEventListener('load', onLoad); } catch(e){}
-      setTimeout(() => {
-        try { iframe.remove(); } catch(e){}
-        try { if (formEl) formEl.remove(); } catch(e){}
-      }, 1000);
-    }
-
-    window.addEventListener('message', onMessage);
-    iframe.addEventListener('load', onLoad);
-
-    formEl = document.createElement('form');
-    formEl.method = 'POST';
-    formEl.action = url;
-    formEl.target = iframeName;
-    formEl.style.display = 'none';
-
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'payload';
-    input.value = JSON.stringify(payload);
-    formEl.appendChild(input);
-
-    document.body.appendChild(formEl);
-    formEl.submit();
-    // Do NOT remove form here — mobile Safari may cancel the request
+    fetch(url, {
+      method: 'POST',
+      body: formData,
+      mode: 'no-cors',
+      redirect: 'follow'
+    }).then(function() {
+      clearTimeout(timer);
+      resolve({ success: true });
+    }).catch(function(err) {
+      clearTimeout(timer);
+      reject(new Error('Network error: ' + err.message));
+    });
   });
 }
 
