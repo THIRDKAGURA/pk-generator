@@ -1502,10 +1502,10 @@ function postViaIframe(url, payload) {
     let settled = false;
     let loadCount = 0;
 
-    // Hard timeout: 20s
+    // Hard timeout: 45s (GAS PRE-MERGE + redirect chain can be slow on mobile)
     const timeout = setTimeout(() => {
       if (!settled) { settled = true; cleanup(); reject(new Error('Request timed out. Please try again.')); }
-    }, 20000);
+    }, 45000);
 
     // Best case: postMessage from GAS response
     function onMessage(event) {
@@ -1535,30 +1535,35 @@ function postViaIframe(url, payload) {
       }
     }
 
+    var formEl = null;
+
     function cleanup() {
       window.removeEventListener('message', onMessage);
       try { iframe.removeEventListener('load', onLoad); } catch(e){}
-      setTimeout(() => { try { iframe.remove(); } catch(e){} }, 500);
+      setTimeout(() => {
+        try { iframe.remove(); } catch(e){}
+        try { if (formEl) formEl.remove(); } catch(e){}
+      }, 1000);
     }
 
     window.addEventListener('message', onMessage);
     iframe.addEventListener('load', onLoad);
 
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = url;
-    form.target = iframeName;
-    form.style.display = 'none';
+    formEl = document.createElement('form');
+    formEl.method = 'POST';
+    formEl.action = url;
+    formEl.target = iframeName;
+    formEl.style.display = 'none';
 
     const input = document.createElement('input');
     input.type = 'hidden';
     input.name = 'payload';
     input.value = JSON.stringify(payload);
-    form.appendChild(input);
+    formEl.appendChild(input);
 
-    document.body.appendChild(form);
-    form.submit();
-    form.remove();
+    document.body.appendChild(formEl);
+    formEl.submit();
+    // Do NOT remove form here — mobile Safari may cancel the request
   });
 }
 
