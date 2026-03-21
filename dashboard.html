@@ -93,7 +93,7 @@
     /* Entries */
     .entry-row {
       display:grid; gap:10px; align-items:end; margin-bottom:10px;
-      padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); 
+      padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
     }
     .entry-row .field { margin-bottom:0; }
     .entry-row label { font-size:12px; }
@@ -1487,7 +1487,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
   btn.classList.remove('loading'); btn.disabled=false;
 });
 
-// ─── Iframe POST with postMessage response ───
+// ─── Iframe POST with postMessage + onload fallback ───
 function postViaIframe(url, payload) {
   return new Promise((resolve, reject) => {
     const msgId = 'pk_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
@@ -1500,10 +1500,14 @@ function postViaIframe(url, payload) {
     document.body.appendChild(iframe);
 
     let settled = false;
+    let loadCount = 0;
+
+    // Hard timeout: 20s
     const timeout = setTimeout(() => {
       if (!settled) { settled = true; cleanup(); reject(new Error('Request timed out. Please try again.')); }
-    }, 30000);
+    }, 20000);
 
+    // Best case: postMessage from GAS response
     function onMessage(event) {
       if (!event.data || event.data._messageId !== msgId) return;
       if (settled) return;
@@ -1514,12 +1518,31 @@ function postViaIframe(url, payload) {
       else { resolve(event.data); }
     }
 
+    // Fallback: iframe onload (for mobile where postMessage may be blocked)
+    function onLoad() {
+      loadCount++;
+      // GAS redirects: first load is redirect, second is final response
+      // Wait 3s after load for postMessage; if none, assume success
+      if (loadCount >= 1) {
+        setTimeout(() => {
+          if (!settled) {
+            settled = true;
+            clearTimeout(timeout);
+            cleanup();
+            resolve({ success: true, _fallback: true });
+          }
+        }, 3000);
+      }
+    }
+
     function cleanup() {
       window.removeEventListener('message', onMessage);
+      try { iframe.removeEventListener('load', onLoad); } catch(e){}
       setTimeout(() => { try { iframe.remove(); } catch(e){} }, 500);
     }
 
     window.addEventListener('message', onMessage);
+    iframe.addEventListener('load', onLoad);
 
     const form = document.createElement('form');
     form.method = 'POST';
