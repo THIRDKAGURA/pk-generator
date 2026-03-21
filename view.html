@@ -43,10 +43,11 @@
     /* =============== SHARED STYLES =============== */
     .content-wrap { max-width:480px; margin:0 auto; padding:0 20px; }
     .container { max-width:480px; margin:0 auto; padding:8px 20px 0; }
-    .hero-name { font-size:36px; font-weight:800; letter-spacing:2px; display:inline-flex; align-items:center; gap:10px; justify-content:center; }
+    .hero-name { font-size:42px; font-weight:800; letter-spacing:2px; display:inline-flex; align-items:center; gap:10px; justify-content:center; }
     .ig-icon { width:22px; height:22px; opacity:0.7; transition:opacity 0.2s; cursor:pointer; color:var(--text); }
     .ig-icon:hover { opacity:1; }
-    .hero-subtitle { font-size:13px; color:var(--text-dim); margin-bottom:12px; letter-spacing:0.5px; }
+    .hero-subtitle { font-size:13px; color:var(--text-dim); margin-bottom:8px; letter-spacing:0.5px; }
+    .hero-roles { font-size:12px; color:var(--accent); letter-spacing:1px; font-weight:600; text-transform:uppercase; margin-bottom:4px; }
     .genre-tags { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
     .genre-tag { padding:4px 16px; border:1px solid var(--accent); border-radius:20px; font-size:11px; color:var(--accent); letter-spacing:0.5px; font-weight:500; }
 
@@ -54,55 +55,65 @@
     .parent-block { border:1px solid var(--border); border-radius:var(--radius); margin-bottom:12px; overflow:hidden; background:var(--surface); }
     .parent-header { padding:14px 16px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:var(--text); }
     .parent-body { padding:16px; }
-    #secAbout .parent-header { padding-bottom:2px; }
-    #secAbout .parent-body { padding-top:4px; }
 
-    /* Sub accordion */
-    .sub-acc-header { display:flex; align-items:center; gap:8px; padding:10px 0; cursor:pointer; user-select:none; }
-    .sub-acc-icon { font-size:0; color:var(--accent); width:16px; text-align:center; font-family:monospace; }
-    .sub-acc:not(.open) .sub-acc-icon::after { content:'+'; font-size:14px; }
-    .sub-acc.open .sub-acc-icon::after { content:'\2212'; font-size:14px; }
-    .sub-acc-label { font-size:13px; font-weight:500; color:var(--text-dim); letter-spacing:0.5px; text-transform:uppercase; }
-    .sub-acc-body { display:none; padding:0 0 8px 24px; }
-    .sub-acc.open .sub-acc-body { display:block; }
+    /* Section divider */
+    .sec-divider { border:none; border-top:1px solid var(--border); margin:20px 0; }
+    body.pat2 .sec-divider { border-color:var(--border-a); }
+
+    /* History section */
+    .history-section { margin-bottom:16px; }
+    .history-category { margin-bottom:14px; }
+    .history-category:last-child { margin-bottom:0; }
+    .hist-cat-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-bottom:8px; }
+    .hist-item { padding:8px 0; border-bottom:1px solid var(--border); }
+    body.pat2 .hist-item { border-color:var(--border-a); }
+    .hist-item:last-child { border-bottom:none; }
+    .hist-venue { font-size:14px; font-weight:600; color:var(--text); line-height:1.4; }
+    .hist-meta { font-size:12px; color:var(--text-muted); margin-top:1px; }
+    .hist-more-toggle { background:none; border:none; color:var(--accent); cursor:pointer; font-size:12px; font-family:inherit; margin-top:6px; padding:0; }
+    .hist-hidden { display:none; }
+
+    /* Award */
+    .award-item { display:flex; gap:10px; align-items:baseline; padding:6px 0; }
+    .award-year { font-size:12px; color:var(--text-muted); font-weight:600; flex-shrink:0; min-width:36px; }
+    .award-title { font-size:13px; color:var(--text-dim); }
+
+    /* Contact */
+    .contact-section { margin-bottom:16px; }
+    .contact-agency { font-size:14px; font-weight:700; color:var(--text); margin-bottom:8px; }
+    .contact-row { font-size:13px; color:var(--text-dim); line-height:2; }
+    .contact-row a { color:var(--accent); text-decoration:none; }
+    .contact-row a:hover { text-decoration:underline; }
+    .contact-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-top:8px; margin-bottom:2px; }
+    .social-links { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+    .social-link { padding:6px 12px; border:1px solid var(--border); border-radius:var(--radius); color:var(--text-dim); text-decoration:none; font-size:12px; transition:border-color 0.2s, color 0.2s; }
+    body.pat2 .social-link { border-color:var(--border-a); }
+    .social-link:hover { border-color:var(--accent); color:var(--accent); }
 
     /* Bio */
     .bio-text { font-size:14px; color:var(--text-dim); line-height:1.8; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
     .bio-text.expanded { display:block; -webkit-line-clamp:unset; }
     .bio-toggle { background:none; border:none; color:var(--accent); cursor:pointer; font-size:12px; font-family:inherit; margin-top:6px; padding:0; display:none; width:100%; text-align:right; }
 
-    /* Contact */
-    .contact-title { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-top:14px; margin-bottom:10px; }
-    .contact-always { font-size:13px; color:var(--text-dim); line-height:2; }
-    .contact-always a { color:var(--accent); text-decoration:none; }
-    .contact-always a:hover { text-decoration:underline; }
-    .social-links { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
-    .social-link { padding:6px 12px; border:1px solid var(--border); border-radius:var(--radius); color:var(--text-dim); text-decoration:none; font-size:12px; transition:border-color 0.2s, color 0.2s; }
-    body.pat2 .social-link { border-color:var(--border-a); }
-    .social-link:hover { border-color:var(--accent); color:var(--accent); }
-
-    /* Activity */
-    .act-item { font-size:13px; color:var(--text-dim); line-height:1.7; margin-bottom:6px; }
-    .act-item .act-title { font-weight:600; color:var(--text); font-size:14px; }
-    .act-item .act-meta { font-size:12px; color:var(--text-muted); }
-
-    /* Listen */
-    .listen-item { margin-bottom:12px; position:relative; }
+    /* Platform links (listen) */
+    .platform-links { margin-bottom:12px; }
+    .listen-item { margin-bottom:10px; position:relative; }
     .listen-item:last-child { margin-bottom:0; }
-    .listen-item iframe { width:100%; border-radius:var(--radius); }
     .listen-fallback { display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); text-decoration:none; transition:border-color 0.2s; }
+    body.pat2 .listen-fallback { background:rgba(20,20,20,0.25); border-color:var(--border-a); }
     .listen-fallback:hover { border-color:var(--accent); }
-    .listen-fallback .lf-icon { width:40px; height:40px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .listen-fallback .lf-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .listen-fallback .lf-icon.sc { background:#f50; }
     .listen-fallback .lf-icon.sp { background:#1db954; }
     .listen-fallback .lf-icon.yt { background:#ff0000; }
     .listen-fallback .lf-icon.mc { background:#5000ff; }
+    .listen-fallback .lf-icon.am { background:linear-gradient(135deg,#fc3c44,#c643fc,#3b9dff); }
     .listen-fallback .lf-icon.default { background:var(--accent); }
     .listen-fallback .lf-text { flex:1; min-width:0; }
     .listen-fallback .lf-label { font-size:13px; font-weight:600; color:var(--text); }
     .listen-fallback .lf-url { font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
 
-    /* Featured Links */
+    /* Featured Links / Release */
     .feat-link { display:block; border-radius:var(--radius); overflow:hidden; margin-bottom:12px; text-decoration:none; transition:opacity 0.2s; }
     .feat-link:last-child { margin-bottom:0; }
     .feat-link:hover { opacity:0.85; }
@@ -111,17 +122,19 @@
     body.pat2 .feat-link .feat-label { background:rgba(20,20,20,0.4); border-color:var(--border-a); }
     .feat-link .feat-arrow { color:var(--accent); font-size:14px; }
 
-    /* Next gig — linkable */
-    .gig-link { display:flex; justify-content:space-between; align-items:flex-start; padding:14px 0; border-bottom:1px solid var(--border); text-decoration:none; color:inherit; transition:opacity 0.2s; }
-    body.pat2 .gig-link { border-color:var(--border-a); }
-    .gig-link:last-child { border-bottom:none; }
-    .gig-link:hover { opacity:0.8; }
-    .gig-link .gig-info { flex:1; min-width:0; padding-right:12px; }
-    .gig-link .gig-name { font-weight:600; color:var(--text); font-size:14px; line-height:1.4; }
-    .gig-link .gig-detail { font-size:12px; color:var(--text-muted); margin-top:2px; }
-    .gig-link .gig-right { display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0; padding-top:2px; }
-    .gig-link .gig-date { font-size:11px; color:var(--text-muted); white-space:nowrap; }
-    .gig-link .gig-arrow { font-size:14px; color:var(--accent); margin-top:2px; }
+    /* Upcoming / Ticket — thumbnail card style */
+    .ticket-card { display:flex; gap:14px; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); text-decoration:none; transition:border-color 0.2s; margin-bottom:10px; }
+    body.pat2 .ticket-card { background:rgba(20,20,20,0.25); border-color:var(--border-a); }
+    .ticket-card:hover { border-color:var(--accent); }
+    .ticket-card:last-child { margin-bottom:0; }
+    .ticket-thumb { width:56px; height:56px; border-radius:var(--radius); background:var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .ticket-thumb img { width:100%; height:100%; object-fit:cover; }
+    .ticket-thumb svg { width:24px; height:24px; color:var(--accent); }
+    .ticket-info { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; }
+    .ticket-name { font-size:14px; font-weight:600; color:var(--text); line-height:1.3; }
+    .ticket-detail { font-size:12px; color:var(--text-muted); margin-top:2px; }
+    .ticket-arrow { display:flex; align-items:center; flex-shrink:0; }
+    .ticket-arrow svg { width:16px; height:16px; color:var(--text-muted); }
 
     /* Download */
     .dl-header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; }
@@ -138,13 +151,21 @@
     .dl-separator { border:none; border-top:1px solid var(--border); margin:10px 0; }
     body.pat2 .dl-separator { border-color:var(--border-a); }
 
+    /* Sub accordion */
+    .sub-acc-header { display:flex; align-items:center; gap:8px; padding:10px 0; cursor:pointer; user-select:none; }
+    .sub-acc-icon { font-size:0; color:var(--accent); width:16px; text-align:center; font-family:monospace; }
+    .sub-acc:not(.open) .sub-acc-icon::after { content:'+'; font-size:14px; }
+    .sub-acc.open .sub-acc-icon::after { content:'\2212'; font-size:14px; }
+    .sub-acc-label { font-size:13px; font-weight:500; color:var(--text-dim); letter-spacing:0.5px; text-transform:uppercase; }
+    .sub-acc-body { display:none; padding:0 0 8px 24px; }
+    .sub-acc.open .sub-acc-body { display:block; }
+
     /* Footer */
     .footer { max-width:480px; margin:0 auto; display:flex; align-items:center; justify-content:center; gap:8px; padding:24px 20px 40px; color:var(--text-muted); font-size:10px; letter-spacing:0.5px; }
     body.pat2 .footer { position:relative; z-index:2; }
     .footer a { color:var(--text-muted); text-decoration:none; }
     .footer a:hover { color:var(--accent); }
     .footer svg { width:14px; height:14px; }
-
 
     /* Loading / Error */
     .loading-screen { display:flex; align-items:center; justify-content:center; min-height:60vh; color:var(--text-dim); font-size:14px; }
@@ -156,7 +177,7 @@
     body.pat2 .bg-layer, body.pat2 .bg-overlay { display:block; }
     .p1-hero, .p3-hero { display:none; }
 
-    @media (max-width:520px) { .hero-name { font-size:28px; } .content-wrap, .container { max-width:100%; } .p1-hero { max-width:100%; } }
+    @media (max-width:520px) { .hero-name { font-size:32px; } .content-wrap, .container { max-width:100%; } .p1-hero { max-width:100%; } }
   </style>
 </head>
 <body>
@@ -183,44 +204,47 @@
 
 <div id="mainContent" style="display:none">
 
-  <!-- Hero: Pattern 2 (inside content-wrap) -->
   <div class="content-wrap" id="contentWrap">
+    <!-- Hero: Pattern 2 (inside content-wrap) -->
     <div class="hero-content" id="p2Content" style="display:none"></div>
 
-    <!-- ===== ABOUT ===== -->
-    <div class="parent-block" id="secAbout">
+    <!-- ===== HISTORY (Resident / Headliner / Organizer / Award) ===== -->
+    <div class="history-section" id="secHistory" style="display:none"></div>
+
+    <!-- ===== CONTACT ===== -->
+    <div class="contact-section" id="secContact" style="display:none"></div>
+
+    <!-- ===== ABOUT (Bio only) ===== -->
+    <div class="parent-block" id="secAbout" style="display:none">
       <div class="parent-header">About</div>
       <div class="parent-body">
         <div class="bio-text" id="vBio"></div>
         <button class="bio-toggle" id="bioToggle" onclick="toggleBio()">Read more</button>
-        <div id="vHistory"></div>
-        <div id="vOrganize"></div>
-        <div id="vPromoter"></div>
-        <div id="vAward"></div>
-        <div class="contact-title" id="contactTitle" style="display:none">Contact</div>
-        <div class="contact-always" id="vContact" style="display:none"></div>
-        <div class="social-links" id="vSocial"></div>
       </div>
     </div>
 
-    <!-- ===== LISTEN ===== -->
-    <div class="parent-block" id="secListen" style="display:none">
-      <div class="parent-header">Listen</div>
-      <div class="parent-body" id="vListen"></div>
+    <hr class="sec-divider" id="divider1" style="display:none">
+
+    <!-- ===== RELEASE / FEATURED LINKS ===== -->
+    <div id="secRelease" style="display:none;margin-bottom:12px">
+      <div style="padding:6px 0 10px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text)">Release</div>
+      <div id="vRelease"></div>
     </div>
 
-    <!-- ===== FEATURED LINKS ===== -->
-    <div class="parent-block" id="secFeatLinks" style="display:none">
-      <div class="parent-body" id="vFeatLinks"></div>
+    <!-- ===== PLATFORM LINKS (Spotify, SoundCloud, etc.) ===== -->
+    <div class="platform-links" id="secPlatforms" style="display:none">
+      <div id="vPlatforms"></div>
     </div>
 
-    <!-- ===== NEXT GIG ===== -->
-    <div class="parent-block" id="secGig" style="display:none">
-      <div class="parent-header">Upcoming Shows</div>
-      <div class="parent-body" id="vGig" style="padding:0 16px;"></div>
+    <!-- ===== TICKET / UPCOMING EVENTS ===== -->
+    <div id="secTicket" style="display:none;margin-bottom:12px">
+      <div style="padding:6px 0 10px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text)">Events</div>
+      <div id="vTicket"></div>
     </div>
 
-    <!-- ===== DOWNLOAD ===== -->
+    <hr class="sec-divider" id="divider2" style="display:none">
+
+    <!-- ===== DOWNLOAD / IMAGES ===== -->
     <div class="parent-block" id="secDl" style="display:none">
       <div class="dl-header">
         <span class="dl-title">Download</span>
@@ -292,19 +316,18 @@ function renderProfile(d) {
   let roles = [];
   try { roles = JSON.parse(d.role || '[]'); } catch(e) {}
   if (typeof d.role === 'string' && !d.role.startsWith('[')) roles = d.role ? [d.role] : [];
-  const roleStr = roles.join(' / ');
 
   // Genres
   let genres = [];
   try { genres = JSON.parse(d.genre || '[]'); } catch(e) {}
   if (typeof d.genre === 'string' && !d.genre.startsWith('[')) genres = [d.genre];
-  const genreHtml = genres.map(g => '<span class="genre-tag">'+esc(g)+'</span>').join('');
 
-  // Hero HTML
-  const heroInner = '<div class="hero-name">'+esc(d.artistName || '')+' '+igLink+'</div>' +
-    (roleStr ? '<div style="font-size:12px;color:var(--accent);letter-spacing:1px;font-weight:600;text-transform:uppercase;margin-bottom:4px">'+esc(roleStr)+'</div>' : '') +
-    '<div class="hero-subtitle">based '+ esc(d.location || '') +'</div>' +
-    '<div class="genre-tags">'+genreHtml+'</div>';
+  // Hero HTML — Name (big) → Based → Roles (DJ/Producer) → Genres
+  const heroInner =
+    '<div class="hero-name">'+esc(d.artistName || '')+' '+igLink+'</div>' +
+    (d.location ? '<div class="hero-subtitle">Based in '+ esc(d.location) +'</div>' : '') +
+    (roles.length ? '<div class="hero-roles">'+esc(roles.join(' / '))+'</div>' : '') +
+    (genres.length ? '<div class="genre-tags">'+genres.map(g => '<span class="genre-tag">'+esc(g)+'</span>').join('')+'</div>' : '');
 
   // Pattern setup
   if (pattern === 1) {
@@ -322,130 +345,148 @@ function renderProfile(d) {
     document.getElementById('p3Hero').innerHTML = photoHtml + '<div>' + heroInner + '</div>';
   }
 
-  // === ABOUT: BIO ===
-  const bio = (d.bio || '').trim();
-  if (bio) {
-    document.getElementById('vBio').textContent = bio;
-    // Show toggle if text is long enough to be clamped (rough check: >200 chars)
-    if (bio.length > 200) document.getElementById('bioToggle').style.display = 'block';
-  }
-
-  // === ABOUT: HISTORY (from activity) ===
+  // ══════════════════════════════════════════
+  // === HISTORY SECTION (first in content) ===
+  // ══════════════════════════════════════════
   const activities = jp(d.activity) || [];
-  if (activities.length > 0) {
-    const el = document.getElementById('vHistory');
-    let html = '<div class="sub-acc"><div class="sub-acc-header" onclick="toggleSubAcc(this)"><span class="sub-acc-icon"></span><span class="sub-acc-label">History</span></div><div class="sub-acc-body">';
-    activities.forEach(a => {
-      let title = '', meta = '';
-      if (a.type === 'residency') {
-        title = a.venue || '';
-        const p = []; if (a.country) p.push(a.country);
-        if (a.startDate) p.push(a.startDate + (a.currentlyRunning ? ' — Present' : (a.endDate ? ' — ' + a.endDate : '')));
-        meta = p.join(' · ');
-      } else if (a.type === 'clubGig') {
-        title = a.eventName || '';
-        const p = []; if (a.venue) p.push(a.venue); if (a.year) p.push(a.year); if (a.role) p.push(a.role);
-        meta = p.join(' · ');
-      } else if (a.type === 'festival') {
-        title = a.name || '';
-        if (a.year) meta = a.year;
-      } else if (a.type === 'live') {
-        title = a.name || '';
-        const p = []; if (a.venue) p.push(a.venue); if (a.year) p.push(a.year);
-        meta = p.join(' · ');
-      } else if (a.type === 'media') {
-        title = a.title || '';
-        if (a.year) meta = a.year;
-      } else if (a.type === 'other') {
-        title = a.title || '';
-        if (a.year) meta = a.year;
-      }
-      if (title) html += '<div class="act-item"><div class="act-title">'+esc(title)+'</div>'+(meta?'<div class="act-meta">'+esc(meta)+'</div>':'')+'</div>';
-    });
-    html += '</div></div>';
-    el.innerHTML = html;
-  }
-
-  // === ABOUT: ORGANIZE ===
   const org = jp(d.organizer);
-  if (org && org.active && org.events && org.events.length > 0) {
-    const el = document.getElementById('vOrganize');
-    let html = '<div class="sub-acc"><div class="sub-acc-header" onclick="toggleSubAcc(this)"><span class="sub-acc-icon"></span><span class="sub-acc-label">Organize</span></div><div class="sub-acc-body">';
-    org.events.forEach(e => {
-      const meta = [e.venue, e.size ? e.size+' capacity' : ''].filter(Boolean).join(' · ');
-      html += '<div class="act-item"><div class="act-title">'+esc(e.name || '')+'</div>'+(meta?'<div class="act-meta">'+esc(meta)+'</div>':'')+'</div>';
-    });
-    html += '</div></div>';
-    el.innerHTML = html;
-  }
-
-  // === ABOUT: PROMOTER ===
-  const promo = jp(d.promoter);
-  if (promo && promo.active && promo.events && promo.events.length > 0) {
-    const pel = document.getElementById('vPromoter');
-    let html = '<div class="sub-acc"><div class="sub-acc-header" onclick="toggleSubAcc(this)"><span class="sub-acc-icon"></span><span class="sub-acc-label">Promoter</span></div><div class="sub-acc-body">';
-    promo.events.forEach(e => {
-      const meta = [e.venue, e.size ? e.size+' capacity' : ''].filter(Boolean).join(' · ');
-      html += '<div class="act-item"><div class="act-title">'+esc(e.name || '')+'</div>'+(meta?'<div class="act-meta">'+esc(meta)+'</div>':'')+'</div>';
-    });
-    html += '</div></div>';
-    pel.innerHTML = html;
-  }
-
-  // === ABOUT: AWARD ===
   const awards = jp(d.awards) || [];
-  if (awards.length > 0) {
-    const el = document.getElementById('vAward');
-    let html = '<div class="sub-acc"><div class="sub-acc-header" onclick="toggleSubAcc(this)"><span class="sub-acc-icon"></span><span class="sub-acc-label">Award</span></div><div class="sub-acc-body">';
-    awards.forEach(a => {
-      html += '<div class="act-item"><div class="act-title">'+esc(a.title || '')+'</div><div class="act-meta">'+esc(a.year || '')+'</div></div>';
-    });
-    html += '</div></div>';
-    el.innerHTML = html;
+  const hasHistory = activities.length > 0 || (org && org.active && org.events && org.events.length > 0) || awards.length > 0;
+
+  if (hasHistory) {
+    const hel = document.getElementById('secHistory');
+    hel.style.display = 'block';
+    let html = '';
+
+    // Group activities by type
+    const residencies = activities.filter(a => a.type === 'residency');
+    const headliners = activities.filter(a => a.type === 'clubGig' || a.type === 'festival' || a.type === 'live');
+    const others = activities.filter(a => a.type === 'media' || a.type === 'other');
+
+    // Resident DJ
+    if (residencies.length > 0) {
+      html += '<div class="history-category"><div class="hist-cat-label">Resident DJ</div>';
+      residencies.forEach((a, i) => {
+        const venue = a.venue || '';
+        const location = a.country || '';
+        const period = a.startDate ? a.startDate + (a.currentlyRunning ? ' — Present' : (a.endDate ? ' — ' + a.endDate : '')) : '';
+        const hidden = i >= 3 ? ' hist-hidden' : '';
+        html += '<div class="hist-item'+hidden+'">';
+        html += '<div class="hist-venue">' + esc(venue) + (location ? ' · ' + esc(location) : '') + '</div>';
+        if (period) html += '<div class="hist-meta">' + esc(period) + '</div>';
+        html += '</div>';
+      });
+      if (residencies.length > 3) html += '<button class="hist-more-toggle" onclick="toggleHistMore(this)">Show more (' + (residencies.length - 3) + ')</button>';
+      html += '</div>';
+    }
+
+    // Headliner / Gigs
+    if (headliners.length > 0) {
+      html += '<div class="history-category"><div class="hist-cat-label">Headliner</div>';
+      headliners.forEach((a, i) => {
+        let title = a.eventName || a.name || '';
+        const parts = [];
+        if (a.venue) parts.push(a.venue);
+        if (a.country) parts.push(a.country);
+        if (a.year) parts.push(a.year);
+        if (a.role && a.role !== 'Headliner') parts.push(a.role);
+        const hidden = i >= 3 ? ' hist-hidden' : '';
+        html += '<div class="hist-item'+hidden+'">';
+        html += '<div class="hist-venue">' + esc(title) + '</div>';
+        if (parts.length) html += '<div class="hist-meta">' + esc(parts.join(' · ')) + '</div>';
+        html += '</div>';
+      });
+      if (headliners.length > 3) html += '<button class="hist-more-toggle" onclick="toggleHistMore(this)">Show more (' + (headliners.length - 3) + ')</button>';
+      html += '</div>';
+    }
+
+    // Organizer
+    const orgEvents = (org && org.active && org.events) ? org.events : [];
+    if (orgEvents.length > 0) {
+      html += '<div class="history-category"><div class="hist-cat-label">Organizer</div>';
+      orgEvents.forEach((e, i) => {
+        const parts = [];
+        if (e.venue) parts.push(e.venue);
+        if (e.size) parts.push(e.size + ' capacity');
+        const hidden = i >= 3 ? ' hist-hidden' : '';
+        html += '<div class="hist-item'+hidden+'">';
+        html += '<div class="hist-venue">' + esc(e.name || '') + '</div>';
+        if (parts.length) html += '<div class="hist-meta">' + esc(parts.join(' · ')) + '</div>';
+        html += '</div>';
+      });
+      if (orgEvents.length > 3) html += '<button class="hist-more-toggle" onclick="toggleHistMore(this)">Show more (' + (orgEvents.length - 3) + ')</button>';
+      html += '</div>';
+    }
+
+    // Others (media, other)
+    if (others.length > 0) {
+      others.forEach((a, i) => {
+        const hidden = i >= 3 ? ' hist-hidden' : '';
+        html += '<div class="hist-item'+hidden+'"><div class="hist-venue">'+esc(a.title || '')+'</div>'+(a.year?'<div class="hist-meta">'+esc(a.year)+'</div>':'')+'</div>';
+      });
+    }
+
+    // Awards
+    if (awards.length > 0) {
+      html += '<div class="history-category"><div class="hist-cat-label">Award</div>';
+      awards.forEach(a => {
+        html += '<div class="award-item"><span class="award-year">' + esc(a.year || '') + '</span><span class="award-title">' + esc(a.title || '') + '</span></div>';
+      });
+      html += '</div>';
+    }
+
+    hel.innerHTML = html;
   }
 
-  // === ABOUT: CONTACT ===
-  const hasContact = d.agencyName || d.agencyWebsite || d.bookingEmail;
+  // ══════════════════════════════
+  // === CONTACT ===
+  // ══════════════════════════════
+  const hasContact = d.agencyName || d.agencyWebsite || d.bookingEmail || d.managementEmail;
   if (hasContact) {
-    document.getElementById('contactTitle').style.display = 'block';
-    const cel = document.getElementById('vContact');
+    const cel = document.getElementById('secContact');
     cel.style.display = 'block';
     let ch = '';
-    if (d.bookingEmail) ch += '<div><a href="mailto:'+esc(d.bookingEmail)+'">'+esc(d.bookingEmail)+'</a></div>';
-    if (d.agencyName) ch += '<div style="font-weight:600;color:var(--text);margin-top:6px;margin-bottom:2px;">'+esc(d.agencyName)+'</div>';
-    if (d.agencyWebsite) ch += '<div><a href="'+esc(d.agencyWebsite)+'" target="_blank">'+esc(d.agencyWebsite.replace(/^https?:\/\//,''))+'</a></div>';
+    if (d.agencyName) ch += '<div class="contact-agency">' + esc(d.agencyName) + '</div>';
+    if (d.agencyWebsite) ch += '<div class="contact-row"><a href="'+esc(d.agencyWebsite)+'" target="_blank">'+esc(d.agencyWebsite.replace(/^https?:\/\//,''))+'</a></div>';
+    if (d.bookingEmail) {
+      ch += '<div class="contact-label">Booking</div>';
+      ch += '<div class="contact-row"><a href="mailto:'+esc(d.bookingEmail)+'">'+esc(d.bookingEmail)+'</a></div>';
+    }
+    if (d.managementEmail) {
+      ch += '<div class="contact-label">Management</div>';
+      ch += '<div class="contact-row"><a href="mailto:'+esc(d.managementEmail)+'">'+esc(d.managementEmail)+'</a></div>';
+    }
+    // Social links
+    const links = jp(d.links) || [];
+    if (links.length > 0) {
+      ch += '<div class="social-links">';
+      links.forEach(l => {
+        if (!l.url) return;
+        ch += '<a class="social-link" href="'+esc(l.url)+'" target="_blank">'+esc(l.label || l.url)+'</a>';
+      });
+      ch += '</div>';
+    }
     cel.innerHTML = ch;
   }
 
-  // === ABOUT: SOCIAL LINKS ===
-  const links = jp(d.links) || [];
-  if (links.length > 0) {
-    const sel = document.getElementById('vSocial');
-    links.forEach(l => {
-      if (!l.url) return;
-      const a = document.createElement('a');
-      a.className = 'social-link';
-      a.href = l.url;
-      a.target = '_blank';
-      a.textContent = l.label || l.url;
-      sel.appendChild(a);
-    });
+  // ══════════════════════════════
+  // === ABOUT (Bio) ===
+  // ══════════════════════════════
+  const bio = (d.bio || '').trim();
+  if (bio) {
+    document.getElementById('secAbout').style.display = 'block';
+    document.getElementById('vBio').textContent = bio;
+    if (bio.length > 200) document.getElementById('bioToggle').style.display = 'block';
   }
 
-  // === LISTEN ===
-  const sound = (d.primarySoundLink || '').trim();
-  const spots = jp(d.spotifyTracks) || [];
-  if (sound || spots.length > 0) {
-    document.getElementById('secListen').style.display = 'block';
-    const lel = document.getElementById('vListen');
-    if (sound) lel.innerHTML += '<div class="listen-item">' + buildEmbed(sound) + '</div>';
-    spots.forEach(url => {
-      if (!url) return;
-      lel.innerHTML += '<div class="listen-item">' + buildEmbed(url) + '</div>';
-    });
+  // Divider 1 — between About and Release
+  if (bio || hasContact || hasHistory) {
+    document.getElementById('divider1').style.display = 'block';
   }
 
-  // === FEATURED LINKS ===
+  // ══════════════════════════════
+  // === RELEASE (Featured Links) ===
+  // ══════════════════════════════
   const fl1Label = (d.featLink1Label || '').trim();
   const fl1Url = (d.featLink1Url || '').trim();
   const fl1Img = (d.featLink1Img || '').trim();
@@ -453,8 +494,8 @@ function renderProfile(d) {
   const fl2Url = (d.featLink2Url || '').trim();
   const fl2Img = (d.featLink2Img || '').trim();
   if (fl1Label || fl2Label || fl1Img || fl2Img) {
-    document.getElementById('secFeatLinks').style.display = 'block';
-    const fel = document.getElementById('vFeatLinks');
+    document.getElementById('secRelease').style.display = 'block';
+    const fel = document.getElementById('vRelease');
     [{ label: fl1Label, url: fl1Url, img: fl1Img }, { label: fl2Label, url: fl2Url, img: fl2Img }].forEach(fl => {
       if (!fl.label && !fl.img) return;
       const imgHtml = fl.img ? '<img src="'+esc(fl.img)+'" alt="'+esc(fl.label || '')+'">' : '';
@@ -467,25 +508,57 @@ function renderProfile(d) {
     });
   }
 
-  // === NEXT GIG ===
-  const upcoming = jp(d.upcoming);
-  if (upcoming && upcoming.active && upcoming.shows && upcoming.shows.length > 0) {
-    document.getElementById('secGig').style.display = 'block';
-    const gel = document.getElementById('vGig');
-    upcoming.shows.forEach(s => {
-      const dateStr = s.date ? formatDate(s.date) : '';
-      const url = s.ticketUrl || '#';
-      gel.innerHTML += '<a class="gig-link" href="'+esc(url)+'" target="_blank">' +
-        '<div class="gig-info"><div class="gig-name">'+esc(s.name || '')+'</div>' +
-        (s.venue ? '<div class="gig-detail">'+esc(s.venue)+'</div>' : '') +
-        (dateStr ? '<div class="gig-detail">'+esc(dateStr)+'</div>' : '') +
-        '</div>' +
-        (s.ticketUrl ? '<div class="gig-right"><div class="gig-arrow">→</div></div>' : '') +
-        '</a>';
+  // ══════════════════════════════
+  // === PLATFORM LINKS ===
+  // ══════════════════════════════
+  const sound = (d.primarySoundLink || '').trim();
+  const spots = jp(d.spotifyTracks) || [];
+  if (sound || spots.length > 0) {
+    document.getElementById('secPlatforms').style.display = 'block';
+    const pel = document.getElementById('vPlatforms');
+    if (sound) pel.innerHTML += '<div class="listen-item">' + buildFallbackCard(sound) + '</div>';
+    spots.forEach(url => {
+      if (!url) return;
+      pel.innerHTML += '<div class="listen-item">' + buildFallbackCard(url) + '</div>';
     });
   }
 
+  // ══════════════════════════════════════
+  // === TICKET / UPCOMING EVENTS ===
+  // ══════════════════════════════════════
+  const upcoming = jp(d.upcoming);
+  if (upcoming && upcoming.active && upcoming.shows && upcoming.shows.length > 0) {
+    document.getElementById('secTicket').style.display = 'block';
+    const tel = document.getElementById('vTicket');
+    upcoming.shows.forEach(s => {
+      const dateStr = s.date ? formatDate(s.date) : '';
+      const url = s.ticketUrl || '';
+      const tag = url ? 'a' : 'div';
+      const hrefAttr = url ? ' href="'+esc(url)+'" target="_blank"' : '';
+      tel.innerHTML +=
+        '<'+tag+' class="ticket-card"'+hrefAttr+'>' +
+          '<div class="ticket-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 4v2"/><path d="M16 4v2"/></svg></div>' +
+          '<div class="ticket-info">' +
+            '<div class="ticket-name">'+esc(s.name || '')+'</div>' +
+            (s.venue ? '<div class="ticket-detail">'+esc(s.venue)+'</div>' : '') +
+            (dateStr ? '<div class="ticket-detail">'+esc(dateStr)+'</div>' : '') +
+          '</div>' +
+          (url ? '<div class="ticket-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>' : '') +
+        '</'+tag+'>';
+    });
+  }
+
+  // Divider 2 — before download
+  const hasRelease = fl1Label || fl2Label || fl1Img || fl2Img;
+  const hasTicket = upcoming && upcoming.active && upcoming.shows && upcoming.shows.length > 0;
+  const hasPlatforms = sound || spots.length > 0;
+  if (hasRelease || hasTicket || hasPlatforms) {
+    document.getElementById('divider2').style.display = 'block';
+  }
+
+  // ══════════════════════════════
   // === DOWNLOAD ===
+  // ══════════════════════════════
   const hasLogo = d.artistLogo;
   const hasProfile = d.profilePhoto;
   const hasPerf = d.perfPhoto;
@@ -505,13 +578,12 @@ function renderProfile(d) {
       if (hasProfile) { thumbsEl.innerHTML += thumbHtml(d.profilePhoto, 'Press Photo'); dlFiles.push({url:d.profilePhoto, name:'press_photo'}); }
       if (hasPerf) { thumbsEl.innerHTML += thumbHtml(d.perfPhoto, 'Live Photo'); dlFiles.push({url:d.perfPhoto, name:'live_photo'}); }
 
-      // Show download button
       document.getElementById('dlAllBtn').style.display = 'block';
       window._dlFiles = dlFiles;
       document.getElementById('dlAllBtn').onclick = () => downloadZip(d);
     }
 
-    // Riders (show as text content)
+    // Riders
     if (hasTech || hasHosp) {
       if (hasLogo || hasProfile || hasPerf) document.getElementById('dlSep').style.display = 'block';
       const dfel = document.getElementById('vDlFiles');
@@ -523,9 +595,6 @@ function renderProfile(d) {
   // Show
   document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('mainContent').style.display = 'block';
-
-  // Check embeds after render (with delay for iframes to load)
-  setTimeout(checkEmbeds, 2000);
 }
 
 function thumbHtml(src, label) {
@@ -544,6 +613,9 @@ function buildFallbackCard(url) {
   } else if (url.includes('spotify.com')) {
     platform = 'Spotify'; iconClass = 'sp';
     icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 17.3c-.2.3-.6.4-1 .2-2.7-1.6-6-2-10-1.1-.4.1-.8-.2-.8-.6-.1-.4.2-.8.6-.8 4.3-1 8-.6 11 1.2.4.2.4.7.2 1.1zm1.5-3.3c-.3.4-.8.5-1.2.3-3-1.9-7.7-2.4-11.3-1.3-.4.1-.9-.1-1-.5-.1-.4.1-.9.5-1 4.1-1.3 9.2-.7 12.6 1.5.4.2.5.7.4 1zm.1-3.4C15.4 8.3 9 8.1 5.2 9.2c-.5.1-1-.2-1.1-.7-.1-.5.2-1 .7-1.1C9.1 6.1 16 6.3 20.3 9c.5.3.6.9.3 1.3-.2.5-.8.6-1.5.3z"/></svg>';
+  } else if (url.includes('music.apple.com') || url.includes('itunes.apple.com')) {
+    platform = 'Apple Music'; iconClass = 'am';
+    icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.073-.004-.146-.01-.22-.012C17.5.003 17.09 0 16.678 0H7.32c-.413 0-.825.003-1.237.005-.074.002-.147.008-.22.012a10.5 10.5 0 00-1.564.15 5.022 5.022 0 00-1.877.726C1.305 1.624.56 2.624.243 3.934a9.23 9.23 0 00-.24 2.19C.001 6.197 0 6.27 0 6.343v11.312c0 .073 0 .146.003.22a9.23 9.23 0 00.24 2.19c.317 1.31 1.062 2.31 2.18 3.043a5.022 5.022 0 001.877.726c.513.085 1.036.132 1.564.15.073.004.146.01.22.012.412.002.824.004 1.237.004h9.36c.412 0 .824-.002 1.236-.004.074-.002.147-.008.22-.012a10.5 10.5 0 001.564-.15 5.022 5.022 0 001.877-.726c1.118-.733 1.863-1.733 2.18-3.043a9.23 9.23 0 00.24-2.19c.002-.074.003-.147.003-.22V6.343c0-.073 0-.146-.003-.22zM16.948 13.2v4.106c0 .439-.092.862-.323 1.25a2.158 2.158 0 01-.99.87c-.4.196-.823.29-1.27.308-.468.019-.925-.073-1.347-.295a1.85 1.85 0 01-.877-.932 1.87 1.87 0 01-.085-1.058c.096-.437.34-.793.702-1.053.33-.237.7-.386 1.098-.462.428-.082.86-.14 1.288-.218.2-.036.384-.108.5-.3a.73.73 0 00.104-.387V9.282c0-.132-.043-.232-.167-.275a.784.784 0 00-.3-.04l-5.727 1.033c-.02.003-.04.01-.057.016-.13.043-.18.126-.18.264v6.603c0 .46-.082.9-.32 1.303a2.2 2.2 0 01-.996.9c-.39.19-.805.282-1.24.303-.474.023-.935-.062-1.364-.276a1.89 1.89 0 01-.9-.936 1.855 1.855 0 01-.085-1.09c.1-.437.346-.79.72-1.046a3.268 3.268 0 011.1-.46c.42-.08.843-.137 1.264-.213.21-.038.4-.113.515-.314a.77.77 0 00.098-.392V7.604c0-.363.1-.626.406-.74.132-.05.268-.084.404-.108L15.6 5.57c.19-.034.38-.065.573-.074.26-.012.42.117.432.383.002.04.003.08.003.12v7.2z"/></svg>';
   } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
     platform = 'YouTube'; iconClass = 'yt';
     icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M23.5 6.2s-.2-1.6-.9-2.3c-.9-.9-1.8-.9-2.3-1C17 2.7 12 2.7 12 2.7s-5 0-8.3.2c-.5.1-1.4.1-2.3 1-.7.7-.9 2.3-.9 2.3S.2 8.1.2 10v1.8c0 1.9.3 3.8.3 3.8s.2 1.6.9 2.3c.9.9 2 .9 2.5 1 1.8.2 7.6.2 7.6.2s5 0 8.3-.3c.5-.1 1.4-.1 2.3-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.8V10c0-1.9-.3-3.8-.3-3.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>';
@@ -553,56 +625,8 @@ function buildFallbackCard(url) {
   } else {
     icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>';
   }
-  return '<a href="'+esc(url)+'" target="_blank" class="listen-fallback"><div class="lf-icon '+iconClass+'">'+icon+'</div><div class="lf-text"><div class="lf-label">Listen on '+platform+'</div><div class="lf-url">'+esc(url)+'</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>';
+  return '<a href="'+esc(url)+'" target="_blank" class="listen-fallback"><div class="lf-icon '+iconClass+'">'+icon+'</div><div class="lf-text"><div class="lf-label">'+platform+'</div><div class="lf-url">'+esc(url)+'</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>';
 }
-
-function buildEmbed(url) {
-  if (url.includes('soundcloud.com')) {
-    // Short URLs (on.soundcloud.com) don't work with the embed player — show fallback card only
-    if (url.includes('on.soundcloud.com')) return buildFallbackCard(url);
-    return '<div class="embed-wrap" data-url="'+esc(url)+'"><iframe height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%23'+currentAccent.replace('#','')+'&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>';
-  } else if (url.includes('spotify.com')) {
-    const embedUrl = url.replace('https://open.spotify.com/', 'https://open.spotify.com/embed/');
-    return '<div class="embed-wrap" data-url="'+esc(url)+'"><iframe style="border-radius:12px" src="'+embedUrl+'" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>';
-  } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
-    let vid = '';
-    if (url.includes('youtu.be/')) vid = url.split('youtu.be/')[1]?.split('?')[0];
-    else try { vid = new URL(url).searchParams.get('v'); } catch(e){}
-    if (vid) return '<div class="embed-wrap" data-url="'+esc(url)+'"><iframe width="100%" height="200" src="https://www.youtube.com/embed/'+vid+'" frameborder="0" allowfullscreen style="border-radius:8px"></iframe></div>';
-    return buildFallbackCard(url);
-  } else if (url.includes('mixcloud.com')) {
-    return '<div class="embed-wrap" data-url="'+esc(url)+'"><iframe width="100%" height="120" src="https://www.mixcloud.com/widget/iframe/?hide_cover=1&feed='+encodeURIComponent(url)+'" frameborder="0"></iframe></div>';
-  }
-  return buildFallbackCard(url);
-}
-
-// Check embeds after page load — replace broken ones with fallback cards
-function checkEmbeds() {
-  document.querySelectorAll('.embed-wrap').forEach(function(wrap) {
-    var iframe = wrap.querySelector('iframe');
-    if (!iframe) return;
-    var url = wrap.getAttribute('data-url') || '';
-    // Listen for iframe error
-    iframe.addEventListener('error', function() {
-      wrap.innerHTML = buildFallbackCard(url);
-    });
-    // For SoundCloud: if iframe loaded but content might be error, show a subtle open link below
-    if (url.includes('soundcloud.com') || url.includes('spotify.com') || url.includes('mixcloud.com')) {
-      var platform = 'SoundCloud';
-      if (url.includes('spotify.com')) platform = 'Spotify';
-      if (url.includes('mixcloud.com')) platform = 'Mixcloud';
-      var link = document.createElement('a');
-      link.href = url;
-      link.target = '_blank';
-      link.style.cssText = 'display:block;text-align:right;font-size:11px;color:var(--text-muted);margin-top:4px;text-decoration:none;';
-      link.textContent = 'Open in ' + platform + ' ↗';
-      link.addEventListener('mouseenter', function() { this.style.color = 'var(--accent)'; });
-      link.addEventListener('mouseleave', function() { this.style.color = 'var(--text-muted)'; });
-      wrap.appendChild(link);
-    }
-  });
-}
-// checkEmbeds is now called from renderProfile() after data loads
 
 function formatDate(dateStr) {
   try {
@@ -619,6 +643,14 @@ function toggleBio() {
   b.textContent = t.classList.contains('expanded') ? 'Show less' : 'Read more';
 }
 function toggleSubAcc(h) { h.parentElement.classList.toggle('open'); }
+
+function toggleHistMore(btn) {
+  const cat = btn.parentElement;
+  const hidden = cat.querySelectorAll('.hist-hidden');
+  const isShowing = btn.textContent.startsWith('Show less');
+  hidden.forEach(el => el.style.display = isShowing ? 'none' : 'block');
+  btn.textContent = isShowing ? 'Show more (' + hidden.length + ')' : 'Show less';
+}
 
 // ═══ ZIP DOWNLOAD (PDF + images) ═══
 async function downloadZip(d) {
@@ -638,7 +670,6 @@ async function downloadZip(d) {
     if (d.featLink1Img) images.push({url: d.featLink1Img, name: 'featured1'});
     if (d.featLink2Img) images.push({url: d.featLink2Img, name: 'featured2'});
 
-    // Fetch images as blobs and add to zip
     for (const img of images) {
       try {
         const res = await fetch(img.url);
@@ -648,8 +679,9 @@ async function downloadZip(d) {
       } catch(e) { console.warn('Failed to fetch image:', img.name); }
     }
 
-    // 2. Generate PDF — open all accordions first
+    // 2. Generate PDF
     document.querySelectorAll('.sub-acc').forEach(el => el.classList.add('open'));
+    document.querySelectorAll('.hist-hidden').forEach(el => el.style.display = 'block');
     const bioEl = document.getElementById('vBio');
     if (bioEl) bioEl.classList.add('expanded');
 
@@ -664,8 +696,8 @@ async function downloadZip(d) {
     });
 
     const { jsPDF } = window.jspdf;
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
+    const imgWidth = 210;
+    const pageHeight = 297;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     const pdf = new jsPDF('p', 'mm', 'a4');
 
