@@ -558,6 +558,8 @@ function buildFallbackCard(url) {
 
 function buildEmbed(url) {
   if (url.includes('soundcloud.com')) {
+    // Short URLs (on.soundcloud.com) don't work with the embed player — show fallback card only
+    if (url.includes('on.soundcloud.com')) return buildFallbackCard(url);
     return '<div class="embed-wrap" data-url="'+esc(url)+'"><iframe height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%23'+currentAccent.replace('#','')+'&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>';
   } else if (url.includes('spotify.com')) {
     const embedUrl = url.replace('https://open.spotify.com/', 'https://open.spotify.com/embed/');
