@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Your Press Kit — THIRD KAGURA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#0a0a0a; --surface:#141414; --border:#2a2a2a; --border-focus:#c4a265;
+      --gold:#c4a265; --gold-dim:rgba(196,162,101,0.15);
+      --text:#f0f0f0; --text-dim:#888; --text-muted:#555;
+      --error:#e74c3c; --error-bg:rgba(231,76,60,0.1);
+      --success:#2ecc71; --radius:8px; --transition:0.2s ease;
+    }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; }
+
+    .page-header { text-align:center; padding:48px 24px 24px; border-bottom:1px solid var(--border); }
+    .page-header h1 { font-size:24px; font-weight:700; margin-bottom:6px; }
+    .page-header p { color:var(--text-dim); font-size:14px; }
+
+    .container { max-width:720px; margin:0 auto; padding:32px 24px 64px; }
+
+    /* Views */
+    .view { display:none; }
+    .view.active { display:block; }
+
+    /* Fields */
+    .field { margin-bottom:18px; }
+    .field label { display:block; font-size:13px; font-weight:500; color:var(--text-dim); margin-bottom:5px; }
+    .field .hint { font-size:12px; color:var(--text-muted); margin-top:4px; }
+    .form-section { margin-bottom:28px; }
+    .form-section h3 {
+      font-size:13px; font-weight:600; color:var(--gold);
+      text-transform:uppercase; letter-spacing:1px;
+      margin-bottom:16px; padding-bottom:6px; border-bottom:1px solid var(--border);
+    }
+
+    input[type="text"],input[type="email"],input[type="url"],select,textarea {
+      width:100%; padding:10px 14px; background:var(--surface);
+      border:1px solid var(--border); border-radius:var(--radius);
+      color:var(--text); font-family:inherit; font-size:14px;
+      transition:border-color var(--transition); outline:none;
+    }
+    input:focus,select:focus,textarea:focus { border-color:var(--border-focus); }
+    textarea { resize:vertical; min-height:100px; }
+    select {
+      appearance:none; cursor:pointer; padding-right:36px;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 12px center;
+    }
+
+    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    @media (max-width:540px) { .field-row { grid-template-columns:1fr; } }
+
+    .bio-counter { font-size:12px; margin-top:4px; text-align:right; }
+    .bio-counter.under { color:var(--error); }
+    .bio-counter.ok { color:var(--success); }
+
+    /* Genre chips */
+    .genre-grid { display:flex; flex-wrap:wrap; gap:8px; }
+    .genre-chip {
+      padding:6px 14px; border:1px solid var(--border); border-radius:20px;
+      font-size:13px; color:var(--text-dim); cursor:pointer;
+      transition:all var(--transition); user-select:none;
+    }
+    .genre-chip:hover { border-color:var(--text-muted); color:var(--text); }
+    .genre-chip.selected { border-color:var(--gold); background:var(--gold-dim); color:var(--gold); }
+
+    /* Image upload */
+    .image-upload {
+      position:relative; border:2px dashed var(--border); border-radius:12px;
+      padding:32px 24px; text-align:center; cursor:pointer;
+      transition:border-color var(--transition),background var(--transition);
+    }
+    .image-upload:hover { border-color:var(--text-muted); background:var(--surface); }
+    .image-upload.has-image { border-style:solid; border-color:var(--gold); padding:8px; }
+    .image-upload input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+    .image-upload .upload-label { color:var(--text-dim); font-size:13px; }
+    .image-upload .upload-label strong { color:var(--gold); display:block; margin-bottom:4px; }
+    .image-upload .preview-img { max-width:100%; max-height:280px; border-radius:var(--radius); object-fit:contain; display:none; }
+    .image-upload.has-image .upload-label { display:none; }
+    .image-upload.has-image .preview-img { display:block; margin:0 auto; }
+    .image-upload .remove-btn {
+      display:none; position:absolute; top:8px; right:8px;
+      background:rgba(0,0,0,0.7); color:#fff; border:none; border-radius:50%;
+      width:28px; height:28px; cursor:pointer; font-size:16px; line-height:28px;
+    }
+    .image-upload.has-image .remove-btn { display:block; }
+
+    /* Entries */
+    .entry-row {
+      display:grid; gap:10px; align-items:end; margin-bottom:10px;
+      padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    }
+    .entry-row .field { margin-bottom:0; }
+    .entry-row label { font-size:12px; }
+    .gig-grid { grid-template-columns:1fr auto auto 1fr auto; }
+    .link-grid { grid-template-columns:140px 1fr auto; }
+    @media (max-width:640px) { .gig-grid,.link-grid { grid-template-columns:1fr; } }
+    .remove-entry {
+      background:none; border:1px solid var(--border); color:var(--text-muted);
+      border-radius:var(--radius); width:36px; height:36px; cursor:pointer; font-size:16px;
+    }
+    .remove-entry:hover { border-color:var(--error); color:var(--error); }
+    .add-entry-btn {
+      display:inline-block; padding:8px 20px; background:transparent;
+      border:1px dashed var(--border); border-radius:var(--radius);
+      color:var(--gold); font-family:inherit; font-size:13px; cursor:pointer;
+    }
+    .add-entry-btn:hover { border-color:var(--gold); }
+
+    /* Buttons */
+    .btn {
+      display:inline-block; padding:12px 40px; border:none; border-radius:var(--radius);
+      font-family:inherit; font-size:14px; font-weight:600; cursor:pointer;
+      transition:opacity var(--transition);
+    }
+    .btn:hover { opacity:0.9; }
+    .btn:disabled { opacity:0.4; cursor:not-allowed; }
+    .btn-primary { background:var(--gold); color:#000; }
+    .btn-secondary { background:transparent; border:1px solid var(--border); color:var(--text-dim); }
+    .btn-row { display:flex; gap:12px; justify-content:center; padding-top:16px; }
+    .spinner { display:none; width:18px; height:18px; border:2px solid transparent; border-top-color:#000; border-radius:50%; animation:spin 0.6s linear infinite; }
+    .btn.loading .spinner { display:inline-block; }
+    .btn.loading .btn-text { display:none; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* Toast */
+    .toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px);
+      padding:12px 24px; border-radius:var(--radius); font-size:14px; font-weight:500;
+      opacity:0; transition:transform 0.3s ease,opacity 0.3s ease; z-index:9999;
+    }
+    .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+    .toast.success { background:var(--success); color:#000; }
+    .toast.error { background:var(--error); color:#fff; }
+
+    /* Auth view */
+    .auth-box,.login-box { max-width:400px; margin:60px auto; text-align:center; }
+    .auth-box h2,.login-box h2 { font-size:20px; margin-bottom:8px; }
+    .auth-box p,.login-box p { color:var(--text-dim); font-size:14px; margin-bottom:24px; }
+    .auth-box input,.login-box input { margin-bottom:16px; }
+    .auth-sent { color:var(--success); font-size:14px; margin-top:12px; }
+
+    /* Login form messages */
+    .error-msg { color:var(--error); font-size:13px; margin-bottom:12px; display:block; }
+    .success-msg { color:var(--success); font-size:13px; margin-bottom:12px; display:block; }
+    .login-box .field { text-align:left; }
+    .login-box .field input { margin-bottom:0; }
+
+    /* Loading */
+    .loading-view { text-align:center; padding:80px 24px; color:var(--text-dim); }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>Edit Your Press Kit</h1>
+  <p id="headerSubtitle">Sign in with your ID and password</p>
+</header>
+
+<main class="container">
+
+  <!-- ═══ AUTH VIEW ═══ -->
+  <div class="view active" id="authView">
+    <div class="login-box">
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px">Sign in with your ID and password</p>
+
+      <div id="loginForm">
+        <div class="field">
+          <label for="loginSlug">Your ID</label>
+          <input type="text" id="loginSlug" placeholder="your-artist-id">
+        </div>
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Your password">
+        </div>
+        <div class="error-msg" id="loginError" style="display:none"></div>
+        <button type="button" class="btn btn-primary" id="loginBtn" style="width:100%;margin-top:12px">
+          <span class="btn-text">SIGN IN</span>
+          <span class="spinner"></span>
+        </button>
+        <div style="text-align:center;margin-top:12px">
+          <a href="#" id="forgotPasswordLink" style="color:var(--gold);font-size:12px;text-decoration:none">Forgot password?</a>
+        </div>
+      </div>
+
+      <!-- Forgot password form (hidden by default) -->
+      <div id="forgotForm" style="display:none">
+        <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Enter your ID and we'll send a reset link to your registered email.</p>
+        <div class="field">
+          <label for="resetSlug">Your ID</label>
+          <input type="text" id="resetSlug" placeholder="your-artist-id">
+        </div>
+        <div class="error-msg" id="resetError" style="display:none"></div>
+        <div class="success-msg" id="resetSuccess" style="display:none;color:#4caf50;font-size:13px;margin-bottom:12px"></div>
+        <button type="button" class="btn btn-primary" id="resetBtn" style="width:100%;margin-top:12px">
+          <span class="btn-text">SEND RESET LINK</span>
+          <span class="spinner"></span>
+        </button>
+        <div style="text-align:center;margin-top:12px">
+          <a href="#" id="backToLoginLink" style="color:var(--gold);font-size:12px;text-decoration:none">Back to sign in</a>
+        </div>
+      </div>
+
+      <!-- Reset password form (shown when ?reset=TOKEN) -->
+      <div id="newPasswordForm" style="display:none">
+        <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Set your new password.</p>
+        <div class="field">
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" placeholder="At least 6 characters" minlength="6">
+        </div>
+        <div class="field">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" placeholder="Re-enter password">
+        </div>
+        <div class="error-msg" id="newPasswordError" style="display:none"></div>
+        <button type="button" class="btn btn-primary" id="setPasswordBtn" style="width:100%;margin-top:12px">
+          <span class="btn-text">SET PASSWORD</span>
+          <span class="spinner"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LOADING VIEW ═══ -->
+  <div class="view" id="loadingView">
+    <div class="loading-view">Loading your press kit...</div>
+  </div>
+
+  <!-- ═══ EDIT VIEW ═══ -->
+  <div class="view" id="editView">
+
+    <!-- Profile Photo -->
+    <section class="form-section">
+      <h3>Profile Photo</h3>
+      <div class="field">
+        <div class="image-upload" id="drop-profilePhoto">
+          <input type="file" accept="image/*" data-field="profilePhoto">
+          <div class="upload-label"><strong>Click or drag to upload</strong>Portrait recommended</div>
+          <img class="preview-img" id="preview-profilePhoto" alt="Profile preview">
+          <button type="button" class="remove-btn" data-field="profilePhoto">×</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Basic Info -->
+    <section class="form-section">
+      <h3>Basic Info</h3>
+      <div class="field">
+        <label for="e-artistName">Artist Name</label>
+        <input type="text" id="e-artistName" maxlength="80">
+      </div>
+      <div class="field">
+        <label for="e-location">Country</label>
+        <select id="e-location"></select>
+      </div>
+      <div class="field">
+        <label>Role</label>
+        <div class="genre-grid" id="e-roleGrid" style="margin-top:6px">
+          <div class="genre-chip" data-role="DJ">DJ</div>
+          <div class="genre-chip" data-role="Producer">Producer</div>
+          <div class="genre-chip" data-role="MC">MC</div>
+          <div class="genre-chip" data-role="Singer">Singer</div>
+          <div class="genre-chip" data-role="Dancer">Dancer</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Genre <span id="e-genreReqMark" style="color:var(--error);margin-left:2px">*</span></label>
+        <div class="hint" id="e-genreHint" style="margin-bottom:8px">Required for DJ and Producer roles</div>
+        <div class="genre-grid" id="e-genreGrid"></div>
+      </div>
+      <div class="field">
+        <label for="e-primarySoundLink">Primary Sound Link</label>
+        <input type="url" id="e-primarySoundLink" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label for="e-instagram">Instagram</label>
+        <input type="url" id="e-instagram" placeholder="https://instagram.com/...">
+      </div>
+      <div class="field">
+        <label for="e-bio">Bio</label>
+        <textarea id="e-bio" maxlength="1000"></textarea>
+        <div class="bio-counter" id="e-bioCounter">0 / 1000</div>
+      </div>
+    </section>
+
+    <!-- Images -->
+    <section class="form-section">
+      <h3>More Images</h3>
+      <div class="field-row">
+        <div class="field">
+          <label>Performance Photo</label>
+          <div class="image-upload" id="drop-perfPhoto">
+            <input type="file" accept="image/*" data-field="perfPhoto">
+            <div class="upload-label"><strong>Upload</strong>Landscape 16:9</div>
+            <img class="preview-img" id="preview-perfPhoto" alt="">
+            <button type="button" class="remove-btn" data-field="perfPhoto">×</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Artist Logo</label>
+          <div class="image-upload" id="drop-artistLogo">
+            <input type="file" accept="image/*" data-field="artistLogo">
+            <div class="upload-label"><strong>Upload</strong>Square 1:1</div>
+            <img class="preview-img" id="preview-artistLogo" alt="">
+            <button type="button" class="remove-btn" data-field="artistLogo">×</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Activity -->
+    <section class="form-section">
+      <h3>Activity</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+        <label class="genre-chip" id="e-actType-residency" style="cursor:pointer"><input type="checkbox" value="residency" class="e-act-type-cb" style="display:none"> Residency</label>
+        <label class="genre-chip" id="e-actType-clubGig" style="cursor:pointer"><input type="checkbox" value="clubGig" class="e-act-type-cb" style="display:none"> Club Gig</label>
+        <label class="genre-chip" id="e-actType-festival" style="cursor:pointer"><input type="checkbox" value="festival" class="e-act-type-cb" style="display:none"> Festival</label>
+        <label class="genre-chip" id="e-actType-live" style="cursor:pointer"><input type="checkbox" value="live" class="e-act-type-cb" style="display:none"> Live</label>
+        <label class="genre-chip" id="e-actType-media" style="cursor:pointer"><input type="checkbox" value="media" class="e-act-type-cb" style="display:none"> Media</label>
+        <label class="genre-chip" id="e-actType-other" style="cursor:pointer"><input type="checkbox" value="other" class="e-act-type-cb" style="display:none"> Other</label>
+      </div>
+      <div id="e-residencySection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Residency</h4>
+        <div id="e-residencyContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addResidencyBtn">+ Add residency</button>
+      </div>
+      <div id="e-clubGigSection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Club Gig</h4>
+        <div id="e-clubGigContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addClubGigBtn">+ Add club gig</button>
+      </div>
+      <div id="e-festivalSection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Festival</h4>
+        <div id="e-festivalContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addFestivalBtn">+ Add festival</button>
+      </div>
+      <div id="e-liveSection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Live</h4>
+        <div id="e-liveContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addLiveBtn">+ Add live performance</button>
+      </div>
+      <div id="e-mediaSection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Media</h4>
+        <div id="e-mediaContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addMediaBtn">+ Add media</button>
+      </div>
+      <div id="e-otherSection" style="display:none;margin-top:16px">
+        <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Other</h4>
+        <div id="e-otherContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addOtherBtn">+ Add other</button>
+      </div>
+    </section>
+
+    <!-- Awards / Organizer / Promoter (no separators) -->
+    <div style="padding:0 0 20px">
+      <div style="margin-bottom:20px">
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px">Do you have any awards or achievements?</p>
+        <div style="display:flex;gap:14px;margin-bottom:12px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasAwards" value="yes" style="accent-color:var(--gold)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-hasAwards" value="no" checked style="accent-color:var(--gold)"> No</label>
+        </div>
+        <div id="e-awardsSection" style="display:none">
+          <div id="e-awardsContainer"></div>
+          <button type="button" class="add-entry-btn" id="e-addAwardBtn">+ Add award</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px">Do you organize events?</p>
+        <div style="display:flex;gap:14px;margin-bottom:12px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isOrganizer" value="yes" style="accent-color:var(--gold)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isOrganizer" value="no" checked style="accent-color:var(--gold)"> No</label>
+        </div>
+        <div id="e-organizerSection" style="display:none">
+          <div id="e-organizerContainer"></div>
+          <button type="button" class="add-entry-btn" id="e-addOrganizerBtn">+ Add event</button>
+        </div>
+      </div>
+
+      <div>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px">Are you a promoter?</p>
+        <div style="display:flex;gap:14px;margin-bottom:12px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isPromoter" value="yes" style="accent-color:var(--gold)"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-isPromoter" value="no" checked style="accent-color:var(--gold)"> No</label>
+        </div>
+        <div id="e-promoterSection" style="display:none">
+          <div id="e-promoterContainer"></div>
+          <button type="button" class="add-entry-btn" id="e-addPromoterBtn">+ Add promoted event</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Shows -->
+    <section class="form-section">
+      <h3>Upcoming Shows <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Optional)</span></h3>
+      <div id="e-upcomingSection">
+        <div id="e-upcomingContainer"></div>
+        <button type="button" class="add-entry-btn" id="e-addUpcomingBtn">+ Add upcoming show</button>
+      </div>
+    </section>
+
+    <!-- Links + Featured Links -->
+    <section class="form-section">
+      <h3>Links</h3>
+      <div id="e-linksContainer"></div>
+      <button type="button" class="add-entry-btn" id="e-addLinkBtn">+ Add a link</button>
+
+      <div style="margin-top:28px">
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Add up to 2 links with a custom banner image.</p>
+        <div id="e-featuredLinksContainer">
+          <div id="e-featuredLink1" style="margin-bottom:20px">
+            <div class="field"><label>Title</label><input type="text" id="e-featLink1Label" placeholder="e.g. My Latest Mix"></div>
+            <div class="field"><label>URL</label><input type="url" id="e-featLink1Url" placeholder="https://..."></div>
+            <div class="field">
+              <label>Banner Image</label>
+              <div class="image-upload" id="drop-featLink1Img" style="height:80px">
+                <input type="file" accept="image/*" data-field="featLink1Img">
+                <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+                <img class="preview-img" id="preview-featLink1Img" alt="Featured link 1 preview">
+                <button type="button" class="remove-btn" data-field="featLink1Img">×</button>
+              </div>
+            </div>
+          </div>
+          <div id="e-featuredLink2" style="display:none;margin-bottom:20px">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:4px"><button type="button" class="remove-entry" id="e-removeFeatLink2" style="font-size:18px">×</button></div>
+            <div class="field"><label>Title</label><input type="text" id="e-featLink2Label" placeholder="e.g. Event Page"></div>
+            <div class="field"><label>URL</label><input type="url" id="e-featLink2Url" placeholder="https://..."></div>
+            <div class="field">
+              <label>Banner Image</label>
+              <div class="image-upload" id="drop-featLink2Img" style="height:80px">
+                <input type="file" accept="image/*" data-field="featLink2Img">
+                <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
+                <img class="preview-img" id="preview-featLink2Img" alt="Featured link 2 preview">
+                <button type="button" class="remove-btn" data-field="featLink2Img">×</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="add-entry-btn" id="e-addFeatLinkBtn" style="margin-top:8px">+ Add a link</button>
+      </div>
+    </section>
+
+    <!-- Fees + Riders -->
+    <section class="form-section">
+      <h3>Fees <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private — never shown publicly)</span></h3>
+      <div class="field" style="margin-bottom:14px">
+        <label for="e-feeCurrency">Currency</label>
+        <select id="e-feeCurrency" style="width:auto;min-width:160px">
+          <option value="AUD">AUD — Australian Dollar</option>
+          <option value="USD">USD — US Dollar</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="GBP">GBP — British Pound</option>
+          <option value="JPY">JPY — Japanese Yen</option>
+          <option value="KRW">KRW — Korean Won</option>
+          <option value="CNY">CNY — Chinese Yuan</option>
+          <option value="NZD">NZD — New Zealand Dollar</option>
+          <option value="SGD">SGD — Singapore Dollar</option>
+          <option value="THB">THB — Thai Baht</option>
+          <option value="IDR">IDR — Indonesian Rupiah</option>
+          <option value="PHP">PHP — Philippine Peso</option>
+          <option value="INR">INR — Indian Rupee</option>
+          <option value="BRL">BRL — Brazilian Real</option>
+          <option value="ZAR">ZAR — South African Rand</option>
+          <option value="AED">AED — UAE Dirham</option>
+          <option value="CAD">CAD — Canadian Dollar</option>
+          <option value="SEK">SEK — Swedish Krona</option>
+          <option value="CHF">CHF — Swiss Franc</option>
+          <option value="MXN">MXN — Mexican Peso</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Local Fee</label><input type="text" id="e-localFee" placeholder="Enter range"></div>
+        <div class="field"><label>Club Fee</label><input type="text" id="e-clubFee" placeholder="Enter range"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Festival Fee</label><input type="text" id="e-festivalFee" placeholder="Enter range"></div>
+        <div class="field"><label>Minimum Fee</label><input type="text" id="e-minimumFee" placeholder="Enter amount"></div>
+      </div>
+      <div class="field" style="margin-top:20px"><label>Tech Rider</label><textarea id="e-techRider" placeholder="Equipment requirements, setup preferences..."></textarea></div>
+      <div class="field"><label>Hospitality Rider</label><textarea id="e-hospRider" placeholder="Drinks, food, travel requirements..."></textarea></div>
+    </section>
+
+    <!-- Contact Information -->
+    <section class="form-section">
+      <h3>Contact Information <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Shown on your profile)</span></h3>
+      <div class="field-row">
+        <div class="field"><label>Booking Email</label><input type="email" id="e-bookingEmail"></div>
+        <div class="field"><label>Management Email</label><input type="email" id="e-mgmtEmail"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Agency Name</label><input type="text" id="e-agencyName"></div>
+        <div class="field"><label>Agency Email</label><input type="email" id="e-agencyEmail"></div>
+      </div>
+      <div class="field"><label>Agency Website</label><input type="url" id="e-agencyWebsite"></div>
+    </section>
+
+    <!-- Customization -->
+    <section class="form-section">
+      <h3>Customization</h3>
+      <div class="field-row">
+        <div class="field">
+          <label>Accent Color</label>
+          <div style="display:flex;gap:10px;align-items:center">
+            <input type="color" id="e-accentColor" value="#c4a265" style="width:48px;height:38px;padding:2px;cursor:pointer">
+            <input type="text" id="e-accentColorHex" value="#c4a265" maxlength="7" style="width:100px;text-align:center;font-family:monospace">
+          </div>
+        </div>
+        <div class="field">
+          <label>Font</label>
+          <select id="e-font" style="font-size:14px" onchange="document.getElementById('e-fontPreview').style.fontFamily=this.value+',sans-serif'">
+            <option value="Montserrat" style="font-family:'Montserrat',sans-serif">Montserrat</option>
+            <option value="Poppins" style="font-family:'Poppins',sans-serif">Poppins</option>
+            <option value="Playfair Display" style="font-family:'Playfair Display',serif">Playfair Display</option>
+            <option value="Bebas Neue" style="font-family:'Bebas Neue',sans-serif">Bebas Neue</option>
+            <option value="Inter" style="font-family:'Inter',sans-serif">Inter</option>
+            <option value="Rajdhani" style="font-family:'Rajdhani',sans-serif">Rajdhani</option>
+          </select>
+          <div id="e-fontPreview" style="margin-top:8px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);font-family:'Inter',sans-serif;font-size:18px;color:var(--text)">The quick brown fox jumps over the lazy dog</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="saveBtn" style="min-width:200px">
+        <span class="btn-text">SAVE CHANGES</span>
+        <span class="spinner"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ PREVIEW VIEW (after save) ═══ -->
+  <div class="view" id="previewView">
+    <!-- Phase 1: Preview check -->
+    <div id="e-previewPhase" style="padding:40px 0">
+      <div style="text-align:center;margin-bottom:16px">
+        <h2 style="font-size:28px;font-weight:700;margin-bottom:12px">Pick your look</h2>
+        <div id="e-designSelector" style="display:flex;gap:8px;justify-content:center">
+          <button type="button" class="btn e-design-btn active" data-design="1" style="padding:10px 20px;font-size:12px;border:1px solid var(--gold);color:var(--gold);background:var(--gold-dim);border-radius:20px" onclick="eSwitchDesignPreview(1)">Photo</button>
+          <button type="button" class="btn e-design-btn" data-design="2" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="eSwitchDesignPreview(2)">BG</button>
+          <button type="button" class="btn e-design-btn" data-design="3" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="eSwitchDesignPreview(3)">Icon</button>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;background:#000">
+        <iframe id="e-previewFrame" style="width:100%;height:520px;border:none;background:#000" sandbox="allow-scripts allow-same-origin"></iframe>
+      </div>
+
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">EDIT MORE</button>
+        <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('e-previewPhase').style.display='none';document.getElementById('e-actionsPhase').style.display='block'">Use this layout</button>
+      </div>
+    </div>
+
+    <!-- Phase 2: Actions -->
+    <div id="e-actionsPhase" style="display:none;text-align:center;padding:60px 0 40px">
+      <div style="font-size:40px;margin-bottom:16px">🔗</div>
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">Your press kit is live</h2>
+      <p style="color:var(--text-dim);font-size:14px;margin-bottom:32px">Share it with the world.</p>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;text-align:left;margin-bottom:24px">
+        <input type="text" id="e-doneUrl" readonly style="width:100%;background:var(--bg);cursor:text;font-size:13px;margin-bottom:12px">
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn btn-primary" style="flex:1;padding:10px;font-size:13px" onclick="window.open(document.getElementById('e-doneUrl').value,'_blank')">View press kit</button>
+          <button type="button" class="btn" style="flex:1;padding:10px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="navigator.clipboard.writeText(document.getElementById('e-doneUrl').value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy link',2000)">Copy link</button>
+          <button type="button" class="btn" style="flex:1;padding:10px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="var u=document.getElementById('e-doneUrl').value;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
+        </div>
+      </div>
+
+      <button type="button" class="btn" style="padding:12px 48px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">Back to editing</button>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyNJ5Wk7frGflBAmZ_2gLu3NrDOKf1g_WYT6sOW-rHXQuCg6FzWwLaoT7pZOOZyXee2/exec';
+
+// ─── Data ───
+const GENRE_LIST = [
+  'Afro House','Amapiano','Dance','Drum & Bass','Hardcore / Uptempo',
+  'Hard Techno','Hardstyle','Hip Hop','House','Melodic Techno',
+  'Minimal / Deep Tech','Open Format','Psytrance','Techno','Trance','UK Garage'
+];
+let eResidencyCounter = 0, eClubGigCounter = 0, eFestivalCounter = 0;
+let eLiveCounter = 0, eMediaCounter = 0, eOtherCounter = 0;
+let eOrganizerCounter = 0, ePromoterCounter = 0, eUpcomingCounter = 0, eAwardCounter = 0;
+
+const COUNTRIES = [
+  'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan',
+  'Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
+  'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo','Congo (DRC)','Costa Rica','Croatia','Cuba','Cyprus','Czech Republic',
+  'Denmark','Djibouti','Dominica','Dominican Republic',
+  'Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini','Ethiopia',
+  'Fiji','Finland','France',
+  'Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana',
+  'Haiti','Honduras','Hong Kong','Hungary',
+  'Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Ivory Coast',
+  'Jamaica','Japan','Jordan',
+  'Kazakhstan','Kenya','Kiribati','Kosovo','Kuwait','Kyrgyzstan',
+  'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
+  'Macau','Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar',
+  'Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia','Norway',
+  'Oman',
+  'Pakistan','Palau','Palestine','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal',
+  'Qatar',
+  'Romania','Russia','Rwanda',
+  'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland','Syria',
+  'Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
+  'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan',
+  'Vanuatu','Vatican City','Venezuela','Vietnam',
+  'Yemen',
+  'Zambia','Zimbabwe'
+];
+
+const IMAGE_SPECS = {
+  profilePhoto:{maxWidth:1200,quality:0.85,aspect:3/4},
+  perfPhoto:{maxWidth:1920,quality:0.85,aspect:16/9},
+  artistLogo:{maxWidth:200,quality:0.8,aspect:1/1},
+  featLink1Img:{maxWidth:1200,quality:0.85,aspect:16/5},
+  featLink2Img:{maxWidth:1200,quality:0.85,aspect:16/5}
+};
+
+let currentToken = null;
+let currentSlug = null;
+const selectedGenres = new Set();
+const selectedRoles = new Set();
+const imageData = {profilePhoto:null,perfPhoto:null,artistLogo:null,featLink1Img:null,featLink2Img:null};
+let gigCounter = 0, linkCounter = 0;
+
+// ─── Init ───
+(function init() {
+  // Populate country select
+  const sel = document.getElementById('e-location');
+  const defOpt = document.createElement('option'); defOpt.value=''; defOpt.textContent='Select country'; sel.appendChild(defOpt);
+  COUNTRIES.forEach(c => { const o = document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+
+  // Role chips
+  document.querySelectorAll('#e-roleGrid .genre-chip[data-role]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const role = chip.dataset.role;
+      if (selectedRoles.has(role)) { selectedRoles.delete(role); chip.classList.remove('selected'); }
+      else { selectedRoles.add(role); chip.classList.add('selected'); }
+      eUpdateGenreRequirement();
+    });
+  });
+
+  // Genre chips
+  const grid = document.getElementById('e-genreGrid');
+  GENRE_LIST.forEach(g => {
+    const chip = document.createElement('div'); chip.className='genre-chip'; chip.textContent=g;
+    chip.addEventListener('click', () => {
+      if (selectedGenres.has(g)) { selectedGenres.delete(g); chip.classList.remove('selected'); }
+      else { selectedGenres.add(g); chip.classList.add('selected'); }
+    });
+    grid.appendChild(chip);
+  });
+
+  // Check for token in URL
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  if (token) {
+    currentToken = token;
+    showView('loadingView');
+    verifyToken(token);
+  }
+})();
+
+// ─── Views ───
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelector('.page-header').style.display = (id === 'previewView') ? 'none' : '';
+}
+
+// ─── Auth: Password Login ───
+document.getElementById('loginBtn').addEventListener('click', async function() {
+  const slug = document.getElementById('loginSlug').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+
+  if (!slug || !password) {
+    errEl.textContent = 'ID and password are required';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  this.disabled = true;
+  this.classList.add('loading');
+
+  try {
+    const res = await fetch(GAS_URL + '?action=password_login&slug=' + encodeURIComponent(slug) + '&password=' + encodeURIComponent(password));
+    const result = await res.json();
+    if (result.error) {
+      errEl.textContent = result.error;
+      errEl.style.display = 'block';
+    } else if (result.token) {
+      currentToken = result.token;
+      currentSlug = result.slug;
+      // Load artist data using the token
+      const verifyRes = await fetch(GAS_URL + '?action=verify_token&token=' + encodeURIComponent(currentToken));
+      const verifyResult = await verifyRes.json();
+      if (verifyResult.success && verifyResult.artist) {
+        document.getElementById('headerSubtitle').textContent = 'Editing: ' + (verifyResult.artist.artistName || currentSlug);
+        populateForm(verifyResult.artist);
+        showView('editView');
+      } else {
+        errEl.textContent = 'Failed to load your data';
+        errEl.style.display = 'block';
+      }
+    }
+  } catch (e) {
+    errEl.textContent = 'Connection error. Please try again.';
+    errEl.style.display = 'block';
+  } finally {
+    this.disabled = false;
+    this.classList.remove('loading');
+  }
+});
+
+// ─── Auth: Forgot Password UI ───
+document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
+  e.preventDefault();
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('forgotForm').style.display = 'block';
+});
+
+document.getElementById('backToLoginLink').addEventListener('click', function(e) {
+  e.preventDefault();
+  document.getElementById('forgotForm').style.display = 'none';
+  document.getElementById('loginForm').style.display = 'block';
+});
+
+// ─── Auth: Password Reset Request ───
+document.getElementById('resetBtn').addEventListener('click', async function() {
+  const slug = document.getElementById('resetSlug').value.trim().toLowerCase();
+  const errEl = document.getElementById('resetError');
+  const successEl = document.getElementById('resetSuccess');
+  errEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  if (!slug) {
+    errEl.textContent = 'ID is required';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  this.disabled = true;
+  this.classList.add('loading');
+
+  try {
+    const res = await fetch(GAS_URL + '?action=reset_password&slug=' + encodeURIComponent(slug));
+    const result = await res.json();
+    successEl.textContent = result.message || 'If this ID exists, a reset link has been sent.';
+    successEl.style.display = 'block';
+  } catch (e) {
+    errEl.textContent = 'Connection error';
+    errEl.style.display = 'block';
+  } finally {
+    this.disabled = false;
+    this.classList.remove('loading');
+  }
+});
+
+// ─── Auth: Password Reset (from token link) ───
+// Check for password reset token in URL
+const urlParams = new URLSearchParams(window.location.search);
+const resetToken = urlParams.get('reset');
+if (resetToken) {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('newPasswordForm').style.display = 'block';
+
+  document.getElementById('setPasswordBtn').addEventListener('click', async function() {
+    const newPw = document.getElementById('newPassword').value;
+    const confirmPw = document.getElementById('confirmPassword').value;
+    const errEl = document.getElementById('newPasswordError');
+    errEl.style.display = 'none';
+
+    if (newPw.length < 6) {
+      errEl.textContent = 'Password must be at least 6 characters';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (newPw !== confirmPw) {
+      errEl.textContent = 'Passwords do not match';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    this.disabled = true;
+    this.classList.add('loading');
+
+    try {
+      const res = await fetch(GAS_URL + '?action=set_password&token=' + encodeURIComponent(resetToken) + '&newPassword=' + encodeURIComponent(newPw));
+      const result = await res.json();
+      if (result.error) {
+        errEl.textContent = result.error;
+        errEl.style.display = 'block';
+      } else {
+        document.getElementById('newPasswordForm').innerHTML = '<p style="color:#4caf50;text-align:center;margin-top:24px">Password set successfully! <a href="dashboard.html" style="color:var(--gold);text-decoration:none">Sign in now</a></p>';
+      }
+    } catch (e) {
+      errEl.textContent = 'Connection error';
+      errEl.style.display = 'block';
+    } finally {
+      this.disabled = false;
+      this.classList.remove('loading');
+    }
+  });
+}
+
+// ─── Auth: Verify token (for backward compatibility) ───
+async function verifyToken(token) {
+  try {
+    const res = await fetch(GAS_URL + '?action=verify_token&token=' + encodeURIComponent(token));
+    const json = await res.json();
+    if (json.success && json.artist) {
+      currentSlug = json.slug;
+      document.getElementById('headerSubtitle').textContent = 'Editing: ' + (json.artist.artistName || json.slug);
+      populateForm(json.artist);
+      showView('editView');
+    } else {
+      showToast(json.error || 'Invalid token', 'error');
+      showView('authView');
+    }
+  } catch (e) {
+    showToast('Error verifying token', 'error');
+    showView('authView');
+  }
+}
+
+// ─── Populate form with existing data ───
+function populateForm(d) {
+  document.getElementById('e-artistName').value = d.artistName || '';
+  document.getElementById('e-location').value = d.location || '';
+  document.getElementById('e-primarySoundLink').value = d.primarySoundLink || '';
+  document.getElementById('e-instagram').value = d.instagram || '';
+  document.getElementById('e-bio').value = d.bio || '';
+  updateBioCounter();
+  document.getElementById('e-feeCurrency').value = d.feeCurrency || 'AUD';
+  document.getElementById('e-localFee').value = d.localFee || '';
+  document.getElementById('e-clubFee').value = d.clubFee || '';
+  document.getElementById('e-festivalFee').value = d.festivalFee || '';
+  document.getElementById('e-minimumFee').value = d.minimumFee || '';
+  document.getElementById('e-techRider').value = d.techRider || '';
+  document.getElementById('e-hospRider').value = d.hospRider || '';
+  document.getElementById('e-bookingEmail').value = d.bookingEmail || '';
+  document.getElementById('e-mgmtEmail').value = d.mgmtEmail || '';
+  document.getElementById('e-agencyName').value = d.agencyName || '';
+  document.getElementById('e-agencyEmail').value = d.agencyEmail || '';
+  document.getElementById('e-agencyWebsite').value = d.agencyWebsite || '';
+  document.getElementById('e-accentColor').value = d.accentColor || '#c4a265';
+  document.getElementById('e-accentColorHex').value = d.accentColor || '#c4a265';
+  document.getElementById('e-font').value = d.font || 'Inter';
+  document.getElementById('e-fontPreview').style.fontFamily = (d.font || 'Inter') + ',sans-serif';
+
+  // Roles
+  selectedRoles.clear();
+  try {
+    const roles = typeof d.role === 'string' ? JSON.parse(d.role) : (d.role || []);
+    if (Array.isArray(roles)) {
+      roles.forEach(r => {
+        selectedRoles.add(r);
+        document.querySelectorAll('#e-roleGrid .genre-chip[data-role]').forEach(chip => {
+          if (chip.dataset.role === r) chip.classList.add('selected');
+        });
+      });
+    }
+  } catch(e) {}
+  eUpdateGenreRequirement();
+
+  // Genres
+  selectedGenres.clear();
+  try {
+    const genres = JSON.parse(d.genre);
+    if (Array.isArray(genres)) {
+      genres.forEach(g => {
+        selectedGenres.add(g);
+        document.querySelectorAll('#e-genreGrid .genre-chip').forEach(chip => {
+          if (chip.textContent === g) chip.classList.add('selected');
+        });
+      });
+    }
+  } catch(e) {}
+
+  // Images (show existing Drive URLs)
+  ['profilePhoto','perfPhoto','artistLogo','featLink1Img','featLink2Img'].forEach(field => {
+    if (d[field] && d[field].toString().startsWith('http')) {
+      const preview = document.getElementById('preview-' + field);
+      const drop = document.getElementById('drop-' + field);
+      preview.src = d[field];
+      drop.classList.add('has-image');
+      imageData[field] = d[field]; // Keep existing URL
+    }
+  });
+
+  // Activity
+  try {
+    const activities = typeof d.activity === 'string' ? JSON.parse(d.activity) : d.activity;
+    if (Array.isArray(activities)) {
+      const types = new Set();
+      activities.forEach(a => {
+        types.add(a.type);
+        if (a.type === 'residency') eAddResidencyEntry(a);
+        else if (a.type === 'clubGig') eAddClubGigEntry(a);
+        else if (a.type === 'festival') eAddFestivalEntry(a);
+        else if (a.type === 'live') eAddLiveEntry(a);
+        else if (a.type === 'media') eAddMediaEntry(a);
+        else if (a.type === 'other') eAddOtherEntry(a);
+      });
+      const sectionMap = { residency:'e-residencySection', clubGig:'e-clubGigSection', festival:'e-festivalSection', live:'e-liveSection', media:'e-mediaSection', other:'e-otherSection' };
+      types.forEach(t => {
+        const cb = document.querySelector(`.e-act-type-cb[value="${t}"]`);
+        if (cb) { cb.checked = true; cb.closest('label').classList.add('selected'); }
+        const sec = sectionMap[t];
+        if (sec) document.getElementById(sec).style.display = 'block';
+      });
+    }
+  } catch(e) {}
+
+  // Organizer
+  try {
+    const org = typeof d.organizer === 'string' ? JSON.parse(d.organizer) : d.organizer;
+    if (org && org.active) {
+      document.querySelector('input[name="e-isOrganizer"][value="yes"]').checked = true;
+      document.getElementById('e-organizerSection').style.display = 'block';
+      if (Array.isArray(org.events)) org.events.forEach(e => eAddOrganizerEntry(e));
+    }
+  } catch(e) {}
+
+  // Promoter
+  try {
+    const promo = typeof d.promoter === 'string' ? JSON.parse(d.promoter) : d.promoter;
+    if (promo && promo.active) {
+      document.querySelector('input[name="e-isPromoter"][value="yes"]').checked = true;
+      document.getElementById('e-promoterSection').style.display = 'block';
+      if (Array.isArray(promo.events)) promo.events.forEach(e => eAddPromoterEntry(e));
+    }
+  } catch(e) {}
+
+  // Upcoming (always visible)
+  try {
+    const up = typeof d.upcoming === 'string' ? JSON.parse(d.upcoming) : d.upcoming;
+    if (up && Array.isArray(up.shows) && up.shows.length > 0) up.shows.forEach(s => eAddUpcomingEntry(s));
+    else eAddUpcomingEntry(); // 最初から1件開く
+  } catch(e) { eAddUpcomingEntry(); }
+
+  // Awards
+  try {
+    const awards = typeof d.awards === 'string' ? JSON.parse(d.awards) : d.awards;
+    if (Array.isArray(awards) && awards.length > 0) {
+      document.querySelector('input[name="e-hasAwards"][value="yes"]').checked = true;
+      document.getElementById('e-awardsSection').style.display = 'block';
+      awards.forEach(a => eAddAwardEntry(a));
+    }
+  } catch(e) {}
+
+  // Featured Links
+  if (d.featLink1Label) document.getElementById('e-featLink1Label').value = d.featLink1Label;
+  if (d.featLink1Url) document.getElementById('e-featLink1Url').value = d.featLink1Url;
+  if (d.featLink2Label) document.getElementById('e-featLink2Label').value = d.featLink2Label;
+  if (d.featLink2Url) document.getElementById('e-featLink2Url').value = d.featLink2Url;
+  if (d.featLink2Label || d.featLink2Url) {
+    document.getElementById('e-featuredLink2').style.display = 'block';
+    document.getElementById('e-addFeatLinkBtn').style.display = 'none';
+  }
+
+  // Links
+  try {
+    const links = JSON.parse(d.links);
+    if (Array.isArray(links)) {
+      links.forEach(l => addLinkEntry(l));
+    }
+  } catch(e) {}
+}
+
+// ─── Bio counter ───
+const bioEl = document.getElementById('e-bio');
+bioEl.addEventListener('input', updateBioCounter);
+function updateBioCounter() {
+  const len = bioEl.value.length;
+  const c = document.getElementById('e-bioCounter');
+  c.textContent = `${len} / 1000`;
+  c.className = 'bio-counter ' + (len < 100 ? 'under' : 'ok');
+}
+
+// ─── Color sync ───
+document.getElementById('e-accentColor').addEventListener('input', function() {
+  document.getElementById('e-accentColorHex').value = this.value;
+});
+document.getElementById('e-accentColorHex').addEventListener('input', function() {
+  if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) document.getElementById('e-accentColor').value = this.value;
+});
+
+// ─── Image processing ───
+function processImage(file, spec) {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) return reject(new Error('Not an image'));
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        let srcX=0,srcY=0,srcW=img.width,srcH=img.height;
+        if (spec.aspect) {
+          const t=spec.aspect,c=img.width/img.height;
+          if(c>t){srcW=img.height*t;srcX=(img.width-srcW)/2;}
+          else{srcH=img.width/t;srcY=(img.height-srcH)/2;}
+        }
+        let outW=srcW,outH=srcH;
+        if(outW>spec.maxWidth){outH=(spec.maxWidth/outW)*outH;outW=spec.maxWidth;}
+        canvas.width=Math.round(outW);canvas.height=Math.round(outH);
+        ctx.drawImage(img,srcX,srcY,srcW,srcH,0,0,canvas.width,canvas.height);
+        resolve(canvas.toDataURL('image/jpeg',spec.quality));
+      };
+      img.onerror = () => reject(new Error('Failed'));
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+Object.keys(IMAGE_SPECS).forEach(field => {
+  const drop = document.getElementById('drop-'+field);
+  if (!drop) return;
+  const fi = drop.querySelector('input[type="file"]');
+  const preview = document.getElementById('preview-'+field);
+  const rm = drop.querySelector('.remove-btn');
+
+  fi.addEventListener('change', async e => {
+    const file = e.target.files[0]; if(!file) return;
+    try {
+      const b64 = await processImage(file, IMAGE_SPECS[field]);
+      imageData[field]=b64; preview.src=b64; drop.classList.add('has-image');
+    } catch(err) { showToast('Image error','error'); }
+  });
+  rm.addEventListener('click', e => {
+    e.stopPropagation(); imageData[field]=null; preview.src=''; fi.value=''; drop.classList.remove('has-image');
+  });
+});
+
+// ─── Genre requirement ───
+function eUpdateGenreRequirement() {
+  const needsGenre = selectedRoles.has('DJ') || selectedRoles.has('Producer');
+  const reqMark = document.getElementById('e-genreReqMark');
+  const hint = document.getElementById('e-genreHint');
+  if (reqMark) reqMark.style.display = needsGenre ? '' : 'none';
+  if (hint) hint.style.display = needsGenre ? '' : 'none';
+}
+
+// ─── Activity type toggles ───
+document.querySelectorAll('.e-act-type-cb').forEach(cb => {
+  cb.closest('label').addEventListener('click', () => {
+    setTimeout(() => {
+      const label = cb.closest('label');
+      if (cb.checked) label.classList.add('selected'); else label.classList.remove('selected');
+      const sectionMap = { residency:'e-residencySection', clubGig:'e-clubGigSection', festival:'e-festivalSection', live:'e-liveSection', media:'e-mediaSection', other:'e-otherSection' };
+      const sec = sectionMap[cb.value];
+      if (sec) document.getElementById(sec).style.display = cb.checked ? 'block' : 'none';
+    }, 0);
+  });
+});
+
+function eAddResidencyEntry(data) {
+  eResidencyCounter++;
+  const id = eResidencyCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-residency-' + id; div.style.display = 'block';
+  const countryOptions = '<option value="">Select country</option>' + COUNTRIES.map(c => '<option value="' + c + '"' + (c === (data?.country||'') ? ' selected' : '') + '>' + c + '</option>').join('');
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Club Name / Event Name</label><input type="text" data-res="${id}" data-res-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-residency-${id}')?.remove()">×</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Country</label><select data-res="${id}" data-res-field="country">${countryOptions}</select></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Start Date</label><input type="month" data-res="${id}" data-res-field="startDate" value="${data?.startDate||''}"></div>
+      <div class="field" style="flex:1"><label>End Date</label><input type="month" data-res="${id}" data-res-field="endDate" id="e-resEnd-${id}" value="${data?.endDate||''}"${data?.currentlyRunning?' disabled':''}></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;margin-bottom:4px"><input type="checkbox" data-res="${id}" data-res-field="currentlyRunning" style="accent-color:var(--gold)"${data?.currentlyRunning?' checked':''} onchange="document.getElementById('e-resEnd-${id}').disabled=this.checked;if(this.checked)document.getElementById('e-resEnd-${id}').value=''"> Currently running</label>
+    <div class="field" style="margin-top:8px"><label>Description</label><textarea data-res="${id}" data-res-field="description" placeholder="e.g. Weekly Saturday night residency" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
+  `;
+  document.getElementById('e-residencyContainer').appendChild(div);
+}
+document.getElementById('e-addResidencyBtn').addEventListener('click', () => eAddResidencyEntry());
+
+function eAddClubGigEntry(data) {
+  eClubGigCounter++;
+  const id = eClubGigCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-clubgig-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-cg="${id}" data-cg-field="eventName" value="${(data?.eventName||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-cg="${id}" data-cg-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-clubgig-${id}')?.remove()">×</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Venue</label><input type="text" data-cg="${id}" data-cg-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="flex:1">
+        <label>Role</label>
+        <div style="display:flex;gap:10px;padding-top:6px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="checkbox" data-cg="${id}" data-cg-role="Headliner" style="accent-color:var(--gold)"${(data?.role||'').includes('Headliner')?' checked':''}> Headliner</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="checkbox" data-cg="${id}" data-cg-role="Support" style="accent-color:var(--gold)"${(data?.role||'').includes('Support')?' checked':''}> Support</label>
+        </div>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-cg="${id}" data-cg-field="description" placeholder="e.g. Opening set for international headliner" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
+  `;
+  document.getElementById('e-clubGigContainer').appendChild(div);
+}
+document.getElementById('e-addClubGigBtn').addEventListener('click', () => eAddClubGigEntry());
+
+function eAddFestivalEntry(data) {
+  eFestivalCounter++;
+  const id = eFestivalCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-festival-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Name</label><input type="text" data-fest="${id}" data-fest-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-fest="${id}" data-fest-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-festival-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-fest="${id}" data-fest-field="description" placeholder="e.g. Main stage closing set" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
+  `;
+  document.getElementById('e-festivalContainer').appendChild(div);
+}
+document.getElementById('e-addFestivalBtn').addEventListener('click', () => eAddFestivalEntry());
+
+// Live
+function eAddLiveEntry(data) {
+  eLiveCounter++;
+  const id = eLiveCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-live-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event / Performance Name</label><input type="text" data-live="${id}" data-live-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-live="${id}" data-live-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-live-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>Venue</label><input type="text" data-live="${id}" data-live-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-live="${id}" data-live-field="description" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
+  `;
+  document.getElementById('e-liveContainer').appendChild(div);
+}
+document.getElementById('e-addLiveBtn').addEventListener('click', () => eAddLiveEntry());
+
+// Media
+function eAddMediaEntry(data) {
+  eMediaCounter++;
+  const id = eMediaCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-media-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Title</label><input type="text" data-media="${id}" data-media-field="title" value="${(data?.title||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-media="${id}" data-media-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-media-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>URL</label><input type="url" data-media="${id}" data-media-field="url" value="${(data?.url||'').replace(/"/g,'&quot;')}"></div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-media="${id}" data-media-field="description" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
+  `;
+  document.getElementById('e-mediaContainer').appendChild(div);
+}
+document.getElementById('e-addMediaBtn').addEventListener('click', () => eAddMediaEntry());
+
+// Other
+function eAddOtherEntry(data) {
+  eOtherCounter++;
+  const id = eOtherCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-other-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Title</label><input type="text" data-other="${id}" data-other-field="title" value="${(data?.title||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-other="${id}" data-other-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-other-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:4px"><label>Description</label><textarea data-other="${id}" data-other-field="description" style="height:60px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
+  `;
+  document.getElementById('e-otherContainer').appendChild(div);
+}
+document.getElementById('e-addOtherBtn').addEventListener('click', () => eAddOtherEntry());
+
+// Organizer
+document.querySelectorAll('input[name="e-isOrganizer"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('e-organizerSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
+  });
+});
+
+function eAddOrganizerEntry(data) {
+  eOrganizerCounter++;
+  const id = eOrganizerCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-org-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-org="${id}" data-org-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-org-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>Venue / Location</label><input type="text" data-org="${id}" data-org-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Start Date</label><input type="month" data-org="${id}" data-org-field="startDate" value="${data?.startDate||''}"></div>
+      <div class="field" style="flex:1"><label>End Date</label><input type="month" data-org="${id}" data-org-field="endDate" id="e-orgEnd-${id}" value="${data?.endDate||''}"${data?.currentlyRunning?' disabled':''}></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);cursor:pointer;margin-bottom:8px"><input type="checkbox" data-org="${id}" data-org-field="currentlyRunning" style="accent-color:var(--gold)"${data?.currentlyRunning?' checked':''} onchange="document.getElementById('e-orgEnd-${id}').disabled=this.checked;if(this.checked)document.getElementById('e-orgEnd-${id}').value=''"> Currently running</label>
+    <div class="field" style="margin-bottom:8px"><label>Event Size</label><select data-org="${id}" data-org-field="size" style="width:auto;min-width:160px"><option value="">Select</option><option value="<100"${data?.size==='<100'?' selected':''}>&lt;100</option><option value="100-300"${data?.size==='100-300'?' selected':''}>100–300</option><option value="300-1000"${data?.size==='300-1000'?' selected':''}>300–1000</option><option value="1000+"${data?.size==='1000+'?' selected':''}>1000+</option></select></div>
+    <div class="field" style="margin-bottom:8px"><label>Event URL</label><input type="url" data-org="${id}" data-org-field="url" value="${(data?.url||'').replace(/"/g,'&quot;')}"></div>
+    <div class="field"><label>Description</label><textarea data-org="${id}" data-org-field="description" style="min-height:60px">${data?.description||''}</textarea></div>
+  `;
+  document.getElementById('e-organizerContainer').appendChild(div);
+}
+document.getElementById('e-addOrganizerBtn').addEventListener('click', () => eAddOrganizerEntry());
+
+// Promoter
+document.querySelectorAll('input[name="e-isPromoter"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('e-promoterSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
+  });
+});
+
+function eAddPromoterEntry(data) {
+  ePromoterCounter++;
+  const id = ePromoterCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-promo-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-promo="${id}" data-promo-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-promo-${id}')?.remove()">×</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Venue / Location</label><input type="text" data-promo="${id}" data-promo-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="flex:1"><label>Event URL</label><input type="url" data-promo="${id}" data-promo-field="url" value="${(data?.url||'').replace(/"/g,'&quot;')}"></div>
+    </div>
+  `;
+  document.getElementById('e-promoterContainer').appendChild(div);
+}
+document.getElementById('e-addPromoterBtn').addEventListener('click', () => eAddPromoterEntry());
+
+// Upcoming (always visible — no toggle)
+function eAddUpcomingEntry(data) {
+  eUpcomingCounter++;
+  const id = eUpcomingCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-upcoming-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Event Name</label><input type="text" data-up="${id}" data-up-field="name" value="${(data?.name||'').replace(/"/g,'&quot;')}"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-upcoming-${id}')?.remove()">×</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Venue</label><input type="text" data-up="${id}" data-up-field="venue" value="${(data?.venue||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="flex:1"><label>Date</label><input type="date" data-up="${id}" data-up-field="date" value="${data?.date||''}"></div>
+    </div>
+    <div class="field"><label>Event info / Ticket link</label><input type="url" data-up="${id}" data-up-field="ticketUrl" value="${(data?.ticketUrl||'').replace(/"/g,'&quot;')}"></div>
+  `;
+  document.getElementById('e-upcomingContainer').appendChild(div);
+}
+document.getElementById('e-addUpcomingBtn').addEventListener('click', () => eAddUpcomingEntry());
+
+// Featured Link 2 toggle
+document.getElementById('e-addFeatLinkBtn').addEventListener('click', function() {
+  document.getElementById('e-featuredLink2').style.display = 'block';
+  this.style.display = 'none';
+});
+document.getElementById('e-removeFeatLink2').addEventListener('click', function() {
+  document.getElementById('e-featuredLink2').style.display = 'none';
+  document.getElementById('e-featLink2Label').value = '';
+  document.getElementById('e-featLink2Url').value = '';
+  imageData.featLink2Img = null;
+  var prev = document.getElementById('preview-featLink2Img');
+  if (prev) { prev.style.display = 'none'; prev.src = ''; }
+  var rmBtn = document.querySelector('#drop-featLink2Img .remove-btn');
+  if (rmBtn) rmBtn.style.display = 'none';
+  document.getElementById('e-addFeatLinkBtn').style.display = '';
+});
+
+// Awards
+document.querySelectorAll('input[name="e-hasAwards"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('e-awardsSection').style.display = r.value === 'yes' && r.checked ? 'block' : 'none';
+  });
+});
+
+function eAddAwardEntry(data) {
+  eAwardCounter++;
+  const id = eAwardCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-award-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1"><label>Award Title</label><input type="text" data-award="${id}" data-award-field="title" value="${(data?.title||'').replace(/"/g,'&quot;')}"></div>
+      <div class="field" style="width:100px"><label>Year</label><input type="text" data-award="${id}" data-award-field="year" value="${data?.year||''}" maxlength="4"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-award-${id}')?.remove()">×</button>
+    </div>
+  `;
+  document.getElementById('e-awardsContainer').appendChild(div);
+}
+document.getElementById('e-addAwardBtn').addEventListener('click', () => eAddAwardEntry());
+
+// Collect functions
+function eCollectActivity() {
+  const activities = [];
+  document.querySelectorAll('#e-residencyContainer .entry-row').forEach(entry => {
+    const venue = entry.querySelector('[data-res-field="venue"]')?.value.trim();
+    if (venue) activities.push({ type:'residency', venue, country: entry.querySelector('[data-res-field="country"]')?.value||'', startDate: entry.querySelector('[data-res-field="startDate"]')?.value||'', endDate: entry.querySelector('[data-res-field="endDate"]')?.value||'', currentlyRunning: entry.querySelector('[data-res-field="currentlyRunning"]')?.checked||false, description: entry.querySelector('[data-res-field="description"]')?.value.trim()||'' });
+  });
+  document.querySelectorAll('#e-clubGigContainer .entry-row').forEach(entry => {
+    const eventName = entry.querySelector('[data-cg-field="eventName"]')?.value.trim();
+    const roles = [];
+    entry.querySelectorAll('[data-cg-role]').forEach(cb => { if(cb.checked) roles.push(cb.dataset.cgRole); });
+    if (eventName) activities.push({ type:'clubGig', eventName, venue: entry.querySelector('[data-cg-field="venue"]')?.value.trim()||'', role: roles.join(', '), year: entry.querySelector('[data-cg-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-cg-field="description"]')?.value.trim()||'' });
+  });
+  document.querySelectorAll('#e-festivalContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-fest-field="name"]')?.value.trim();
+    if (name) activities.push({ type:'festival', name, year: entry.querySelector('[data-fest-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-fest-field="description"]')?.value.trim()||'' });
+  });
+  document.querySelectorAll('#e-liveContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-live-field="name"]')?.value.trim();
+    if (name) activities.push({ type:'live', name, venue: entry.querySelector('[data-live-field="venue"]')?.value.trim()||'', year: entry.querySelector('[data-live-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-live-field="description"]')?.value.trim()||'' });
+  });
+  document.querySelectorAll('#e-mediaContainer .entry-row').forEach(entry => {
+    const title = entry.querySelector('[data-media-field="title"]')?.value.trim();
+    if (title) activities.push({ type:'media', title, url: entry.querySelector('[data-media-field="url"]')?.value.trim()||'', year: entry.querySelector('[data-media-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-media-field="description"]')?.value.trim()||'' });
+  });
+  document.querySelectorAll('#e-otherContainer .entry-row').forEach(entry => {
+    const title = entry.querySelector('[data-other-field="title"]')?.value.trim();
+    if (title) activities.push({ type:'other', title, year: entry.querySelector('[data-other-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-other-field="description"]')?.value.trim()||'' });
+  });
+  return activities;
+}
+
+function eCollectOrganizer() {
+  const active = document.querySelector('input[name="e-isOrganizer"][value="yes"]')?.checked||false;
+  if (!active) return JSON.stringify({active:false,events:[]});
+  const events = [];
+  document.querySelectorAll('#e-organizerContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-org-field="name"]')?.value.trim();
+    if (name) events.push({ name, venue: entry.querySelector('[data-org-field="venue"]')?.value.trim()||'', startDate: entry.querySelector('[data-org-field="startDate"]')?.value||'', endDate: entry.querySelector('[data-org-field="endDate"]')?.value||'', currentlyRunning: entry.querySelector('[data-org-field="currentlyRunning"]')?.checked||false, size: entry.querySelector('[data-org-field="size"]')?.value||'', url: entry.querySelector('[data-org-field="url"]')?.value.trim()||'', description: entry.querySelector('[data-org-field="description"]')?.value.trim()||'' });
+  });
+  return JSON.stringify({active:true,events});
+}
+
+function eCollectPromoter() {
+  const active = document.querySelector('input[name="e-isPromoter"][value="yes"]')?.checked||false;
+  if (!active) return JSON.stringify({active:false,events:[]});
+  const events = [];
+  document.querySelectorAll('#e-promoterContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-promo-field="name"]')?.value.trim();
+    if (name) events.push({ name, venue: entry.querySelector('[data-promo-field="venue"]')?.value.trim()||'', url: entry.querySelector('[data-promo-field="url"]')?.value.trim()||'' });
+  });
+  return JSON.stringify({active:true,events});
+}
+
+function eCollectUpcoming() {
+  const shows = [];
+  document.querySelectorAll('#e-upcomingContainer .entry-row').forEach(entry => {
+    const name = entry.querySelector('[data-up-field="name"]')?.value.trim();
+    if (name) shows.push({ name, venue: entry.querySelector('[data-up-field="venue"]')?.value.trim()||'', date: entry.querySelector('[data-up-field="date"]')?.value||'', ticketUrl: entry.querySelector('[data-up-field="ticketUrl"]')?.value.trim()||'' });
+  });
+  return JSON.stringify({active:shows.length>0,shows});
+}
+
+function eCollectAwards() {
+  const hasAwards = document.querySelector('input[name="e-hasAwards"][value="yes"]')?.checked||false;
+  if (!hasAwards) return JSON.stringify([]);
+  const awards = [];
+  document.querySelectorAll('#e-awardsContainer .entry-row').forEach(entry => {
+    const title = entry.querySelector('[data-award-field="title"]')?.value.trim();
+    const year = entry.querySelector('[data-award-field="year"]')?.value.trim()||'';
+    if (title) awards.push({ title, year });
+  });
+  return JSON.stringify(awards);
+}
+
+// ─── Links ───
+function addLinkEntry(data) {
+  linkCounter++;
+  const id = linkCounter;
+  const div = document.createElement('div');
+  div.className='entry-row link-grid'; div.id='link-'+id;
+  div.innerHTML=`
+    <div class="field"><label>Label</label><input type="text" data-link="${id}" data-link-field="label" value="${(data?.label||'').replace(/"/g,'&quot;')}"></div>
+    <div class="field"><label>URL</label><input type="url" data-link="${id}" data-link-field="url" value="${(data?.url||'').replace(/"/g,'&quot;')}"></div>
+    <button type="button" class="remove-entry" onclick="document.getElementById('link-${id}')?.remove()">×</button>
+  `;
+  document.getElementById('e-linksContainer').appendChild(div);
+}
+document.getElementById('e-addLinkBtn').addEventListener('click', () => addLinkEntry());
+
+function collectLinks() {
+  const links=[];
+  document.querySelectorAll('#e-linksContainer .entry-row').forEach(entry => {
+    const label=entry.querySelector('[data-link-field="label"]').value.trim();
+    const url=entry.querySelector('[data-link-field="url"]').value.trim();
+    if(label&&url) links.push({label,url});
+  });
+  return links;
+}
+
+// ─── Save ───
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('saveBtn');
+  btn.classList.add('loading'); btn.disabled=true;
+
+  const payload = {
+    action: 'update',
+    token: currentToken,
+    slug: currentSlug,
+    artistName: document.getElementById('e-artistName').value.trim(),
+    location: document.getElementById('e-location').value,
+    role: JSON.stringify([...selectedRoles]),
+    genre: JSON.stringify([...selectedGenres]),
+    primarySoundLink: document.getElementById('e-primarySoundLink').value.trim(),
+    instagram: document.getElementById('e-instagram').value.trim(),
+    bio: document.getElementById('e-bio').value.trim().substring(0, 1000),
+    profilePhoto: imageData.profilePhoto || '',
+    perfPhoto: imageData.perfPhoto || '',
+    artistLogo: imageData.artistLogo || '',
+    accentColor: document.getElementById('e-accentColor').value,
+    font: document.getElementById('e-font').value,
+    feeCurrency: document.getElementById('e-feeCurrency').value,
+    localFee: document.getElementById('e-localFee').value.trim(),
+    clubFee: document.getElementById('e-clubFee').value.trim(),
+    festivalFee: document.getElementById('e-festivalFee').value.trim(),
+    minimumFee: document.getElementById('e-minimumFee').value.trim(),
+    techRider: document.getElementById('e-techRider').value.trim(),
+    hospRider: document.getElementById('e-hospRider').value.trim(),
+    links: JSON.stringify(collectLinks()),
+    bookingEmail: document.getElementById('e-bookingEmail').value.trim(),
+    mgmtEmail: document.getElementById('e-mgmtEmail').value.trim(),
+    agencyName: document.getElementById('e-agencyName').value.trim(),
+    agencyEmail: document.getElementById('e-agencyEmail').value.trim(),
+    agencyWebsite: document.getElementById('e-agencyWebsite').value.trim(),
+    activity: JSON.stringify(eCollectActivity()),
+    organizer: eCollectOrganizer(),
+    promoter: eCollectPromoter(),
+    upcoming: eCollectUpcoming(),
+    awards: eCollectAwards(),
+    featLink1Label: document.getElementById('e-featLink1Label')?.value.trim() || '',
+    featLink1Url: document.getElementById('e-featLink1Url')?.value.trim() || '',
+    featLink1Img: imageData.featLink1Img || '',
+    featLink2Label: document.getElementById('e-featLink2Label')?.value.trim() || '',
+    featLink2Url: document.getElementById('e-featLink2Url')?.value.trim() || '',
+    featLink2Img: imageData.featLink2Img || '',
+    updatedAt: new Date().toISOString()
+  };
+
+  try {
+    await postViaIframe(GAS_URL, payload);
+    // Show preview after save
+    eSelectedDesign = 1;
+    var profileUrl = 'https://presskit.thirdkagura.com/view.html?id=' + currentSlug + '&design=' + eSelectedDesign;
+    showView('previewView');
+    document.getElementById('e-previewFrame').src = profileUrl;
+    document.getElementById('e-doneUrl').value = profileUrl;
+    // Reset design buttons
+    document.querySelectorAll('.e-design-btn').forEach(b => {
+      if (parseInt(b.dataset.design) === 1) { b.style.borderColor='var(--gold)'; b.style.color='var(--gold)'; b.style.background='var(--gold-dim)'; b.classList.add('active'); }
+      else { b.style.borderColor='var(--border)'; b.style.color='var(--text-dim)'; b.style.background='transparent'; b.classList.remove('active'); }
+    });
+    document.getElementById('e-previewPhase').style.display = 'block';
+    document.getElementById('e-actionsPhase').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch(e) {
+    if (e.message && (e.message.includes('expired') || e.message.includes('Invalid or expired'))) {
+      showToast('Session expired. Please log in again.', 'error');
+      setTimeout(() => { currentToken = null; showView('loginView'); }, 2000);
+    } else {
+      showToast('Error: ' + (e.message || 'Save failed'), 'error');
+    }
+  }
+  btn.classList.remove('loading'); btn.disabled=false;
+});
+
+// ─── Iframe POST with postMessage + onload fallback ───
+function postViaIframe(url, payload) {
+  return new Promise((resolve, reject) => {
+    const msgId = 'pk_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+    payload._messageId = msgId;
+
+    const iframeName = 'pkSubmitFrame_' + Date.now();
+    const iframe = document.createElement('iframe');
+    iframe.name = iframeName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    let settled = false;
+    let loadCount = 0;
+
+    // Hard timeout: 20s
+    const timeout = setTimeout(() => {
+      if (!settled) { settled = true; cleanup(); reject(new Error('Request timed out. Please try again.')); }
+    }, 20000);
+
+    // Best case: postMessage from GAS response
+    function onMessage(event) {
+      if (!event.data || event.data._messageId !== msgId) return;
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      cleanup();
+      if (event.data.error) { reject(new Error(event.data.error)); }
+      else { resolve(event.data); }
+    }
+
+    // Fallback: iframe onload (for mobile where postMessage may be blocked)
+    function onLoad() {
+      loadCount++;
+      // GAS redirects: first load is redirect, second is final response
+      // Wait 3s after load for postMessage; if none, assume success
+      if (loadCount >= 1) {
+        setTimeout(() => {
+          if (!settled) {
+            settled = true;
+            clearTimeout(timeout);
+            cleanup();
+            resolve({ success: true, _fallback: true });
+          }
+        }, 3000);
+      }
+    }
+
+    function cleanup() {
+      window.removeEventListener('message', onMessage);
+      try { iframe.removeEventListener('load', onLoad); } catch(e){}
+      setTimeout(() => { try { iframe.remove(); } catch(e){} }, 500);
+    }
+
+    window.addEventListener('message', onMessage);
+    iframe.addEventListener('load', onLoad);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.target = iframeName;
+    form.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'payload';
+    input.value = JSON.stringify(payload);
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+  });
+}
+
+// ─── Toast ───
+function showToast(msg,type='success') {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+// Design preview switcher
+var eSelectedDesign = 1;
+function eSwitchDesignPreview(num) {
+  eSelectedDesign = num;
+  var baseUrl = document.getElementById('e-doneUrl').value.replace(/&design=\d+/, '');
+  var newUrl = baseUrl + '&design=' + num;
+  document.getElementById('e-previewFrame').src = newUrl;
+  document.getElementById('e-doneUrl').value = newUrl;
+  document.querySelectorAll('.e-design-btn').forEach(b => {
+    if (parseInt(b.dataset.design) === num) {
+      b.style.borderColor = 'var(--gold)'; b.style.color = 'var(--gold)'; b.style.background = 'var(--gold-dim)'; b.classList.add('active');
+    } else {
+      b.style.borderColor = 'var(--border)'; b.style.color = 'var(--text-dim)'; b.style.background = 'transparent'; b.classList.remove('active');
+    }
+  });
+}
+</script>
+</body>
+</html>
