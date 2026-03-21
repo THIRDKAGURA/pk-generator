@@ -1464,7 +1464,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     await postViaIframe(GAS_URL, payload);
     // Show preview after save
     eSelectedDesign = 1;
-    var profileUrl = 'https://thirdkagura.github.io/pk-generator/view.html?id=' + currentSlug + '&design=' + eSelectedDesign;
+    var profileUrl = 'https://presskit.thirdkagura.com/view.html?id=' + currentSlug + '&design=' + eSelectedDesign;
     showView('previewView');
     document.getElementById('e-previewFrame').src = profileUrl;
     document.getElementById('e-doneUrl').value = profileUrl;
@@ -1477,37 +1477,29 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     document.getElementById('e-actionsPhase').style.display = 'none';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch(e) {
-    showToast('Error saving','error');
+    if (e.message && (e.message.includes('expired') || e.message.includes('Invalid or expired'))) {
+      showToast('Session expired. Please log in again.', 'error');
+      setTimeout(() => { currentToken = null; showView('loginView'); }, 2000);
+    } else {
+      showToast('Error: ' + (e.message || 'Save failed'), 'error');
+    }
   }
   btn.classList.remove('loading'); btn.disabled=false;
 });
 
-// ─── Iframe POST ───
-function postViaIframe(url, payload) {
-  return new Promise((resolve) => {
-    const iframeName = 'pkSubmitFrame_' + Date.now();
-    const iframe = document.createElement('iframe');
-    iframe.name = iframeName;
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = url;
-    form.target = iframeName;
-    form.style.display = 'none';
-
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'payload';
-    input.value = JSON.stringify(payload);
-    form.appendChild(input);
-
-    document.body.appendChild(form);
-    form.submit();
-
-    setTimeout(() => { form.remove(); iframe.remove(); resolve(); }, 5000);
+// ─── POST via fetch (with response check) ───
+async function postViaIframe(url, payload) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload),
+    redirect: 'follow'
   });
+  const text = await res.text();
+  let json;
+  try { json = JSON.parse(text); } catch(e) { throw new Error('Invalid server response'); }
+  if (json.error) throw new Error(json.error);
+  return json;
 }
 
 // ─── Toast ───
