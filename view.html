@@ -452,16 +452,18 @@ function renderProfile(d) {
   const fl2Label = (d.featLink2Label || '').trim();
   const fl2Url = (d.featLink2Url || '').trim();
   const fl2Img = (d.featLink2Img || '').trim();
-  if (fl1Label || fl2Label) {
+  if (fl1Label || fl2Label || fl1Img || fl2Img) {
     document.getElementById('secFeatLinks').style.display = 'block';
     const fel = document.getElementById('vFeatLinks');
     [{ label: fl1Label, url: fl1Url, img: fl1Img }, { label: fl2Label, url: fl2Url, img: fl2Img }].forEach(fl => {
-      if (!fl.label) return;
-      const href = fl.url ? esc(fl.url) : '#';
-      const imgHtml = fl.img ? '<img src="'+esc(fl.img)+'" alt="'+esc(fl.label)+'">' : '';
-      fel.innerHTML += '<a class="feat-link" href="'+href+'" target="_blank">' +
-        imgHtml +
-        '<div class="feat-label"><span>'+esc(fl.label)+'</span><span class="feat-arrow">→</span></div></a>';
+      if (!fl.label && !fl.img) return;
+      const imgHtml = fl.img ? '<img src="'+esc(fl.img)+'" alt="'+esc(fl.label || '')+'">' : '';
+      const labelHtml = fl.label ? '<div class="feat-label"><span>'+esc(fl.label)+'</span>' + (fl.url ? '<span class="feat-arrow">→</span>' : '') + '</div>' : '';
+      if (fl.url) {
+        fel.innerHTML += '<a class="feat-link" href="'+esc(fl.url)+'" target="_blank">' + imgHtml + labelHtml + '</a>';
+      } else {
+        fel.innerHTML += '<div class="feat-link" style="cursor:default">' + imgHtml + labelHtml + '</div>';
+      }
     });
   }
 
@@ -521,6 +523,9 @@ function renderProfile(d) {
   // Show
   document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('mainContent').style.display = 'block';
+
+  // Check embeds after render (with delay for iframes to load)
+  setTimeout(checkEmbeds, 2000);
 }
 
 function thumbHtml(src, label) {
@@ -595,7 +600,7 @@ function checkEmbeds() {
     }
   });
 }
-setTimeout(checkEmbeds, 1000);
+// checkEmbeds is now called from renderProfile() after data loads
 
 function formatDate(dateStr) {
   try {
