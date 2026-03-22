@@ -798,7 +798,7 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyNJ5Wk7frGflBAmZ_2gLu3
 // ─── Invite Gate: block access without valid invite parameter ───
 (function() {
   var inviteCode = new URLSearchParams(window.location.search).get('invite');
-  if (!inviteCode || !/^[0-9]{8,10}$/.test(inviteCode)) {
+  if (!inviteCode || !/^[0-9]{6,10}$/.test(inviteCode)) {
     document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:Inter,sans-serif;color:#f0f0f0;padding:24px;text-align:center;">' +
       '<h1 style="font-size:18px;font-weight:600;margin-bottom:12px;">Invitation Required</h1>' +
       '<p style="color:#888;font-size:13px;margin-bottom:24px;">You need a valid invite code to create a Press Kit.</p>' +
