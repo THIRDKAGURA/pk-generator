@@ -3,737 +3,742 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Press Kit — THIRD KAGURA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <title>THIRD KAGURA — Artist Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --bg:#0a0a0a; --surface:#141414;
-      --border:#2a2a2a; --border-a:rgba(255,255,255,0.1);
-      --accent:#c4a265;
-      --text:#f0f0f0; --text-dim:#aaa; --text-muted:#666;
-      --radius:6px;
+      --bg:#000000; --surface:#0a0a0a;
+      --border:#232323; --border-a:rgba(255,255,255,0.09);
+      --accent:#666666;
+      --text:#f0f0f0; --text-dim:#999; --text-muted:#555;
+      --radius:8px;
     }
     html { scroll-behavior:smooth; }
     body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; min-height:100vh; }
 
-    /* =============== PATTERN 1 — Photo fade =============== */
-    .p1-hero { position:relative; width:100%; max-width:480px; margin:0 auto; aspect-ratio:3/4; overflow:hidden; }
+    /* ====== BG LAYERS ====== */
+    .bg-layer { position:fixed; inset:0; z-index:0; background-size:cover; background-position:center top; display:none; }
+    .bg-overlay { position:fixed; inset:0; z-index:1; display:none; }
+    body.pat2 .bg-layer { display:block; filter:brightness(0.28) blur(2px); }
+    body.pat2 .bg-overlay { display:block; background:linear-gradient(180deg, rgba(10,10,10,0.2) 0%, rgba(10,10,10,0.48) 40%, rgba(10,10,10,0.72) 100%); }
+    body.pat3bg .bg-layer { display:block; filter:brightness(0.26) blur(3px); }
+    body.pat3bg .bg-overlay { display:block; background:linear-gradient(180deg, rgba(10,10,10,0.1) 0%, rgba(10,10,10,0.52) 50%, rgba(10,10,10,0.82) 100%); }
+    body.pat1 { background:var(--bg); }
+
+    /* ====== LAYOUT ====== */
+    .content-wrap { max-width:480px; margin:0 auto; padding:0 20px; position:relative; z-index:2; }
+
+    /* ====== HERO: Pattern 1 — Photo fade ====== */
+    .p1-hero { position:relative; width:100%; max-width:480px; margin:0 auto; aspect-ratio:3/4; overflow:hidden; display:none; }
+    body.pat1 .p1-hero { display:block; }
     .p1-hero img { width:100%; height:100%; object-fit:cover; display:block; }
-    .p1-hero .hero-overlay { position:absolute; inset:0; background:linear-gradient(180deg, transparent 10%, rgba(10,10,10,0.15) 30%, rgba(10,10,10,0.6) 55%, rgba(10,10,10,0.92) 75%, #0a0a0a 100%); }
-    .p1-hero .hero-content { position:absolute; bottom:0; left:0; right:0; padding:0 28px 32px; text-align:center; }
+    .p1-hero .hero-overlay { position:absolute; inset:0; background:linear-gradient(180deg, transparent 5%, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.52) 52%, rgba(0,0,0,0.9) 72%, #000000 100%); }
+    .p1-hero .hero-content { position:absolute; bottom:0; left:0; right:0; padding:0 28px 36px; text-align:center; }
 
-    /* =============== PATTERN 2 — Background image =============== */
-    body.pat2 .bg-layer { position:fixed; inset:0; z-index:0; background-size:cover; background-position:center top; filter:brightness(0.35) blur(1px); }
-    body.pat2 .bg-overlay { position:fixed; inset:0; z-index:1; background:linear-gradient(180deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.5) 40%, rgba(10,10,10,0.7) 100%); }
-    body.pat2 .content-wrap { position:relative; z-index:2; }
-    body.pat2 .parent-block { background:rgba(20,20,20,0.25); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); border-color:var(--border-a); }
-    body.pat2 .hero-content { text-align:center; padding:56px 0 24px; }
-    body.pat2 .hero-name { text-shadow:0 2px 12px rgba(0,0,0,0.6); }
-    body.pat2 .hero-subtitle { text-shadow:0 1px 6px rgba(0,0,0,0.5); }
-    body.pat2 .genre-tag { background:rgba(0,0,0,0.3); }
+    /* ====== HERO: Pattern 2 — Text on blurred bg ====== */
+    .p2-hero { display:none; text-align:center; padding:120px 0 28px; position:relative; z-index:2; }
+    body.pat2 .p2-hero { display:block; }
 
-    /* =============== PATTERN 3 — Linktree round icon =============== */
-    .p3-hero { text-align:center; padding:52px 0 20px; }
-    .p3-hero img { width:144px; height:144px; border-radius:50%; object-fit:cover; border:3px solid var(--accent); margin-bottom:16px; }
+    /* ====== HERO: Pattern 3 — Round icon ====== */
+    .p3-hero { display:none; text-align:center; padding:120px 0 0; position:relative; z-index:2; }
+    body.pat3bg .p3-hero { display:block; }
+    .p3-hero img { width:120px; height:120px; border-radius:50%; object-fit:cover; border:2px solid var(--accent); margin:0 auto 18px; display:block; }
 
-    /* =============== SHARED STYLES =============== */
-    .content-wrap { max-width:480px; margin:0 auto; padding:0 20px; }
-    .container { max-width:480px; margin:0 auto; padding:8px 20px 0; }
-    .hero-name { font-size:42px; font-weight:800; letter-spacing:2px; display:inline-flex; align-items:center; gap:10px; justify-content:center; }
-    .ig-icon { width:22px; height:22px; opacity:0.7; transition:opacity 0.2s; cursor:pointer; color:var(--text); }
-    .ig-icon:hover { opacity:1; }
-    .hero-subtitle { font-size:13px; color:var(--text-dim); margin-bottom:8px; letter-spacing:0.5px; }
-    .hero-roles { font-size:12px; color:var(--accent); letter-spacing:1px; font-weight:600; text-transform:uppercase; margin-bottom:4px; }
-    .genre-tags { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
-    .genre-tag { padding:4px 16px; border:1px solid var(--accent); border-radius:20px; font-size:11px; color:var(--accent); letter-spacing:0.5px; font-weight:500; }
+    /* ====== SHARED HERO TEXT ====== */
+    .hero-name { font-family:'Bebas Neue',sans-serif; font-size:44px; font-weight:800; letter-spacing:1px; display:inline-flex; align-items:center; gap:10px; justify-content:center; line-height:1.1; }
+    body.pat2 .hero-name, body.pat3bg .hero-name { text-shadow:0 2px 20px rgba(0,0,0,0.8); }
+    .hero-icon { width:20px; height:20px; opacity:0.55; color:var(--text); cursor:pointer; transition:opacity 0.2s; }
+    .hero-icon:hover { opacity:1; }
+    .hero-subtitle { font-size:12px; color:var(--text-dim); margin-top:7px; margin-bottom:5px; letter-spacing:1.5px; text-transform:uppercase; }
+    body.pat2 .hero-subtitle, body.pat3bg .hero-subtitle { text-shadow:0 1px 8px rgba(0,0,0,0.6); }
+    .hero-roles { font-size:11px; color:var(--accent); letter-spacing:2px; font-weight:600; text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+    .hero-agency-line { margin-top:4px; text-align:center; }
+    .hero-agency { font-size:10px; font-weight:500; color:var(--text-dim); letter-spacing:0.5px; text-transform:uppercase; text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:1px; }
+    a.hero-agency:hover { color:var(--text); border-bottom-color:rgba(255,255,255,0.4); }
+    .genre-tags { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; }
+    .genre-tag { padding:3px 14px; border:1px solid rgba(102,102,102,0.45); border-radius:20px; font-size:10px; color:var(--accent); letter-spacing:0.5px; font-weight:500; background:rgba(0,0,0,0.35); }
 
-    /* Parent block */
-    .parent-block { border:1px solid var(--border); border-radius:var(--radius); margin-bottom:12px; overflow:hidden; background:var(--surface); }
-    .parent-header { padding:14px 16px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:var(--text); }
-    .parent-body { padding:16px; }
+    /* ====== RECOMMEND CAROUSEL ====== */
+    .recommend-section { padding:10px 20px 8px; max-width:480px; margin:0 auto; position:relative; z-index:2; overflow:hidden; }
+    .recommend-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+    .recommend-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:3px; color:var(--text-muted); }
+    .recommend-count { font-size:9px; color:var(--text-muted); letter-spacing:0.5px; opacity:0.6; }
+    .recommend-track { display:flex; transition:transform 0.45s ease; }
+    .recommend-slide { min-width:100%; padding:0 4px; box-sizing:border-box; }
+    .recommend-quote { font-size:13px; color:var(--text-dim); line-height:1.85; font-style:italic; position:relative; padding-left:16px; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
+    .recommend-quote.expanded { display:block; -webkit-line-clamp:unset; }
+    .recommend-quote::before { content:'\201C'; font-family:'Bebas Neue','Georgia',serif; font-size:28px; line-height:1; color:var(--accent); opacity:0.35; position:absolute; left:0; top:-2px; }
+    .recommend-toggle { background:none; border:none; color:var(--accent); cursor:pointer; font-size:10px; font-family:inherit; padding:2px 0 0 16px; display:none; }
+    .recommend-meta { display:flex; align-items:center; gap:10px; padding:10px 0 0 16px; }
+    .recommend-avatar { width:28px; height:28px; border-radius:50%; background:rgba(102,102,102,0.12); flex-shrink:0; overflow:hidden; border:1px solid rgba(102,102,102,0.25); display:flex; align-items:center; justify-content:center; }
+    .recommend-avatar-icon { width:12px; height:12px; color:var(--accent); opacity:0.5; }
+    .recommend-name-link { text-decoration:none; color:inherit; }
+    .recommend-name-link:hover .recommend-name { color:var(--accent); }
+    .recommend-name { font-size:11px; font-weight:600; color:var(--text); letter-spacing:0.3px; transition:color 0.2s; }
+    .recommend-role { font-size:10px; color:var(--text-muted); letter-spacing:0.3px; margin-top:1px; }
+    .recommend-dots { display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 0 0; }
+    .recommend-dot { width:5px; height:5px; border-radius:50%; background:var(--text-muted); opacity:0.3; transition:opacity 0.25s; cursor:pointer; }
+    .recommend-dot.active { opacity:1; background:var(--accent); }
 
-    /* Section divider */
-    .sec-divider { border:none; border-top:1px solid var(--border); margin:20px 0; }
-    body.pat2 .sec-divider { border-color:var(--border-a); }
+    /* ====== FEATURED (standalone) ====== */
+    .featured-section { padding:10px 20px 4px; max-width:480px; margin:0 auto; position:relative; z-index:2; }
+    .featured-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:3px; color:var(--text-muted); display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .featured-label::after { content:''; flex:1; height:1px; background:var(--border-a); }
 
-    /* History section */
-    .history-section { margin-bottom:16px; }
-    .history-category { margin-bottom:14px; }
-    .history-category:last-child { margin-bottom:0; }
-    .hist-cat-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-bottom:8px; }
-    .hist-item { padding:8px 0; border-bottom:1px solid var(--border); }
-    body.pat2 .hist-item { border-color:var(--border-a); }
-    .hist-item:last-child { border-bottom:none; }
-    .hist-venue { font-size:14px; font-weight:600; color:var(--text); line-height:1.4; }
-    .hist-meta { font-size:12px; color:var(--text-muted); margin-top:1px; }
-    .hist-more-toggle { background:none; border:none; color:var(--accent); cursor:pointer; font-size:12px; font-family:inherit; margin-top:6px; padding:0; }
-    .hist-hidden { display:none; }
+    .feat-more-btn { background:none; border:none; color:var(--accent); cursor:pointer; font-size:10px; font-family:inherit; padding:6px 0 0; letter-spacing:0.5px; display:block; text-align:right; width:100%; }
+    .feat-more-btn:hover { color:var(--text); }
 
-    /* Award */
-    .award-item { display:flex; gap:10px; align-items:baseline; padding:6px 0; }
-    .award-year { font-size:12px; color:var(--text-muted); font-weight:600; flex-shrink:0; min-width:36px; }
-    .award-title { font-size:13px; color:var(--text-dim); }
+    /* ====== UPCOMING (standalone) ====== */
+    .upcoming-section { padding:10px 20px 4px; max-width:480px; margin:0 auto; position:relative; z-index:2; }
+    .upcoming-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:3px; color:var(--text-muted); display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .upcoming-label::after { content:''; flex:1; height:1px; background:var(--border-a); }
 
-    /* Contact */
-    .contact-section { margin-bottom:16px; }
-    .contact-agency { font-size:14px; font-weight:700; color:var(--text); margin-bottom:8px; }
-    .contact-row { font-size:13px; color:var(--text-dim); line-height:2; }
-    .contact-row a { color:var(--accent); text-decoration:none; }
-    .contact-row a:hover { text-decoration:underline; }
-    .contact-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-top:8px; margin-bottom:2px; }
-    .social-links { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
-    .social-link { padding:6px 12px; border:1px solid var(--border); border-radius:var(--radius); color:var(--text-dim); text-decoration:none; font-size:12px; transition:border-color 0.2s, color 0.2s; }
-    body.pat2 .social-link { border-color:var(--border-a); }
-    .social-link:hover { border-color:var(--accent); color:var(--accent); }
+    /* ====== ABOUT (3-line clamp) ====== */
+    .about-section { padding:6px 20px 0; max-width:480px; margin:0 auto; position:relative; z-index:2; }
+    .about-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:3px; color:var(--text-muted); display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+    .about-label::after { content:''; flex:1; height:1px; background:var(--border-a); }
+    .about-text { font-size:14px; color:var(--text-dim); line-height:1.9; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .about-text.expanded { display:block; -webkit-line-clamp:unset; }
+    .about-toggle { background:none; border:none; color:var(--accent); cursor:pointer; font-size:11px; font-family:inherit; margin-top:6px; padding:0; display:none; text-align:right; width:100%; letter-spacing:0.3px; }
 
-    /* Bio */
-    .bio-text { font-size:14px; color:var(--text-dim); line-height:1.8; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-    .bio-text.expanded { display:block; -webkit-line-clamp:unset; }
-    .bio-toggle { background:none; border:none; color:var(--accent); cursor:pointer; font-size:12px; font-family:inherit; margin-top:6px; padding:0; display:none; width:100%; text-align:right; }
+    /* ====== SECTION TOC ====== */
+    .toc-section { padding:12px 20px 4px; max-width:480px; margin:0 auto; position:relative; z-index:2; }
+    .toc-item { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border-a); cursor:pointer; user-select:none; }
+    .toc-item:last-child { border-bottom:none; }
+    .toc-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:var(--text-dim); transition:color 0.2s; }
+    .toc-item:hover .toc-label { color:var(--text); }
+    .toc-arrow { width:14px; height:14px; color:var(--text-muted); transition:transform 0.25s; flex-shrink:0; }
+    .toc-item.open .toc-arrow { transform:rotate(180deg); }
+    .toc-body { display:none; padding:0 0 12px; }
+    .toc-item.open + .toc-body { display:block; }
 
-    /* Platform links (listen) */
-    .platform-links { margin-bottom:12px; }
-    .listen-item { margin-bottom:10px; position:relative; }
-    .listen-item:last-child { margin-bottom:0; }
-    .listen-fallback { display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); text-decoration:none; transition:border-color 0.2s; }
-    body.pat2 .listen-fallback { background:rgba(20,20,20,0.25); border-color:var(--border-a); }
-    .listen-fallback:hover { border-color:var(--accent); }
-    .listen-fallback .lf-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .listen-fallback .lf-icon.sc { background:#f50; }
-    .listen-fallback .lf-icon.sp { background:#1db954; }
-    .listen-fallback .lf-icon.yt { background:#ff0000; }
-    .listen-fallback .lf-icon.mc { background:#5000ff; }
-    .listen-fallback .lf-icon.am { background:linear-gradient(135deg,#fc3c44,#c643fc,#3b9dff); }
-    .listen-fallback .lf-icon.default { background:var(--accent); }
-    .listen-fallback .lf-text { flex:1; min-width:0; }
-    .listen-fallback .lf-label { font-size:13px; font-weight:600; color:var(--text); }
-    .listen-fallback .lf-url { font-size:11px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+    /* ====== HISTORY ====== */
+    .hist-cat { padding-bottom:14px; margin-bottom:14px; border-bottom:1px solid var(--border-a); }
+    .hist-cat:last-child { border-bottom:none; padding-bottom:0; margin-bottom:0; }
+    .hist-cat-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:2.5px; color:var(--accent); margin-bottom:8px; opacity:0.8; }
+    .hist-item { display:flex; gap:16px; padding:5px 0; align-items:flex-start; }
+    .hist-year { font-size:11px; color:var(--accent); font-weight:600; width:80px; min-width:80px; flex-shrink:0; }
+    .hist-venue { font-size:13px; font-weight:600; color:var(--text); line-height:1.4; }
+    .hist-loc { font-size:11px; color:var(--text-muted); margin-top:2px; }
+    .award-item { display:flex; gap:16px; padding:5px 0; align-items:flex-start; }
+    .award-year { font-size:11px; color:var(--accent); font-weight:600; flex-shrink:0; width:80px; min-width:80px; }
+    .award-title { font-size:13px; color:var(--text-dim); line-height:1.4; }
 
-    /* Featured Links / Release */
-    .feat-link { display:block; border-radius:var(--radius); overflow:hidden; margin-bottom:12px; text-decoration:none; transition:opacity 0.2s; }
+    /* ====== FEATURED ====== */
+    .feat-link { display:flex; align-items:center; gap:12px; padding:10px 14px; background:rgba(255,255,255,0.03); border:1px solid var(--border-a); border-radius:var(--radius); text-decoration:none; transition:border-color 0.2s; margin-bottom:8px; }
     .feat-link:last-child { margin-bottom:0; }
-    .feat-link:hover { opacity:0.85; }
-    .feat-link img { width:100%; aspect-ratio:16/5; object-fit:cover; display:block; }
-    .feat-link .feat-label { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--surface); border:1px solid var(--border); border-top:none; border-radius:0 0 var(--radius) var(--radius); font-size:13px; font-weight:600; color:var(--text); }
-    body.pat2 .feat-link .feat-label { background:rgba(20,20,20,0.4); border-color:var(--border-a); }
-    .feat-link .feat-arrow { color:var(--accent); font-size:14px; }
+    .feat-link:hover { border-color:var(--accent); }
+    .feat-thumb { width:40px; height:40px; border-radius:6px; overflow:hidden; flex-shrink:0; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; }
+    .feat-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .feat-title-text { flex:1; min-width:0; font-size:13px; font-weight:600; color:var(--text); line-height:1.4; }
+    .feat-link-arrow { flex-shrink:0; color:var(--text-muted); }
+    .listen-item { margin-bottom:8px; }
+    .listen-item:last-child { margin-bottom:0; }
+    .listen-fallback { display:flex; align-items:center; gap:12px; padding:10px 14px; background:rgba(255,255,255,0.03); border:1px solid var(--border-a); border-radius:var(--radius); text-decoration:none; transition:border-color 0.2s; }
+    .listen-fallback:hover { border-color:var(--accent); }
+    .lf-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .lf-icon.sc { background:#f50; } .lf-icon.sp { background:#1db954; }
+    .lf-icon.yt { background:#ff0000; } .lf-icon.mc { background:#5000ff; }
+    .lf-icon.am { background:linear-gradient(135deg,#fc3c44,#c643fc,#3b9dff); }
+    .lf-icon.default { background:var(--accent); }
+    .lf-text { flex:1; min-width:0; } .lf-label { font-size:13px; font-weight:600; color:var(--text); }
+    .lf-arrow { flex-shrink:0; color:var(--text-muted); }
 
-    /* Upcoming / Ticket — thumbnail card style */
-    .ticket-card { display:flex; gap:14px; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); text-decoration:none; transition:border-color 0.2s; margin-bottom:10px; }
-    body.pat2 .ticket-card { background:rgba(20,20,20,0.25); border-color:var(--border-a); }
-    .ticket-card:hover { border-color:var(--accent); }
+    /* ====== UPCOMING ====== */
+    .ticket-card { display:flex; gap:12px; padding:10px 14px; background:rgba(255,255,255,0.03); border:1px solid var(--border-a); border-radius:var(--radius); text-decoration:none; transition:border-color 0.2s; margin-bottom:8px; }
     .ticket-card:last-child { margin-bottom:0; }
-    .ticket-thumb { width:56px; height:56px; border-radius:var(--radius); background:var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-    .ticket-thumb img { width:100%; height:100%; object-fit:cover; }
-    .ticket-thumb svg { width:24px; height:24px; color:var(--accent); }
+    .ticket-card:hover { border-color:var(--accent); }
+    .ticket-icon { width:40px; height:40px; border-radius:var(--radius); background:rgba(255,255,255,0.05); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .ticket-icon svg { width:18px; height:18px; color:var(--accent); }
     .ticket-info { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; }
-    .ticket-name { font-size:14px; font-weight:600; color:var(--text); line-height:1.3; }
-    .ticket-detail { font-size:12px; color:var(--text-muted); margin-top:2px; }
-    .ticket-arrow { display:flex; align-items:center; flex-shrink:0; }
-    .ticket-arrow svg { width:16px; height:16px; color:var(--text-muted); }
+    .ticket-name { font-size:13px; font-weight:600; color:var(--text); line-height:1.3; }
+    .ticket-detail { font-size:11px; color:var(--text-muted); margin-top:2px; }
 
-    /* Download */
-    .dl-header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; }
-    .dl-header .dl-title { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:var(--text); display:flex; align-items:center; gap:8px; }
-    .dl-header .dl-title svg { width:16px; height:16px; }
-    .dl-all-btn { padding:5px 12px; border:1px solid var(--accent); border-radius:16px; color:var(--accent); font-size:10px; font-weight:600; letter-spacing:0.5px; cursor:pointer; background:none; transition:background 0.2s, color 0.2s; }
-    .dl-all-btn:hover { background:var(--accent); color:#0a0a0a; }
-    .dl-thumbs { display:flex; gap:8px; margin-bottom:14px; }
-    .dl-thumb-wrap { flex:1; }
-    .dl-thumb { aspect-ratio:1; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
-    body.pat2 .dl-thumb { border-color:var(--border-a); }
-    .dl-thumb img { width:100%; height:100%; object-fit:cover; display:block; opacity:0.85; }
-    .dl-thumb-label { font-size:10px; color:var(--text-muted); text-align:center; margin-top:4px; }
-    .dl-separator { border:none; border-top:1px solid var(--border); margin:10px 0; }
-    body.pat2 .dl-separator { border-color:var(--border-a); }
-
-    /* Sub accordion */
-    .sub-acc-header { display:flex; align-items:center; gap:8px; padding:10px 0; cursor:pointer; user-select:none; }
-    .sub-acc-icon { font-size:0; color:var(--accent); width:16px; text-align:center; font-family:monospace; }
+    /* ====== DOWNLOAD ====== */
+    .dl-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:12px; }
+    .dl-all-wrap { display:flex; justify-content:flex-end; padding:4px 0 0; }
+    .dl-all-btn { display:inline-flex; align-items:center; gap:6px; background:none; border:1px solid var(--border-a); border-radius:20px; color:var(--text-dim); font-size:10px; font-family:inherit; padding:7px 16px; cursor:pointer; letter-spacing:0.8px; text-transform:uppercase; transition:all 0.2s; }
+    .dl-all-btn:hover { border-color:var(--accent); color:var(--text); }
+    .dl-all-btn svg { width:13px; height:13px; }
+    .dl-thumbs { display:flex; gap:8px; margin-bottom:12px; }
+    .dl-thumb-wrap { flex:1; text-decoration:none; }
+    .dl-thumb { aspect-ratio:1; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border-a); }
+    .dl-thumb img { width:100%; height:100%; object-fit:cover; }
+    .dl-thumb-label { font-size:10px; color:var(--text-muted); text-align:center; margin-top:5px; letter-spacing:0.3px; }
+    .dl-separator { border:none; border-top:1px solid var(--border-a); margin:10px 0; }
+    .sub-acc-header { display:flex; align-items:center; gap:10px; padding:9px 0; cursor:pointer; user-select:none; }
+    .sub-acc-icon { font-size:0; color:var(--accent); width:16px; text-align:center; font-family:monospace; flex-shrink:0; }
     .sub-acc:not(.open) .sub-acc-icon::after { content:'+'; font-size:14px; }
     .sub-acc.open .sub-acc-icon::after { content:'\2212'; font-size:14px; }
-    .sub-acc-label { font-size:13px; font-weight:500; color:var(--text-dim); letter-spacing:0.5px; text-transform:uppercase; }
-    .sub-acc-body { display:none; padding:0 0 8px 24px; }
+    .sub-acc-label { font-size:12px; font-weight:500; color:var(--text-dim); letter-spacing:0.5px; text-transform:uppercase; }
+    .sub-acc-body { display:none; padding:0 0 10px 26px; }
     .sub-acc.open .sub-acc-body { display:block; }
 
-    /* Footer */
-    .footer { max-width:480px; margin:0 auto; display:flex; align-items:center; justify-content:center; gap:8px; padding:24px 20px 40px; color:var(--text-muted); font-size:10px; letter-spacing:0.5px; }
-    body.pat2 .footer { position:relative; z-index:2; }
+    /* ====== CONTACT ====== */
+    .contact-agency { font-size:14px; font-weight:700; color:var(--text); margin-bottom:6px; }
+    .contact-row { font-size:13px; color:var(--text-dim); line-height:1.9; }
+    .contact-row a { color:var(--accent); text-decoration:none; }
+    .contact-row a:hover { text-decoration:underline; }
+    .contact-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-top:10px; margin-bottom:2px; }
+
+    /* ====== SOCIAL ICONS BAR ====== */
+    .social-bar { display:flex; align-items:center; justify-content:center; gap:16px; padding:24px 0 8px; position:relative; z-index:2; max-width:480px; margin:0 auto; }
+    .social-bar a { display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; border:1px solid var(--border-a); color:var(--text-muted); text-decoration:none; transition:border-color 0.25s, color 0.25s; }
+    .social-bar a:hover { border-color:var(--accent); color:var(--text); }
+    .social-bar a svg { width:20px; height:20px; }
+
+    /* ====== FOOTER ====== */
+    .footer { max-width:480px; margin:0 auto; display:flex; align-items:center; justify-content:center; gap:8px; padding:12px 20px 44px; color:var(--text-muted); font-size:10px; letter-spacing:0.5px; position:relative; z-index:2; }
     .footer a { color:var(--text-muted); text-decoration:none; }
     .footer a:hover { color:var(--accent); }
-    .footer svg { width:14px; height:14px; }
 
-    /* Loading / Error */
-    .loading-screen { display:flex; align-items:center; justify-content:center; min-height:60vh; color:var(--text-dim); font-size:14px; }
-    .error-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; color:var(--text-dim); text-align:center; padding:24px; }
-    .error-screen h2 { margin-bottom:12px; color:var(--text); }
-
-    /* Hide by default */
-    .bg-layer, .bg-overlay { display:none; }
-    body.pat2 .bg-layer, body.pat2 .bg-overlay { display:block; }
-    .p1-hero, .p3-hero { display:none; }
-
-    @media (max-width:520px) { .hero-name { font-size:32px; } .content-wrap, .container { max-width:100%; } .p1-hero { max-width:100%; } }
+    @media (max-width:520px) {
+      .hero-name { font-size:36px; }
+      .hist-year, .award-year { width:68px; min-width:68px; }
+    }
   </style>
 </head>
-<body>
+<body class="pat1">
 
-<div id="loadingScreen" class="loading-screen">Loading...</div>
-<div id="errorScreen" class="error-screen" style="display:none">
-  <h2>Press kit not found</h2>
-  <p>This profile may not exist or may have been removed.</p>
-</div>
-
-<!-- Background (pattern 2 only) -->
+<!-- Background layers -->
 <div class="bg-layer" id="bgLayer"></div>
 <div class="bg-overlay"></div>
 
-<!-- Hero: Pattern 1 -->
-<div class="p1-hero" id="p1Hero">
-  <img id="p1Photo" src="" alt="">
-  <div class="hero-overlay"></div>
-  <div class="hero-content" id="p1Content"></div>
-</div>
+<!-- HERO: Pattern 1 -->
+<div class="p1-hero" id="p1Hero"></div>
 
-<!-- Hero: Pattern 3 -->
+<!-- HERO: Pattern 2 -->
+<div class="p2-hero"><div id="heroP2"></div></div>
+
+<!-- HERO: Pattern 3 -->
 <div class="p3-hero" id="p3Hero"></div>
 
-<div id="mainContent" style="display:none">
+<!-- FEATURED (standalone) -->
+<div class="featured-section" id="featuredSection"></div>
 
-  <div class="content-wrap" id="contentWrap">
-    <!-- Hero: Pattern 2 (inside content-wrap) -->
-    <div class="hero-content" id="p2Content" style="display:none"></div>
-
-    <!-- ===== HISTORY (Resident / Headliner / Organizer / Award) ===== -->
-    <div class="history-section" id="secHistory" style="display:none"></div>
-
-    <!-- ===== CONTACT ===== -->
-    <div class="contact-section" id="secContact" style="display:none"></div>
-
-    <!-- ===== ABOUT (Bio only) ===== -->
-    <div class="parent-block" id="secAbout" style="display:none">
-      <div class="parent-header">About</div>
-      <div class="parent-body">
-        <div class="bio-text" id="vBio"></div>
-        <button class="bio-toggle" id="bioToggle" onclick="toggleBio()">Read more</button>
-      </div>
-    </div>
-
-    <hr class="sec-divider" id="divider1" style="display:none">
-
-    <!-- ===== RELEASE / FEATURED LINKS ===== -->
-    <div id="secRelease" style="display:none;margin-bottom:12px">
-      <div style="padding:6px 0 10px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text)">Release</div>
-      <div id="vRelease"></div>
-    </div>
-
-    <!-- ===== PLATFORM LINKS (Spotify, SoundCloud, etc.) ===== -->
-    <div class="platform-links" id="secPlatforms" style="display:none">
-      <div id="vPlatforms"></div>
-    </div>
-
-    <!-- ===== TICKET / UPCOMING EVENTS ===== -->
-    <div id="secTicket" style="display:none;margin-bottom:12px">
-      <div style="padding:6px 0 10px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text)">Events</div>
-      <div id="vTicket"></div>
-    </div>
-
-    <hr class="sec-divider" id="divider2" style="display:none">
-
-    <!-- ===== DOWNLOAD / IMAGES ===== -->
-    <div class="parent-block" id="secDl" style="display:none">
-      <div class="dl-header">
-        <span class="dl-title">Download</span>
-        <button class="dl-all-btn" id="dlAllBtn" style="display:none" title="Download all"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
-      </div>
-      <div class="parent-body">
-        <div class="dl-thumbs" id="vDlThumbs" style="display:none"></div>
-        <hr class="dl-separator" id="dlSep" style="display:none">
-        <div id="vDlFiles"></div>
-      </div>
-    </div>
+<!-- RECOMMEND CAROUSEL -->
+<div class="recommend-section" id="recommendSection">
+  <div class="recommend-header">
+    <span class="recommend-label">Recommend</span>
+    <span class="recommend-count" id="recommendCount"></span>
   </div>
-
-  <!-- Footer -->
-  <div class="footer">
-    <span>&copy;</span>
-    <a href="https://thirdkagura.com" target="_blank">THIRD KAGURA Pty Ltd</a>
-    <a href="https://www.instagram.com/third_kagura_pty_ltd/" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
+  <div id="recommendCarousel" style="overflow:hidden;">
+    <div class="recommend-track" id="recommendTrack"></div>
   </div>
+  <div class="recommend-dots" id="recommendDots"></div>
 </div>
 
+<!-- UPCOMING (standalone) -->
+<div class="upcoming-section" id="upcomingSection"></div>
+
+<!-- ABOUT -->
+<div class="about-section">
+  <div class="about-label">About</div>
+  <div class="about-text" id="aboutText"></div>
+  <button class="about-toggle" id="aboutToggle" onclick="toggleAbout()">Read more</button>
+</div>
+
+<!-- SECTION TOC + ACCORDION BODIES -->
+<div class="toc-section" id="tocSection">
+  <div class="toc-item" data-sec="history" onclick="toggleToc(this)">
+    <span class="toc-label">History</span>
+    <svg class="toc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="toc-body" id="tocHistory"></div>
+
+  <div class="toc-item" data-sec="contact" onclick="toggleToc(this)">
+    <span class="toc-label">Contact</span>
+    <svg class="toc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="toc-body" id="tocContact"></div>
+
+  <div class="toc-item" data-sec="download" onclick="toggleToc(this)">
+    <span class="toc-label">Download</span>
+    <svg class="toc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="toc-body" id="tocDownload"></div>
+</div>
+
+<!-- SOCIAL ICON BAR -->
+<div class="social-bar" id="socialBar"></div>
+
+<!-- Footer -->
+<div class="footer">Powered by <a href="https://www.thirdkagura.com" target="_blank">THIRD KAGURA</a> <a href="https://www.instagram.com/third_kagura_pty_ltd/" target="_blank" style="color:inherit;text-decoration:none;vertical-align:middle;margin-left:6px;display:inline-block;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a></div>
+
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyNJ5Wk7frGflBAmZ_2gLu3NrDOKf1g_WYT6sOW-rHXQuCg6FzWwLaoT7pZOOZyXee2/exec';
-const params = new URLSearchParams(location.search);
-const slug = params.get('id');
-const designParam = parseInt(params.get('design')) || 2;
+// ══════════════════════════
+// STATE
+// ══════════════════════════
+let profileData = null;
+let currentDesign = 1;
+let recommendInterval = null;
+let currentRecommend = 0;
 
-if (!slug) { showError(); } else { loadProfile(slug); }
-
-function showError() {
-  document.getElementById('loadingScreen').style.display = 'none';
-  document.getElementById('errorScreen').style.display = 'flex';
+// ══════════════════════════
+// URL PARAMS
+// ══════════════════════════
+function getUrlParam(name) {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
 }
 
-async function loadProfile(id) {
-  try {
-    const res = await fetch(GAS_URL + '?id=' + encodeURIComponent(id));
-    const d = await res.json();
-    if (d.error) throw new Error(d.error);
-    renderProfile(d);
-  } catch (e) { showError(); }
-}
-
-function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+// ══════════════════════════
+// HELPERS
+// ══════════════════════════
+function esc(s) { const d = document.createElement('div'); d.textContent = String(s||''); return d.innerHTML; }
 function jp(s) { try { return JSON.parse(s); } catch(e) { return null; } }
-let currentAccent = '#c4a265';
+function formatDate(s) { try { const d=new Date(s); const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear(); } catch(e){return s;} }
+
+// ══════════════════════════
+// SVG ICONS
+// ══════════════════════════
+const SVG = {
+  ig: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>',
+  mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg>',
+  person: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.3"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>',
+  music: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent);opacity:0.6"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+  extLink: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+  cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 4v2"/><path d="M16 4v2"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>',
+  tiktok: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.48V13a8.28 8.28 0 005.58 2.15V11.7a4.83 4.83 0 01-3.58-1.43V6.69h3.58z"/></svg>',
+  threads: '<svg viewBox="0 0 192 192" fill="currentColor"><path d="M141.537 88.988a66.667 66.667 0 00-2.518-1.143c-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.396-35.12 18.036l13.779 9.452c5.73-8.695 14.724-10.548 21.348-10.548h.229c8.249.053 14.474 2.452 18.503 7.129 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.673-1.14-23.82 1.371-39.134 15.24-38.216 34.672.475 10.038 5.178 18.675 13.25 24.332 6.815 4.778 15.596 7.182 24.716 6.765 12.032-.55 21.478-5.183 28.072-13.792 5.005-6.535 8.167-14.883 9.55-25.284 5.723 3.453 9.998 8.071 12.476 13.655 4.194 9.45 4.444 24.966-4.262 33.674-7.667 7.667-16.883 10.99-30.775 11.104-15.391-.127-27.047-5.052-34.636-14.633-7.103-8.97-10.782-21.724-10.933-37.885.151-16.16 3.83-28.916 10.933-37.885 7.59-9.581 19.245-14.506 34.636-14.633 15.537.13 27.397 5.1 35.246 14.764 3.835 4.723 6.675 10.639 8.507 17.628l14.916-3.967c-2.318-8.88-6.158-16.584-11.5-23.065-10.686-13.16-26.063-19.936-45.72-20.135h-.366c-19.557.2-34.843 6.98-45.42 20.135-9.2 11.413-13.963 26.793-14.152 45.718.189 18.926 4.952 34.307 14.152 45.72 10.577 13.155 25.863 19.935 45.42 20.135h.366c17.386-.13 30.069-4.882 39.934-14.748 12.476-12.476 12.789-30.67 7.666-42.2-3.586-8.076-10.142-14.674-19.167-19.267zm-55.17 39.065c-10.094.545-20.57-3.97-21.134-15.869-.403-8.492 5.913-17.954 24.466-19.024 2.158-.124 4.274-.184 6.35-.184 6.266 0 12.124.59 17.439 1.728-1.986 24.946-14.476 32.834-27.121 33.349z"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+  youtube: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.2-1.6-.9-2.3c-.9-.9-1.8-.9-2.3-1C17 2.7 12 2.7 12 2.7s-5 0-8.3.2c-.5.1-1.4.1-2.3 1-.7.7-.9 2.3-.9 2.3S.2 8.1.2 10v1.8c0 1.9.3 3.8.3 3.8s.2 1.6.9 2.3c.9.9 2 .9 2.5 1 1.8.2 7.6.2 7.6.2s5 0 8.3-.3c.5-.1 1.4-.1 2.3-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.8V10c0-1.9-.3-3.8-.3-3.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>',
+  soundcloud: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 18V11h1v7H1zm2.5-1V9h1v8h-1zm2.5 1V7h1v11H6zm2.5-1V8.5h1V17h-1zM11 18V6h1v12h-1zm6.5-9c-.3 0-.5 0-.8.1C16.3 7.3 14.8 6 13 6v12h7c1.7 0 3-1.3 3-3s-1.3-3-3-3h-.5z"/></svg>',
+  spotify: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 17.3c-.2.3-.6.4-1 .2-2.7-1.6-6-2-10-1.1-.4.1-.8-.2-.8-.6-.1-.4.2-.8.6-.8 4.3-1 8-.6 11 1.2.4.2.4.7.2 1.1zm1.5-3.3c-.3.4-.8.5-1.2.3-3-1.9-7.7-2.4-11.3-1.3-.4.1-.9-.1-1-.5-.1-.4.1-.9.5-1 4.1-1.3 9.2-.7 12.6 1.5.4.2.5.7.4 1zm.1-3.4C15.4 8.3 9 8.1 5.2 9.2c-.5.1-1-.2-1.1-.7-.1-.5.2-1 .7-1.1C9.1 6.1 16 6.3 20.3 9c.5.3.6.9.3 1.3-.2.5-.8.6-1.5.3z"/></svg>'
+};
+
+// ══════════════════════════
+// LOAD & RENDER
+// ══════════════════════════
+async function loadProfile() {
+  const slug = getUrlParam('id');
+  const designParam = getUrlParam('design');
+
+  if (!slug) {
+    showError('Missing profile ID');
+    return;
+  }
+
+  currentDesign = designParam ? parseInt(designParam) : 1;
+  if (![1,2,3].includes(currentDesign)) currentDesign = 1;
+
+  try {
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbyNJ5Wk7frGflBAmZ_2gLu3NrDOKf1g_WYT6sOW-rHXQuCg6FzWwLaoT7pZOOZyXee2/exec?action=get_profile&slug=' + encodeURIComponent(slug);
+    const response = await fetch(gasUrl);
+    const result = await response.json();
+
+    if (result.error) {
+      showError(result.error);
+      return;
+    }
+
+    profileData = result;
+    render();
+  } catch (err) {
+    showError('Failed to load profile: ' + err.message);
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('p1Hero');
+  if (el) el.innerHTML = '<div style="padding:40px 20px;text-align:center;color:var(--text-muted);">Error: ' + esc(msg) + '</div>';
+}
+
+function render() {
+  if (!profileData) return;
+
+  document.body.classList.remove('pat1','pat2','pat3bg');
+  document.getElementById('bgLayer').style.backgroundImage = '';
+
+  const p1 = document.getElementById('p1Hero');
+  if (p1) p1.innerHTML = '';
+  const p3 = document.getElementById('p3Hero');
+  if (p3) p3.innerHTML = '';
+  const p2 = document.getElementById('heroP2');
+  if (p2) p2.innerHTML = '';
+
+  const featEl = document.getElementById('featuredSection');
+  if (featEl) featEl.innerHTML = '';
+  const upEl = document.getElementById('upcomingSection');
+  if (upEl) upEl.innerHTML = '';
+
+  ['tocHistory','tocContact','tocDownload'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
+
+  const tocItems = document.querySelectorAll('.toc-item');
+  tocItems.forEach(el => el?.classList.remove('open'));
+
+  const aboutText = document.getElementById('aboutText');
+  if (aboutText) {
+    aboutText.textContent = '';
+    aboutText.classList.remove('expanded');
+  }
+  const aboutToggle = document.getElementById('aboutToggle');
+  if (aboutToggle) aboutToggle.style.display = 'none';
+
+  const track = document.getElementById('recommendTrack');
+  if (track) track.innerHTML = '';
+  const dots = document.getElementById('recommendDots');
+  if (dots) dots.innerHTML = '';
+
+  const socialBar = document.getElementById('socialBar');
+  if (socialBar) socialBar.innerHTML = '';
+
+  renderProfile(profileData);
+}
 
 function renderProfile(d) {
-  const pattern = designParam;
-  document.title = (d.artistName || 'Press Kit') + ' — THIRD KAGURA';
+  // ─── HERO ───
+  const igUrl = d.instagram ? 'https://instagram.com/' + d.instagram.replace('@','') : '';
+  const igLink = igUrl ? '<a href="'+esc(igUrl)+'" target="_blank" class="hero-icon">'+SVG.ig+'</a>' : '';
+  const bookingEmails = jp(d.bookingEmails)||[];
+  const firstEmail = bookingEmails.length ? bookingEmails[0].email : '';
+  const mailLink = firstEmail ? '<a href="mailto:'+esc(firstEmail)+'" class="hero-icon">'+SVG.mail+'</a>' : '';
 
-  // Accent color
-  if (d.accentColor) {
-    currentAccent = d.accentColor;
-    document.documentElement.style.setProperty('--accent', d.accentColor);
-  }
-
-  // Custom font
-  if (d.font) {
-    document.body.style.fontFamily = "'" + d.font + "', sans-serif";
-  }
-
-  // Instagram SVG
-  const igSvg = '<svg class="ig-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>';
-  const igUrl = d.instagram ? (d.instagram.includes('http') ? d.instagram : 'https://instagram.com/' + d.instagram.replace('@','')) : '';
-  const igLink = igUrl ? '<a href="'+esc(igUrl)+'" target="_blank">'+igSvg+'</a>' : '';
-
-  // Roles
-  let roles = [];
-  try { roles = JSON.parse(d.role || '[]'); } catch(e) {}
+  let roles = jp(d.role)||[];
   if (typeof d.role === 'string' && !d.role.startsWith('[')) roles = d.role ? [d.role] : [];
+  let genres = jp(d.genre)||[];
+  if (typeof d.genre === 'string' && !d.genre.startsWith('[')) genres = d.genre ? [d.genre] : [];
 
-  // Genres
-  let genres = [];
-  try { genres = JSON.parse(d.genre || '[]'); } catch(e) {}
-  if (typeof d.genre === 'string' && !d.genre.startsWith('[')) genres = [d.genre];
+  const agencyLine = d.agencyName
+    ? (d.agencyWebsite
+        ? '<div class="hero-agency-line"><a class="hero-agency" href="'+esc(d.agencyWebsite)+'" target="_blank">'+esc(d.agencyName)+'</a></div>'
+        : '<div class="hero-agency-line"><span class="hero-agency">'+esc(d.agencyName)+'</span></div>')
+    : '';
 
-  // Hero HTML — Name (big) → Based → Roles (DJ/Producer) → Genres
   const heroInner =
-    '<div class="hero-name">'+esc(d.artistName || '')+' '+igLink+'</div>' +
-    (d.location ? '<div class="hero-subtitle">Based in '+ esc(d.location) +'</div>' : '') +
+    '<h1 class="hero-name">'+esc(d.artistName||'')+' '+igLink+mailLink+'</h1>' +
+    (d.location ? '<div class="hero-subtitle">'+esc(d.location)+'</div>' : '') +
     (roles.length ? '<div class="hero-roles">'+esc(roles.join(' / '))+'</div>' : '') +
-    (genres.length ? '<div class="genre-tags">'+genres.map(g => '<span class="genre-tag">'+esc(g)+'</span>').join('')+'</div>' : '');
+    agencyLine +
+    (genres.length ? '<div class="genre-tags">'+genres.map(g=>'<span class="genre-tag">'+esc(g)+'</span>').join('')+'</div>' : '');
 
-  // Pattern setup
-  if (pattern === 1) {
-    document.getElementById('p1Hero').style.display = 'block';
-    if (d.profilePhoto) document.getElementById('p1Photo').src = d.profilePhoto;
-    document.getElementById('p1Content').innerHTML = heroInner;
-  } else if (pattern === 2) {
-    document.body.classList.add('pat2');
-    if (d.profilePhoto) document.getElementById('bgLayer').style.backgroundImage = 'url('+d.profilePhoto+')';
-    document.getElementById('p2Content').style.display = 'block';
-    document.getElementById('p2Content').innerHTML = heroInner;
-  } else {
-    document.getElementById('p3Hero').style.display = 'block';
-    const photoHtml = d.profilePhoto ? '<img src="'+esc(d.profilePhoto)+'" alt="'+esc(d.artistName || '')+'">' : '';
-    document.getElementById('p3Hero').innerHTML = photoHtml + '<div>' + heroInner + '</div>';
-  }
-
-  // ══════════════════════════════════════════
-  // === HISTORY SECTION (first in content) ===
-  // ══════════════════════════════════════════
-  const activities = jp(d.activity) || [];
-  const org = jp(d.organizer);
-  const awards = jp(d.awards) || [];
-  const hasHistory = activities.length > 0 || (org && org.active && org.events && org.events.length > 0) || awards.length > 0;
-
-  if (hasHistory) {
-    const hel = document.getElementById('secHistory');
-    hel.style.display = 'block';
-    let html = '';
-
-    // Group activities by type
-    const residencies = activities.filter(a => a.type === 'residency');
-    const headliners = activities.filter(a => a.type === 'clubGig' || a.type === 'festival' || a.type === 'live');
-    const others = activities.filter(a => a.type === 'media' || a.type === 'other');
-
-    // Resident DJ
-    if (residencies.length > 0) {
-      html += '<div class="history-category"><div class="hist-cat-label">Resident DJ</div>';
-      residencies.forEach((a, i) => {
-        const venue = a.venue || '';
-        const location = a.country || '';
-        const period = a.startDate ? a.startDate + (a.currentlyRunning ? ' — Present' : (a.endDate ? ' — ' + a.endDate : '')) : '';
-        const hidden = i >= 3 ? ' hist-hidden' : '';
-        html += '<div class="hist-item'+hidden+'">';
-        html += '<div class="hist-venue">' + esc(venue) + (location ? ' · ' + esc(location) : '') + '</div>';
-        if (period) html += '<div class="hist-meta">' + esc(period) + '</div>';
-        html += '</div>';
-      });
-      if (residencies.length > 3) html += '<button class="hist-more-toggle" onclick="toggleHistMore(this)">Show more (' + (residencies.length - 3) + ')</button>';
-      html += '</div>';
-    }
-
-    // Headliner / Gigs
-    if (headliners.length > 0) {
-      html += '<div class="history-category"><div class="hist-cat-label">Headliner</div>';
-      headliners.forEach((a, i) => {
-        let title = a.eventName || a.name || '';
-        const parts = [];
-        if (a.venue) parts.push(a.venue);
-        if (a.country) parts.push(a.country);
-        if (a.year) parts.push(a.year);
-        if (a.role && a.role !== 'Headliner') parts.push(a.role);
-        const hidden = i >= 3 ? ' hist-hidden' : '';
-        html += '<div class="hist-item'+hidden+'">';
-        html += '<div class="hist-venue">' + esc(title) + '</div>';
-        if (parts.length) html += '<div class="hist-meta">' + esc(parts.join(' · ')) + '</div>';
-        html += '</div>';
-      });
-      if (headliners.length > 3) html += '<button class="hist-more-toggle" onclick="toggleHistMore(this)">Show more (' + (headliners.length - 3) + ')</button>';
-      html += '</div>';
-    }
-
-    // Organizer
-    const orgEvents = (org && org.active && org.events) ? org.events : [];
-    if (orgEvents.length > 0) {
-      html += '<div class="history-category"><div class="hist-cat-label">Organizer</div>';
-      orgEvents.forEach((e, i) => {
-        const parts = [];
-        if (e.venue) parts.push(e.venue);
-        if (e.size) parts.push(e.size + ' capacity');
-        const hidden = i >= 3 ? ' hist-hidden' : '';
-        html += '<div class="hist-item'+hidden+'">';
-        html += '<div class="hist-venue">' + esc(e.name || '') + '</div>';
-        if (parts.length) html += '<div class="hist-meta">' + esc(parts.join(' · ')) + '</div>';
-        html += '</div>';
-      });
-      if (orgEvents.length > 3) html += '<button class="hist-more-toggle" onclick="toggleHistMore(this)">Show more (' + (orgEvents.length - 3) + ')</button>';
-      html += '</div>';
-    }
-
-    // Others (media, other)
-    if (others.length > 0) {
-      others.forEach((a, i) => {
-        const hidden = i >= 3 ? ' hist-hidden' : '';
-        html += '<div class="hist-item'+hidden+'"><div class="hist-venue">'+esc(a.title || '')+'</div>'+(a.year?'<div class="hist-meta">'+esc(a.year)+'</div>':'')+'</div>';
-      });
-    }
-
-    // Awards
-    if (awards.length > 0) {
-      html += '<div class="history-category"><div class="hist-cat-label">Award</div>';
-      awards.forEach(a => {
-        html += '<div class="award-item"><span class="award-year">' + esc(a.year || '') + '</span><span class="award-title">' + esc(a.title || '') + '</span></div>';
-      });
-      html += '</div>';
-    }
-
-    hel.innerHTML = html;
-  }
-
-  // ══════════════════════════════
-  // === CONTACT ===
-  // ══════════════════════════════
-  const hasContact = d.agencyName || d.agencyWebsite || d.bookingEmail || d.managementEmail;
-  if (hasContact) {
-    const cel = document.getElementById('secContact');
-    cel.style.display = 'block';
-    let ch = '';
-    if (d.agencyName) ch += '<div class="contact-agency">' + esc(d.agencyName) + '</div>';
-    if (d.agencyWebsite) ch += '<div class="contact-row"><a href="'+esc(d.agencyWebsite)+'" target="_blank">'+esc(d.agencyWebsite.replace(/^https?:\/\//,''))+'</a></div>';
-    if (d.bookingEmail) {
-      ch += '<div class="contact-label">Booking</div>';
-      ch += '<div class="contact-row"><a href="mailto:'+esc(d.bookingEmail)+'">'+esc(d.bookingEmail)+'</a></div>';
-    }
-    if (d.managementEmail) {
-      ch += '<div class="contact-label">Management</div>';
-      ch += '<div class="contact-row"><a href="mailto:'+esc(d.managementEmail)+'">'+esc(d.managementEmail)+'</a></div>';
-    }
-    // Social links
-    const links = jp(d.links) || [];
-    if (links.length > 0) {
-      ch += '<div class="social-links">';
-      links.forEach(l => {
-        if (!l.url) return;
-        ch += '<a class="social-link" href="'+esc(l.url)+'" target="_blank">'+esc(l.label || l.url)+'</a>';
-      });
-      ch += '</div>';
-    }
-    cel.innerHTML = ch;
-  }
-
-  // ══════════════════════════════
-  // === ABOUT (Bio) ===
-  // ══════════════════════════════
-  const bio = (d.bio || '').trim();
-  if (bio) {
-    document.getElementById('secAbout').style.display = 'block';
-    document.getElementById('vBio').textContent = bio;
-    if (bio.length > 200) document.getElementById('bioToggle').style.display = 'block';
-  }
-
-  // Divider 1 — between About and Release
-  if (bio || hasContact || hasHistory) {
-    document.getElementById('divider1').style.display = 'block';
-  }
-
-  // ══════════════════════════════
-  // === RELEASE (Featured Links) ===
-  // ══════════════════════════════
-  const fl1Label = (d.featLink1Label || '').trim();
-  const fl1Url = (d.featLink1Url || '').trim();
-  const fl1Img = (d.featLink1Img || '').trim();
-  const fl2Label = (d.featLink2Label || '').trim();
-  const fl2Url = (d.featLink2Url || '').trim();
-  const fl2Img = (d.featLink2Img || '').trim();
-  if (fl1Label || fl2Label || fl1Img || fl2Img) {
-    document.getElementById('secRelease').style.display = 'block';
-    const fel = document.getElementById('vRelease');
-    [{ label: fl1Label, url: fl1Url, img: fl1Img }, { label: fl2Label, url: fl2Url, img: fl2Img }].forEach(fl => {
-      if (!fl.label && !fl.img) return;
-      const imgHtml = fl.img ? '<img src="'+esc(fl.img)+'" alt="'+esc(fl.label || '')+'">' : '';
-      const labelHtml = fl.label ? '<div class="feat-label"><span>'+esc(fl.label)+'</span>' + (fl.url ? '<span class="feat-arrow">→</span>' : '') + '</div>' : '';
-      if (fl.url) {
-        fel.innerHTML += '<a class="feat-link" href="'+esc(fl.url)+'" target="_blank">' + imgHtml + labelHtml + '</a>';
+  if (currentDesign === 1) {
+    document.body.classList.add('pat1');
+    const p1 = document.getElementById('p1Hero');
+    if (p1) {
+      if (d.profilePhoto) {
+        p1.innerHTML = '<img src="'+esc(d.profilePhoto)+'" alt="'+esc(d.artistName||'')+'"><div class="hero-overlay"></div><div class="hero-content">'+heroInner+'</div>';
       } else {
-        fel.innerHTML += '<div class="feat-link" style="cursor:default">' + imgHtml + labelHtml + '</div>';
+        p1.innerHTML = '<div class="p1-grad" style="width:100%;height:100%;background:linear-gradient(160deg,#1a1a1a,#0d0d0d);display:flex;align-items:center;justify-content:center;"></div><div class="hero-overlay"></div><div class="hero-content">'+heroInner+'</div>';
       }
-    });
+    }
+  } else if (currentDesign === 2) {
+    document.body.classList.add('pat2');
+    if (d.profilePhoto) {
+      const bgLayer = document.getElementById('bgLayer');
+      if (bgLayer) bgLayer.style.backgroundImage = 'url('+esc(d.profilePhoto)+')';
+    }
+    const p2 = document.getElementById('heroP2');
+    if (p2) p2.innerHTML = heroInner;
+  } else {
+    document.body.classList.add('pat3bg');
+    const p3 = document.getElementById('p3Hero');
+    if (p3) {
+      if (d.bgImage) {
+        const bgLayer = document.getElementById('bgLayer');
+        if (bgLayer) bgLayer.style.backgroundImage = 'url('+esc(d.bgImage)+')';
+      }
+      const photoHtml = d.profilePhoto ? '<img src="'+esc(d.profilePhoto)+'" alt="'+esc(d.artistName||'')+'">' : '';
+      p3.innerHTML = photoHtml + '<div>' + heroInner + '</div>';
+    }
   }
 
-  // ══════════════════════════════
-  // === PLATFORM LINKS ===
-  // ══════════════════════════════
-  const sound = (d.primarySoundLink || '').trim();
-  const spots = jp(d.spotifyTracks) || [];
-  if (sound || spots.length > 0) {
-    document.getElementById('secPlatforms').style.display = 'block';
-    const pel = document.getElementById('vPlatforms');
-    if (sound) pel.innerHTML += '<div class="listen-item">' + buildFallbackCard(sound) + '</div>';
-    spots.forEach(url => {
-      if (!url) return;
-      pel.innerHTML += '<div class="listen-item">' + buildFallbackCard(url) + '</div>';
-    });
+  // ─── RECOMMEND CAROUSEL ───
+  const recs = jp(d.recommendations)||[];
+  const recSection = document.getElementById('recommendSection');
+  const recCount = document.getElementById('recommendCount');
+  if (!d.recommendVisible || !recs.length) {
+    if (recSection) recSection.style.display = 'none';
+  } else {
+    if (recSection) recSection.style.display = '';
+    if (recCount) recCount.textContent = '(' + recs.length + ')';
+
+    const displayCount = Math.min(d.recommendDisplayCount||3, recs.length);
+    const shuffled = [...recs].sort(() => Math.random() - 0.5).slice(0, displayCount);
+    const track = document.getElementById('recommendTrack');
+    const dots = document.getElementById('recommendDots');
+
+    if (track && dots) {
+      shuffled.forEach((r, i) => {
+        const profileUrl = r.slug ? '/presskit/' + r.slug : '#';
+        const av = '<div class="recommend-avatar">'+SVG.person+'</div>';
+        track.innerHTML +=
+          '<div class="recommend-slide">' +
+            '<div class="recommend-quote" id="rq'+i+'">'+esc(r.text||'')+'</div>' +
+            '<button class="recommend-toggle" id="rt'+i+'" onclick="toggleRecommendText('+i+')">Read more</button>' +
+            '<div class="recommend-meta">' +
+              av +
+              '<a href="'+esc(profileUrl)+'" class="recommend-name-link">' +
+                '<div class="recommend-name">'+esc(r.name||'')+'</div>' +
+                (r.role?'<div class="recommend-role">'+esc(r.role)+'</div>':'') +
+              '</a>' +
+            '</div>' +
+          '</div>';
+        dots.innerHTML += '<div class="recommend-dot'+(i===0?' active':'')+'" onclick="goToRecommend('+i+')"></div>';
+      });
+
+      setTimeout(() => {
+        shuffled.forEach((r, i) => {
+          const el = document.getElementById('rq'+i);
+          if (el && el.scrollHeight > el.clientHeight + 2) {
+            const toggle = document.getElementById('rt'+i);
+            if (toggle) toggle.style.display = 'block';
+          }
+        });
+      }, 100);
+
+      if (shuffled.length > 1) {
+        if (recommendInterval) clearInterval(recommendInterval);
+        recommendInterval = setInterval(() => {
+          currentRecommend = (currentRecommend + 1) % shuffled.length;
+          updateCarousel();
+        }, 5000);
+      }
+    }
   }
 
-  // ══════════════════════════════════════
-  // === TICKET / UPCOMING EVENTS ===
-  // ══════════════════════════════════════
+  // ─── ABOUT ───
+  const bio = (d.bio||'').trim();
+  if (bio) {
+    const aboutText = document.getElementById('aboutText');
+    if (aboutText) aboutText.textContent = bio;
+    setTimeout(() => {
+      const el = document.getElementById('aboutText');
+      if (el && el.scrollHeight > el.clientHeight + 2) {
+        const toggle = document.getElementById('aboutToggle');
+        if (toggle) toggle.style.display = 'block';
+      }
+    }, 100);
+  }
+
+  // ─── HISTORY ───
+  const activities = jp(d.activity)||[];
+  const awards = jp(d.awards)||[];
+  if (activities.length || awards.length) {
+    let html = '';
+    const residencies = activities.filter(a=>a.type==='residency');
+    const headliners = activities.filter(a=>a.type==='clubGig'||a.type==='festival'||a.type==='live');
+    const others = activities.filter(a=>a.type==='media'||a.type==='other');
+
+    function histItem(period, venue, loc) {
+      return '<div class="hist-item"><div class="hist-year">'+esc(period)+'</div><div><div class="hist-venue">'+esc(venue)+'</div>'+(loc?'<div class="hist-loc">'+esc(loc)+'</div>':'')+'</div></div>';
+    }
+    if (residencies.length) {
+      html += '<div class="hist-cat"><div class="hist-cat-label">Resident</div>';
+      residencies.forEach(a => { const p = a.startDate+(a.currentlyRunning?' — Present':(a.endDate?' — '+a.endDate:'')); html += histItem(p, a.venue, a.country); });
+      html += '</div>';
+    }
+    if (headliners.length) {
+      const catLabel = roles.includes('Dancer')||roles.includes('Choreographer') ? 'Performance' : (roles.includes('Singer')||roles.includes('Songwriter') ? 'Live' : 'Headliner');
+      html += '<div class="hist-cat"><div class="hist-cat-label">'+catLabel+'</div>';
+      headliners.forEach(a => { const loc = [a.venue, a.country].filter(Boolean).join(' · '); html += histItem(a.year||'', a.eventName||'', loc); });
+      html += '</div>';
+    }
+    if (others.length) {
+      html += '<div class="hist-cat">';
+      others.forEach(a => { html += histItem(a.year||'', a.title||'', ''); });
+      html += '</div>';
+    }
+    if (awards.length) {
+      html += '<div class="hist-cat"><div class="hist-cat-label">Award</div>';
+      awards.forEach(a => { html += '<div class="award-item"><div class="award-year">'+esc(a.year||'')+'</div><div class="award-title">'+esc(a.title||'')+'</div></div>'; });
+      html += '</div>';
+    }
+    const tocHistory = document.getElementById('tocHistory');
+    if (tocHistory) tocHistory.innerHTML = html;
+  }
+
+  // ─── FEATURED (1 visible, rest behind "More") ───
+  const featItems = [];
+  [{label:(d.featLink1Label||'').trim(), url:(d.featLink1Url||'').trim()},
+   {label:(d.featLink2Label||'').trim(), url:(d.featLink2Url||'').trim()}].forEach(fl => {
+    if (!fl.label) return;
+    const thumb = '<div class="feat-thumb">'+SVG.music+'</div>';
+    const title = '<div class="feat-title-text">'+esc(fl.label)+'</div>';
+    if (fl.url) featItems.push('<a class="feat-link" href="'+esc(fl.url)+'" target="_blank">'+thumb+title+'<span class="feat-link-arrow">'+SVG.extLink+'</span></a>');
+    else featItems.push('<div class="feat-link" style="cursor:default">'+thumb+title+'</div>');
+  });
+  const sound = (d.primarySoundLink||'').trim();
+  if (sound) featItems.push('<div class="listen-item">'+buildCard(sound)+'</div>');
+  const featEl = document.getElementById('featuredSection');
+  if (featEl) {
+    if (featItems.length) {
+      let fhtml = '<div class="featured-label">Featured</div>';
+      fhtml += featItems[0];
+      if (featItems.length > 1) {
+        fhtml += '<div class="feat-more-wrap" id="featMore" style="display:none;">';
+        for (let i=1; i<featItems.length; i++) fhtml += featItems[i];
+        fhtml += '</div>';
+        fhtml += '<button class="feat-more-btn" id="featMoreBtn" onclick="toggleFeatMore()">More</button>';
+      }
+      featEl.innerHTML = fhtml;
+    } else {
+      featEl.innerHTML = '';
+    }
+  }
+
+  // ─── UPCOMING ───
   const upcoming = jp(d.upcoming);
-  if (upcoming && upcoming.active && upcoming.shows && upcoming.shows.length > 0) {
-    document.getElementById('secTicket').style.display = 'block';
-    const tel = document.getElementById('vTicket');
+  if (upcoming && upcoming.active && upcoming.shows && upcoming.shows.length) {
+    let uhtml = '';
     upcoming.shows.forEach(s => {
       const dateStr = s.date ? formatDate(s.date) : '';
-      const url = s.ticketUrl || '';
-      const tag = url ? 'a' : 'div';
-      const hrefAttr = url ? ' href="'+esc(url)+'" target="_blank"' : '';
-      tel.innerHTML +=
-        '<'+tag+' class="ticket-card"'+hrefAttr+'>' +
-          '<div class="ticket-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 4v2"/><path d="M16 4v2"/></svg></div>' +
-          '<div class="ticket-info">' +
-            '<div class="ticket-name">'+esc(s.name || '')+'</div>' +
-            (s.venue ? '<div class="ticket-detail">'+esc(s.venue)+'</div>' : '') +
-            (dateStr ? '<div class="ticket-detail">'+esc(dateStr)+'</div>' : '') +
-          '</div>' +
-          (url ? '<div class="ticket-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>' : '') +
-        '</'+tag+'>';
+      const url = s.ticketUrl||''; const tag = url?'a':'div'; const href = url?' href="'+esc(url)+'" target="_blank"':'';
+      uhtml += '<'+tag+' class="ticket-card"'+href+'><div class="ticket-icon">'+SVG.cal+'</div><div class="ticket-info"><div class="ticket-name">'+esc(s.name||'')+'</div>'+(s.venue?'<div class="ticket-detail">'+esc(s.venue)+'</div>':'')+(dateStr?'<div class="ticket-detail">'+esc(dateStr)+'</div>':'')+'</div></'+tag+'>';
+    });
+    const upEl = document.getElementById('upcomingSection');
+    if (upEl) upEl.innerHTML = '<div class="upcoming-label">Upcoming</div>' + uhtml;
+  }
+
+  // ─── CONTACT (contact info only) ───
+  let chtml = '';
+  if (d.agencyName) chtml += '<div class="contact-agency">'+esc(d.agencyName)+'</div>';
+  if (d.agencyWebsite) chtml += '<div class="contact-row"><a href="'+esc(d.agencyWebsite)+'" target="_blank">'+esc(d.agencyWebsite.replace(/^https?:\/\//,''))+'</a></div>';
+  if (bookingEmails.length) {
+    bookingEmails.forEach(be => {
+      chtml += '<div class="contact-label">'+esc(be.label||'Booking')+'</div>';
+      chtml += '<div class="contact-row"><a href="mailto:'+esc(be.email)+'">'+esc(be.email)+'</a></div>';
+    });
+  }
+  if (d.managementEmail) {
+    chtml += '<div class="contact-label">Management</div>';
+    chtml += '<div class="contact-row"><a href="mailto:'+esc(d.managementEmail)+'">'+esc(d.managementEmail)+'</a></div>';
+  }
+  const tocContact = document.getElementById('tocContact');
+  if (tocContact) tocContact.innerHTML = chtml;
+
+  // ─── DOWNLOAD (Images + Rider + Download All) ───
+  let dlHtml = '';
+  const hasLogo=d.artistLogo, hasPrf=d.profilePhoto, hasPerf=d.perfPhoto;
+  if (hasLogo||hasPrf||hasPerf) {
+    dlHtml += '<div class="dl-grid">';
+    if (hasLogo) dlHtml += '<a href="'+esc(d.artistLogo)+'" target="_blank" class="dl-thumb-wrap"><div class="dl-thumb"><img src="'+esc(d.artistLogo)+'" alt="Logo"></div><div class="dl-thumb-label">Logo</div></a>';
+    if (hasPrf) dlHtml += '<a href="'+esc(d.profilePhoto)+'" target="_blank" class="dl-thumb-wrap"><div class="dl-thumb"><img src="'+esc(d.profilePhoto)+'" alt="Press Photo"></div><div class="dl-thumb-label">Press Photo</div></a>';
+    if (hasPerf) dlHtml += '<a href="'+esc(d.perfPhoto)+'" target="_blank" class="dl-thumb-wrap"><div class="dl-thumb"><img src="'+esc(d.perfPhoto)+'" alt="Live Photo"></div><div class="dl-thumb-label">Live Photo</div></a>';
+    dlHtml += '</div>';
+  }
+  if (d.techRider||d.hospRider) {
+    if (hasLogo||hasPrf||hasPerf) dlHtml += '<hr class="dl-separator">';
+    if (d.techRider) dlHtml += subAccHtml('Tech Rider','<div style="font-size:12px;color:var(--text-dim);line-height:1.8;white-space:pre-wrap;">'+esc(d.techRider)+'</div>');
+    if (d.hospRider) dlHtml += subAccHtml('Hospitality Rider','<div style="font-size:12px;color:var(--text-dim);line-height:1.8;white-space:pre-wrap;">'+esc(d.hospRider)+'</div>');
+  }
+  if (hasLogo||hasPrf||hasPerf||d.techRider||d.hospRider) {
+    dlHtml += '<div class="dl-all-wrap"><button class="dl-all-btn" onclick="downloadAllPdf()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download All</button></div>';
+  }
+  const tocDownload = document.getElementById('tocDownload');
+  if (tocDownload) tocDownload.innerHTML = dlHtml;
+
+  // ─── SOCIAL BAR ───
+  const socials = jp(d.socials)||[];
+  const bar = document.getElementById('socialBar');
+  if (bar) {
+    socials.forEach(s => {
+      const icon = SVG[s.platform] || SVG.ig;
+      bar.innerHTML += '<a href="'+esc(s.url)+'" target="_blank" title="'+esc(s.platform)+'">'+icon+'</a>';
     });
   }
 
-  // Divider 2 — before download
-  const hasRelease = fl1Label || fl2Label || fl1Img || fl2Img;
-  const hasTicket = upcoming && upcoming.active && upcoming.shows && upcoming.shows.length > 0;
-  const hasPlatforms = sound || spots.length > 0;
-  if (hasRelease || hasTicket || hasPlatforms) {
-    document.getElementById('divider2').style.display = 'block';
-  }
-
-  // ══════════════════════════════
-  // === DOWNLOAD ===
-  // ══════════════════════════════
-  const hasLogo = d.artistLogo;
-  const hasProfile = d.profilePhoto;
-  const hasPerf = d.perfPhoto;
-  const hasTech = d.techRider;
-  const hasHosp = d.hospRider;
-  const hasAnyDl = hasLogo || hasProfile || hasPerf || hasTech || hasHosp;
-
-  if (hasAnyDl) {
-    document.getElementById('secDl').style.display = 'block';
-
-    // Thumbnails
-    if (hasLogo || hasProfile || hasPerf) {
-      const thumbsEl = document.getElementById('vDlThumbs');
-      thumbsEl.style.display = 'flex';
-      const dlFiles = [];
-      if (hasLogo) { thumbsEl.innerHTML += thumbHtml(d.artistLogo, 'Logo'); dlFiles.push({url:d.artistLogo, name:'logo'}); }
-      if (hasProfile) { thumbsEl.innerHTML += thumbHtml(d.profilePhoto, 'Press Photo'); dlFiles.push({url:d.profilePhoto, name:'press_photo'}); }
-      if (hasPerf) { thumbsEl.innerHTML += thumbHtml(d.perfPhoto, 'Live Photo'); dlFiles.push({url:d.perfPhoto, name:'live_photo'}); }
-
-      document.getElementById('dlAllBtn').style.display = 'block';
-      window._dlFiles = dlFiles;
-      document.getElementById('dlAllBtn').onclick = () => downloadZip(d);
+  // Hide empty TOC items
+  const tocMap = {
+    'history': 'tocHistory',
+    'contact': 'tocContact',
+    'download': 'tocDownload'
+  };
+  document.querySelectorAll('.toc-item').forEach(item => {
+    const sec = item?.dataset.sec;
+    if (!sec) return;
+    const body = document.getElementById(tocMap[sec]);
+    if (body && !body.innerHTML.trim()) {
+      item.style.display = 'none';
+      body.style.display = 'none';
+    } else {
+      item.style.display = '';
+      if (body) body.style.display = '';
     }
-
-    // Riders
-    if (hasTech || hasHosp) {
-      if (hasLogo || hasProfile || hasPerf) document.getElementById('dlSep').style.display = 'block';
-      const dfel = document.getElementById('vDlFiles');
-      if (hasTech) dfel.innerHTML += subAccHtml('Tech Rider', '<div style="font-size:13px;color:var(--text-dim);line-height:1.7;white-space:pre-wrap;">'+esc(d.techRider)+'</div>');
-      if (hasHosp) dfel.innerHTML += subAccHtml('Hospitality Rider', '<div style="font-size:13px;color:var(--text-dim);line-height:1.7;white-space:pre-wrap;">'+esc(d.hospRider)+'</div>');
-    }
-  }
-
-  // Show
-  document.getElementById('loadingScreen').style.display = 'none';
-  document.getElementById('mainContent').style.display = 'block';
+  });
 }
 
-function thumbHtml(src, label) {
-  return '<a href="'+esc(src)+'" target="_blank" class="dl-thumb-wrap" style="text-decoration:none"><div class="dl-thumb"><img src="'+esc(src)+'" alt="'+esc(label)+'"></div><div class="dl-thumb-label">'+esc(label)+'</div></a>';
+// ══════════════════════════
+// INTERACTIONS
+// ══════════════════════════
+function updateCarousel() {
+  const track = document.getElementById('recommendTrack');
+  if (track) track.style.transform = 'translateX(-' + (currentRecommend * 100) + '%)';
+  document.querySelectorAll('.recommend-dot').forEach((d, i) => d?.classList.toggle('active', i === currentRecommend));
+}
+
+function goToRecommend(i) {
+  currentRecommend = i;
+  updateCarousel();
+  if (recommendInterval) { clearInterval(recommendInterval); }
+  if (profileData) {
+    const recs = jp(profileData.recommendations)||[];
+    const count = Math.min(profileData.recommendDisplayCount||3, recs.length);
+    if (count > 1) {
+      recommendInterval = setInterval(() => {
+        currentRecommend = (currentRecommend + 1) % count;
+        updateCarousel();
+      }, 5000);
+    }
+  }
+}
+
+function toggleRecommendText(i) {
+  const q = document.getElementById('rq'+i);
+  const t = document.getElementById('rt'+i);
+  if (q && t) {
+    q.classList.toggle('expanded');
+    t.textContent = q.classList.contains('expanded') ? 'Close' : 'Read more';
+  }
+}
+
+function toggleAbout() {
+  const t = document.getElementById('aboutText');
+  const b = document.getElementById('aboutToggle');
+  if (t && b) {
+    t.classList.toggle('expanded');
+    b.textContent = t.classList.contains('expanded') ? 'Close' : 'Read more';
+  }
+}
+
+function toggleToc(item) {
+  if (item) item.classList.toggle('open');
 }
 
 function subAccHtml(label, body) {
-  return '<div class="sub-acc"><div class="sub-acc-header" onclick="toggleSubAcc(this)"><span class="sub-acc-icon"></span><span class="sub-acc-label">'+esc(label)+'</span></div><div class="sub-acc-body">'+body+'</div></div>';
+  return '<div class="sub-acc"><div class="sub-acc-header" onclick="this.parentElement.classList.toggle(\'open\')"><span class="sub-acc-icon"></span><span class="sub-acc-label">'+esc(label)+'</span></div><div class="sub-acc-body">'+body+'</div></div>';
 }
 
-function buildFallbackCard(url) {
-  var platform = 'Listen', iconClass = 'default', icon = '';
-  if (url.includes('soundcloud.com')) {
-    platform = 'SoundCloud'; iconClass = 'sc';
-    icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M1 18V11h1v7H1zm2.5-1V9h1v8h-1zm2.5 1V7h1v11H6zm2.5-1V8.5h1V17h-1zM11 18V6h1v12h-1zm6.5-9c-.3 0-.5 0-.8.1C16.3 7.3 14.8 6 13 6v12h7c1.7 0 3-1.3 3-3s-1.3-3-3-3h-.5z"/></svg>';
-  } else if (url.includes('spotify.com')) {
-    platform = 'Spotify'; iconClass = 'sp';
-    icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 17.3c-.2.3-.6.4-1 .2-2.7-1.6-6-2-10-1.1-.4.1-.8-.2-.8-.6-.1-.4.2-.8.6-.8 4.3-1 8-.6 11 1.2.4.2.4.7.2 1.1zm1.5-3.3c-.3.4-.8.5-1.2.3-3-1.9-7.7-2.4-11.3-1.3-.4.1-.9-.1-1-.5-.1-.4.1-.9.5-1 4.1-1.3 9.2-.7 12.6 1.5.4.2.5.7.4 1zm.1-3.4C15.4 8.3 9 8.1 5.2 9.2c-.5.1-1-.2-1.1-.7-.1-.5.2-1 .7-1.1C9.1 6.1 16 6.3 20.3 9c.5.3.6.9.3 1.3-.2.5-.8.6-1.5.3z"/></svg>';
-  } else if (url.includes('music.apple.com') || url.includes('itunes.apple.com')) {
-    platform = 'Apple Music'; iconClass = 'am';
-    icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.073-.004-.146-.01-.22-.012C17.5.003 17.09 0 16.678 0H7.32c-.413 0-.825.003-1.237.005-.074.002-.147.008-.22.012a10.5 10.5 0 00-1.564.15 5.022 5.022 0 00-1.877.726C1.305 1.624.56 2.624.243 3.934a9.23 9.23 0 00-.24 2.19C.001 6.197 0 6.27 0 6.343v11.312c0 .073 0 .146.003.22a9.23 9.23 0 00.24 2.19c.317 1.31 1.062 2.31 2.18 3.043a5.022 5.022 0 001.877.726c.513.085 1.036.132 1.564.15.073.004.146.01.22.012.412.002.824.004 1.237.004h9.36c.412 0 .824-.002 1.236-.004.074-.002.147-.008.22-.012a10.5 10.5 0 001.564-.15 5.022 5.022 0 001.877-.726c1.118-.733 1.863-1.733 2.18-3.043a9.23 9.23 0 00.24-2.19c.002-.074.003-.147.003-.22V6.343c0-.073 0-.146-.003-.22zM16.948 13.2v4.106c0 .439-.092.862-.323 1.25a2.158 2.158 0 01-.99.87c-.4.196-.823.29-1.27.308-.468.019-.925-.073-1.347-.295a1.85 1.85 0 01-.877-.932 1.87 1.87 0 01-.085-1.058c.096-.437.34-.793.702-1.053.33-.237.7-.386 1.098-.462.428-.082.86-.14 1.288-.218.2-.036.384-.108.5-.3a.73.73 0 00.104-.387V9.282c0-.132-.043-.232-.167-.275a.784.784 0 00-.3-.04l-5.727 1.033c-.02.003-.04.01-.057.016-.13.043-.18.126-.18.264v6.603c0 .46-.082.9-.32 1.303a2.2 2.2 0 01-.996.9c-.39.19-.805.282-1.24.303-.474.023-.935-.062-1.364-.276a1.89 1.89 0 01-.9-.936 1.855 1.855 0 01-.085-1.09c.1-.437.346-.79.72-1.046a3.268 3.268 0 011.1-.46c.42-.08.843-.137 1.264-.213.21-.038.4-.113.515-.314a.77.77 0 00.098-.392V7.604c0-.363.1-.626.406-.74.132-.05.268-.084.404-.108L15.6 5.57c.19-.034.38-.065.573-.074.26-.012.42.117.432.383.002.04.003.08.003.12v7.2z"/></svg>';
-  } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
-    platform = 'YouTube'; iconClass = 'yt';
-    icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M23.5 6.2s-.2-1.6-.9-2.3c-.9-.9-1.8-.9-2.3-1C17 2.7 12 2.7 12 2.7s-5 0-8.3.2c-.5.1-1.4.1-2.3 1-.7.7-.9 2.3-.9 2.3S.2 8.1.2 10v1.8c0 1.9.3 3.8.3 3.8s.2 1.6.9 2.3c.9.9 2 .9 2.5 1 1.8.2 7.6.2 7.6.2s5 0 8.3-.3c.5-.1 1.4-.1 2.3-1 .7-.7.9-2.3.9-2.3s.3-1.9.3-3.8V10c0-1.9-.3-3.8-.3-3.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>';
-  } else if (url.includes('mixcloud.com')) {
-    platform = 'Mixcloud'; iconClass = 'mc';
-    icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M2 16V8h2l3 5 3-5h2v8h-2v-5l-3 4-3-4v5H2zm14-8h6c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-6c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2zm0 2v4h6v-4h-6z"/></svg>';
-  } else {
-    icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>';
-  }
-  return '<a href="'+esc(url)+'" target="_blank" class="listen-fallback"><div class="lf-icon '+iconClass+'">'+icon+'</div><div class="lf-text"><div class="lf-label">'+platform+'</div><div class="lf-url">'+esc(url)+'</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>';
+function buildCard(url) {
+  let platform='Listen', cls='default', icon='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>';
+  if (url.includes('soundcloud.com')) { platform='SoundCloud'; cls='sc'; icon='<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M1 18V11h1v7H1zm2.5-1V9h1v8h-1zm2.5 1V7h1v11H6zm2.5-1V8.5h1V17h-1zM11 18V6h1v12h-1zm6.5-9c-.3 0-.5 0-.8.1C16.3 7.3 14.8 6 13 6v12h7c1.7 0 3-1.3 3-3s-1.3-3-3-3h-.5z"/></svg>'; }
+  else if (url.includes('spotify.com')) { platform='Spotify'; cls='sp'; icon='<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 17.3c-.2.3-.6.4-1 .2-2.7-1.6-6-2-10-1.1-.4.1-.8-.2-.8-.6-.1-.4.2-.8.6-.8 4.3-1 8-.6 11 1.2.4.2.4.7.2 1.1zm1.5-3.3c-.3.4-.8.5-1.2.3-3-1.9-7.7-2.4-11.3-1.3-.4.1-.9-.1-1-.5-.1-.4.1-.9.5-1 4.1-1.3 9.2-.7 12.6 1.5.4.2.5.7.4 1zm.1-3.4C15.4 8.3 9 8.1 5.2 9.2c-.5.1-1-.2-1.1-.7-.1-.5.2-1 .7-1.1C9.1 6.1 16 6.3 20.3 9c.5.3.6.9.3 1.3-.2.5-.8.6-1.5.3z"/></svg>'; }
+  else if (url.includes('youtube.com')||url.includes('youtu.be')) { platform='YouTube'; cls='yt'; }
+  return '<a href="'+esc(url)+'" target="_blank" class="listen-fallback"><div class="lf-icon '+cls+'">'+icon+'</div><div class="lf-text"><div class="lf-label">'+platform+'</div></div><span class="lf-arrow">'+SVG.extLink+'</span></a>';
 }
 
-function formatDate(dateStr) {
-  try {
-    const d = new Date(dateStr);
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-  } catch(e) { return dateStr; }
-}
-
-function toggleBio() {
-  const t = document.getElementById('vBio');
-  const b = document.getElementById('bioToggle');
-  t.classList.toggle('expanded');
-  b.textContent = t.classList.contains('expanded') ? 'Show less' : 'Read more';
-}
-function toggleSubAcc(h) { h.parentElement.classList.toggle('open'); }
-
-function toggleHistMore(btn) {
-  const cat = btn.parentElement;
-  const hidden = cat.querySelectorAll('.hist-hidden');
-  const isShowing = btn.textContent.startsWith('Show less');
-  hidden.forEach(el => el.style.display = isShowing ? 'none' : 'block');
-  btn.textContent = isShowing ? 'Show more (' + hidden.length + ')' : 'Show less';
-}
-
-// ═══ ZIP DOWNLOAD (PDF + images) ═══
-async function downloadZip(d) {
-  const btn = document.getElementById('dlAllBtn');
-  btn.style.opacity = '0.5';
-  btn.style.pointerEvents = 'none';
-
-  try {
-    const zip = new JSZip();
-    const folder = zip.folder(d.artistName.replace(/[^a-zA-Z0-9_-]/g,'_') + '_PressKit');
-
-    // 1. Collect images
-    const images = [];
-    if (d.profilePhoto) images.push({url: d.profilePhoto, name: 'profile'});
-    if (d.perfPhoto) images.push({url: d.perfPhoto, name: 'performance'});
-    if (d.artistLogo) images.push({url: d.artistLogo, name: 'logo'});
-    if (d.featLink1Img) images.push({url: d.featLink1Img, name: 'featured1'});
-    if (d.featLink2Img) images.push({url: d.featLink2Img, name: 'featured2'});
-
-    for (const img of images) {
-      try {
-        const res = await fetch(img.url);
-        const blob = await res.blob();
-        const ext = blob.type.includes('png') ? '.png' : '.jpg';
-        folder.file(img.name + ext, blob);
-      } catch(e) { console.warn('Failed to fetch image:', img.name); }
-    }
-
-    // 2. Generate PDF
-    document.querySelectorAll('.sub-acc').forEach(el => el.classList.add('open'));
-    document.querySelectorAll('.hist-hidden').forEach(el => el.style.display = 'block');
-    const bioEl = document.getElementById('vBio');
-    if (bioEl) bioEl.classList.add('expanded');
-
-    const mainEl = document.getElementById('mainContent');
-    const canvas = await html2canvas(mainEl, {
-      backgroundColor: '#0a0a0a',
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      scrollY: -window.scrollY,
-      windowWidth: 480
-    });
-
-    const { jsPDF } = window.jspdf;
-    const imgWidth = 210;
-    const pageHeight = 297;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-
-    let heightLeft = imgHeight;
-    let position = 0;
-    const imgData = canvas.toDataURL('image/jpeg', 0.92);
-
-    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft > 0) {
-      position -= pageHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-
-    const pdfBlob = pdf.output('blob');
-    folder.file(d.artistName.replace(/[^a-zA-Z0-9_-]/g,'_') + '_PressKit.pdf', pdfBlob);
-
-    // 3. Generate and download zip
-    const zipBlob = await zip.generateAsync({type: 'blob'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(zipBlob);
-    a.download = d.artistName.replace(/[^a-zA-Z0-9_-]/g,'_') + '_PressKit.zip';
-    a.click();
-    URL.revokeObjectURL(a.href);
-
-  } catch(e) {
-    console.error('Download failed:', e);
-    alert('Download failed. Please try again.');
-  } finally {
-    btn.style.opacity = '1';
-    btn.style.pointerEvents = 'auto';
+function toggleFeatMore() {
+  const wrap = document.getElementById('featMore');
+  const btn = document.getElementById('featMoreBtn');
+  if (wrap && btn) {
+    const open = wrap.style.display === 'none';
+    wrap.style.display = open ? 'block' : 'none';
+    btn.textContent = open ? 'Close' : 'More';
   }
 }
+
+function downloadAllPdf() {
+  alert('Download All as PDF — this will generate a PDF containing all downloadable assets.');
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', loadProfile);
 </script>
+
 </body>
 </html>
