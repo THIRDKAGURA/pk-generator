@@ -774,7 +774,7 @@ document.getElementById('resetBtn').addEventListener('click', async function() {
 const urlParams = new URLSearchParams(window.location.search);
 const resetToken = urlParams.get('reset');
 if (resetToken) {
-  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('forgotForm').style.display = 'none';
   document.getElementById('newPasswordForm').style.display = 'block';
 
   document.getElementById('setPasswordBtn').addEventListener('click', async function() {
