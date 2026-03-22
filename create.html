@@ -1849,7 +1849,7 @@ async function submitForm() {
     await postViaIframe(GAS_URL, payload);
 
     // Show preview screen with design selector
-    var profileUrl = window.location.origin + '/pk-generator/view.html?id=' + slug;
+    var profileUrl = window.location.origin + '/view.html?id=' + slug;
     selectedDesign = 1;
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.getElementById('stepDone').classList.add('active');
