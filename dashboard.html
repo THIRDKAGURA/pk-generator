@@ -825,7 +825,7 @@ async function verifyToken(token) {
       currentSlug = json.slug;
       document.getElementById('pageHeader').style.display = '';
       document.getElementById('headerSubtitle').textContent = 'Editing: ' + (json.artist.artistName || json.slug);
-      populateForm(json.artist);
+      try { populateForm(json.artist); } catch(pe) { console.warn('populateForm error:', pe); }
       showView('editView');
     } else {
       showToast(json.error || 'Invalid token', 'error');
@@ -852,7 +852,6 @@ function populateForm(d) {
   document.getElementById('e-minimumFee').value = d.minimumFee || '';
   document.getElementById('e-techRider').value = d.techRider || '';
   document.getElementById('e-hospRider').value = d.hospRider || '';
-  document.getElementById('e-bookingEmail').value = d.bookingEmail || '';
   document.getElementById('e-mgmtEmail').value = d.mgmtEmail || '';
   document.getElementById('e-agencyName').value = d.agencyName || '';
   document.getElementById('e-agencyEmail').value = d.agencyEmail || '';
@@ -1541,7 +1540,6 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     techRider: document.getElementById('e-techRider').value.trim(),
     hospRider: document.getElementById('e-hospRider').value.trim(),
     links: JSON.stringify(collectLinks()),
-    bookingEmail: document.getElementById('e-bookingEmail').value.trim(),
     mgmtEmail: document.getElementById('e-mgmtEmail').value.trim(),
     agencyName: document.getElementById('e-agencyName').value.trim(),
     agencyEmail: document.getElementById('e-agencyEmail').value.trim(),
