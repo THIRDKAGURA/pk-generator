@@ -8,8 +8,8 @@
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --bg:#0a0a0a; --surface:#141414; --border:#2a2a2a; --border-focus:#c4a265;
-      --gold:#c4a265; --gold-dim:rgba(196,162,101,0.15);
+      --bg:#000000; --surface:#141414; --border:#2a2a2a; --border-focus:#9aa3b0;
+      --gold:#9aa3b0; --gold-dim:rgba(154,163,176,0.15);
       --text:#f0f0f0; --text-dim:#888; --text-muted:#555;
       --error:#e74c3c; --error-bg:rgba(231,76,60,0.1);
       --success:#2ecc71; --radius:8px; --transition:0.2s ease;
@@ -17,7 +17,7 @@
     html { scroll-behavior:smooth; }
     body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; }
 
-    .page-header { text-align:center; padding:48px 24px 24px; border-bottom:1px solid var(--border); }
+    .page-header { text-align:center; padding:48px 24px 24px; }
     .page-header h1 { font-size:24px; font-weight:700; margin-bottom:6px; }
     .page-header p { color:var(--text-dim); font-size:14px; }
 
@@ -138,10 +138,20 @@
     .toast.success { background:var(--success); color:#000; }
     .toast.error { background:var(--error); color:#fff; }
 
-    /* Auth view */
-    .auth-box,.login-box { max-width:400px; margin:60px auto; text-align:center; }
-    .auth-box h2,.login-box h2 { font-size:20px; margin-bottom:8px; }
-    .auth-box p,.login-box p { color:var(--text-dim); font-size:14px; margin-bottom:24px; }
+    /* Auth view — card layout matching index.html */
+    .auth-wrapper {
+      min-height:100vh; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; padding:24px;
+    }
+    .auth-card {
+      width:100%; max-width:440px; background:var(--surface);
+      border:1px solid var(--border); border-radius:12px;
+      padding:40px 32px 32px; text-align:center;
+    }
+    @media (max-width:480px) { .auth-card { padding:32px 20px 24px; } }
+    .auth-box,.login-box { max-width:400px; margin:0 auto; text-align:center; }
+    .auth-box h2,.login-box h2 { font-size:18px; font-weight:600; margin-bottom:8px; }
+    .auth-box p,.login-box p { color:var(--text-dim); font-size:13px; margin-bottom:24px; }
     .auth-box input,.login-box input { margin-bottom:16px; }
     .auth-sent { color:var(--success); font-size:14px; margin-top:12px; }
 
@@ -153,47 +163,48 @@
 
     /* Loading */
     .loading-view { text-align:center; padding:80px 24px; color:var(--text-dim); }
+    /* ─── Google Translate ─── */
+    .gt-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: #111; border-bottom: 1px solid var(--border);
+      padding: 6px 16px; text-align: right;
+    }
+    .gt-bar select {
+      background: #000; color: var(--text-dim); border: 1px solid var(--border);
+      border-radius: 4px; padding: 4px 8px; font-size: 12px; font-family: inherit;
+      cursor: pointer; outline: none;
+    }
+    .gt-bar select:focus { border-color: var(--gold); }
+    body { padding-top: 40px; }
+    .goog-te-banner-frame, .skiptranslate { display: none !important; }
+    body { top: 0 !important; }
   </style>
 </head>
 <body>
 
-<header class="page-header">
-  <h1>Edit Your Press Kit</h1>
-  <p id="headerSubtitle">Sign in with your ID and password</p>
+<div class="gt-bar">
+  <div id="google_translate_element"></div>
+</div>
+
+<header class="page-header" id="pageHeader" style="display:none;">
+  <h1 id="headerTitle">Edit Your Press Kit</h1>
+  <p id="headerSubtitle"></p>
 </header>
 
 <main class="container">
 
-  <!-- ═══ AUTH VIEW ═══ -->
+  <!-- ═══ AUTH VIEW (Reset Password Only) ═══ -->
   <div class="view active" id="authView">
-    <div class="login-box">
-      <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px">Sign in with your ID and password</p>
-
-      <div id="loginForm">
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <div class="login-box">
+      <!-- Reset request form (default) -->
+      <div id="forgotForm">
+        <h2>Reset Password</h2>
+        <p>We'll send a reset link to your registered email.</p>
         <div class="field">
-          <label for="loginSlug">Your ID</label>
-          <input type="text" id="loginSlug" placeholder="your-artist-id">
-        </div>
-        <div class="field">
-          <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" placeholder="Your password">
-        </div>
-        <div class="error-msg" id="loginError" style="display:none"></div>
-        <button type="button" class="btn btn-primary" id="loginBtn" style="width:100%;margin-top:12px">
-          <span class="btn-text">SIGN IN</span>
-          <span class="spinner"></span>
-        </button>
-        <div style="text-align:center;margin-top:12px">
-          <a href="#" id="forgotPasswordLink" style="color:var(--gold);font-size:12px;text-decoration:none">Forgot password?</a>
-        </div>
-      </div>
-
-      <!-- Forgot password form (hidden by default) -->
-      <div id="forgotForm" style="display:none">
-        <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Enter your ID and we'll send a reset link to your registered email.</p>
-        <div class="field">
-          <label for="resetSlug">Your ID</label>
-          <input type="text" id="resetSlug" placeholder="your-artist-id">
+          <label for="resetSlug">Creator ID</label>
+          <input type="text" id="resetSlug" placeholder="">
         </div>
         <div class="error-msg" id="resetError" style="display:none"></div>
         <div class="success-msg" id="resetSuccess" style="display:none;color:#4caf50;font-size:13px;margin-bottom:12px"></div>
@@ -201,21 +212,21 @@
           <span class="btn-text">SEND RESET LINK</span>
           <span class="spinner"></span>
         </button>
-        <div style="text-align:center;margin-top:12px">
-          <a href="#" id="backToLoginLink" style="color:var(--gold);font-size:12px;text-decoration:none">Back to sign in</a>
+        <div style="text-align:center;margin-top:14px">
+          <a href="index.html" style="color:var(--text-dim);font-size:12px;text-decoration:none;">Back to sign in</a>
         </div>
       </div>
 
-      <!-- Reset password form (shown when ?reset=TOKEN) -->
+      <!-- Set new password form (shown when ?reset=TOKEN) -->
       <div id="newPasswordForm" style="display:none">
-        <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px">Set your new password.</p>
+        <h2 style="font-size:18px;font-weight:600;margin-bottom:16px;">Set New Password</h2>
         <div class="field">
           <label for="newPassword">New Password</label>
-          <input type="password" id="newPassword" placeholder="At least 6 characters" minlength="6">
+          <input type="password" id="newPassword" placeholder="" minlength="6">
         </div>
         <div class="field">
           <label for="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" placeholder="Re-enter password">
+          <input type="password" id="confirmPassword" placeholder="">
         </div>
         <div class="error-msg" id="newPasswordError" style="display:none"></div>
         <button type="button" class="btn btn-primary" id="setPasswordBtn" style="width:100%;margin-top:12px">
@@ -223,7 +234,9 @@
           <span class="spinner"></span>
         </button>
       </div>
-    </div>
+        </div><!-- /.login-box -->
+      </div><!-- /.auth-card -->
+    </div><!-- /.auth-wrapper -->
   </div>
 
   <!-- ═══ LOADING VIEW ═══ -->
@@ -257,6 +270,10 @@
       <div class="field">
         <label for="e-location">Country</label>
         <select id="e-location"></select>
+      </div>
+      <div class="field">
+        <label for="e-city">City <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+        <input type="text" id="e-city" maxlength="60" placeholder="e.g., Sydney">
       </div>
       <div class="field">
         <label>Role</label>
@@ -308,6 +325,15 @@
             <div class="upload-label"><strong>Upload</strong>Square 1:1</div>
             <img class="preview-img" id="preview-artistLogo" alt="">
             <button type="button" class="remove-btn" data-field="artistLogo">×</button>
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px">
+          <label>Background Image <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <div class="image-upload" id="drop-bgImage">
+            <input type="file" accept="image/*" data-field="bgImage">
+            <div class="upload-label"><strong>Upload</strong>Full-width background</div>
+            <img class="preview-img" id="preview-bgImage" alt="BG preview">
+            <button type="button" class="remove-btn" data-field="bgImage">×</button>
           </div>
         </div>
       </div>
@@ -488,15 +514,32 @@
     <!-- Contact Information -->
     <section class="form-section">
       <h3>Contact Information <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Shown on your profile)</span></h3>
-      <div class="field-row">
-        <div class="field"><label>Booking Email</label><input type="email" id="e-bookingEmail"></div>
-        <div class="field"><label>Management Email</label><input type="email" id="e-mgmtEmail"></div>
+      <div class="field">
+        <label>Booking Emails</label>
+        <div id="e-bookingEmailsList" style="margin-bottom:10px;"></div>
+        <button type="button" class="add-entry-btn" onclick="eAddBookingEmailEntry()">+ Add booking email</button>
       </div>
+      <div class="field"><label>Management Email</label><input type="email" id="e-mgmtEmail"></div>
       <div class="field-row">
         <div class="field"><label>Agency Name</label><input type="text" id="e-agencyName"></div>
         <div class="field"><label>Agency Email</label><input type="email" id="e-agencyEmail"></div>
       </div>
       <div class="field"><label>Agency Website</label><input type="url" id="e-agencyWebsite"></div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="form-section">
+      <h3>Recommendations</h3>
+      <div class="field">
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <input type="checkbox" id="e-recommendVisible">
+          <span>Show Recommend section on profile</span>
+        </label>
+      </div>
+      <div class="field">
+        <div id="e-recommendList" style="margin-bottom:10px;"></div>
+        <button type="button" class="add-entry-btn" id="e-addRecommendBtn">+ Add Recommendation</button>
+      </div>
     </section>
 
     <!-- Customization -->
@@ -627,6 +670,7 @@ const IMAGE_SPECS = {
   profilePhoto:{maxWidth:1200,quality:0.85,aspect:3/4},
   perfPhoto:{maxWidth:1920,quality:0.85,aspect:16/9},
   artistLogo:{maxWidth:200,quality:0.8,aspect:1/1},
+  bgImage:{maxWidth:1920,quality:0.8},
   featLink1Img:{maxWidth:1200,quality:0.85,aspect:16/5},
   featLink2Img:{maxWidth:1200,quality:0.85,aspect:16/5}
 };
@@ -635,7 +679,7 @@ let currentToken = null;
 let currentSlug = null;
 const selectedGenres = new Set();
 const selectedRoles = new Set();
-const imageData = {profilePhoto:null,perfPhoto:null,artistLogo:null,featLink1Img:null,featLink2Img:null};
+const imageData = {profilePhoto:null,perfPhoto:null,artistLogo:null,bgImage:null,featLink1Img:null,featLink2Img:null};
 let gigCounter = 0, linkCounter = 0;
 
 // ─── Init ───
@@ -674,6 +718,16 @@ let gigCounter = 0, linkCounter = 0;
     showView('loadingView');
     verifyToken(token);
   }
+
+  // Auto-login from index.html (slug passed via URL + token in sessionStorage)
+  var slugParam = params.get('slug');
+  var storedToken = sessionStorage.getItem('pk_token');
+  if (!token && storedToken && slugParam) {
+    currentToken = storedToken;
+    currentSlug = slugParam;
+    showView('loadingView');
+    verifyToken(storedToken);
+  }
 })();
 
 // ─── Views ───
@@ -682,65 +736,6 @@ function showView(id) {
   document.getElementById(id).classList.add('active');
   document.querySelector('.page-header').style.display = (id === 'previewView') ? 'none' : '';
 }
-
-// ─── Auth: Password Login ───
-document.getElementById('loginBtn').addEventListener('click', async function() {
-  const slug = document.getElementById('loginSlug').value.trim().toLowerCase();
-  const password = document.getElementById('loginPassword').value;
-  const errEl = document.getElementById('loginError');
-  errEl.style.display = 'none';
-
-  if (!slug || !password) {
-    errEl.textContent = 'ID and password are required';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  this.disabled = true;
-  this.classList.add('loading');
-
-  try {
-    const res = await fetch(GAS_URL + '?action=password_login&slug=' + encodeURIComponent(slug) + '&password=' + encodeURIComponent(password));
-    const result = await res.json();
-    if (result.error) {
-      errEl.textContent = result.error;
-      errEl.style.display = 'block';
-    } else if (result.token) {
-      currentToken = result.token;
-      currentSlug = result.slug;
-      // Load artist data using the token
-      const verifyRes = await fetch(GAS_URL + '?action=verify_token&token=' + encodeURIComponent(currentToken));
-      const verifyResult = await verifyRes.json();
-      if (verifyResult.success && verifyResult.artist) {
-        document.getElementById('headerSubtitle').textContent = 'Editing: ' + (verifyResult.artist.artistName || currentSlug);
-        populateForm(verifyResult.artist);
-        showView('editView');
-      } else {
-        errEl.textContent = 'Failed to load your data';
-        errEl.style.display = 'block';
-      }
-    }
-  } catch (e) {
-    errEl.textContent = 'Connection error. Please try again.';
-    errEl.style.display = 'block';
-  } finally {
-    this.disabled = false;
-    this.classList.remove('loading');
-  }
-});
-
-// ─── Auth: Forgot Password UI ───
-document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
-  e.preventDefault();
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('forgotForm').style.display = 'block';
-});
-
-document.getElementById('backToLoginLink').addEventListener('click', function(e) {
-  e.preventDefault();
-  document.getElementById('forgotForm').style.display = 'none';
-  document.getElementById('loginForm').style.display = 'block';
-});
 
 // ─── Auth: Password Reset Request ───
 document.getElementById('resetBtn').addEventListener('click', async function() {
@@ -827,6 +822,7 @@ async function verifyToken(token) {
     const json = await res.json();
     if (json.success && json.artist) {
       currentSlug = json.slug;
+      document.getElementById('pageHeader').style.display = '';
       document.getElementById('headerSubtitle').textContent = 'Editing: ' + (json.artist.artistName || json.slug);
       populateForm(json.artist);
       showView('editView');
@@ -865,6 +861,35 @@ function populateForm(d) {
   document.getElementById('e-font').value = d.font || 'Inter';
   document.getElementById('e-fontPreview').style.fontFamily = (d.font || 'Inter') + ',sans-serif';
 
+  // City
+  if (document.getElementById('e-city')) document.getElementById('e-city').value = d.city || '';
+
+  // Recommend
+  if (document.getElementById('e-recommendVisible')) document.getElementById('e-recommendVisible').checked = (d.recommendVisible === '1' || d.recommendVisible === true);
+
+  // Recommendations
+  try {
+    var recs = typeof d.recommendations === 'string' ? JSON.parse(d.recommendations) : (d.recommendations || []);
+    if (Array.isArray(recs)) {
+      recs.forEach(function(r) { eAddRecommendEntry(r); });
+    }
+  } catch(e) {}
+
+  // BG Image
+  if (d.bgImage) {
+    imageData.bgImage = d.bgImage;
+    var bgPrev = document.getElementById('preview-bgImage');
+    if (bgPrev) { bgPrev.src = d.bgImage; bgPrev.parentElement.classList.add('has-image'); }
+  }
+
+  // Booking Emails (array)
+  try {
+    var bEmails = typeof d.bookingEmails === 'string' ? JSON.parse(d.bookingEmails) : (d.bookingEmails || []);
+    if (Array.isArray(bEmails)) {
+      bEmails.forEach(function(be) { eAddBookingEmailEntry(be); });
+    }
+  } catch(e) {}
+
   // Roles
   selectedRoles.clear();
   try {
@@ -895,7 +920,7 @@ function populateForm(d) {
   } catch(e) {}
 
   // Images (show existing Drive URLs)
-  ['profilePhoto','perfPhoto','artistLogo','featLink1Img','featLink2Img'].forEach(field => {
+  ['profilePhoto','perfPhoto','artistLogo','bgImage','featLink1Img','featLink2Img'].forEach(field => {
     if (d[field] && d[field].toString().startsWith('http')) {
       const preview = document.getElementById('preview-' + field);
       const drop = document.getElementById('drop-' + field);
@@ -1416,6 +1441,76 @@ function collectLinks() {
   return links;
 }
 
+// ─── Recommend entries ───
+function eAddRecommendEntry(data) {
+  const list = document.getElementById('e-recommendList');
+  if (!list) return;
+  const id = Date.now() + Math.random();
+  const entry = document.createElement('div');
+  entry.className = 'entry-row';
+  entry.id = 'rec-' + id;
+  entry.style.display = 'block';
+  entry.innerHTML = `
+    <div style="display:flex;gap:10px;margin-bottom:8px;">
+      <input type="text" data-rec-name value="${(data?.name||'').replace(/"/g,'&quot;')}" placeholder="Name" maxlength="80" style="flex:1">
+      <input type="text" data-rec-role value="${(data?.role||'').replace(/"/g,'&quot;')}" placeholder="Role/Title (optional)" maxlength="80" style="flex:1">
+    </div>
+    <textarea data-rec-text placeholder="Recommendation (max 500 chars)" maxlength="500" style="width:100%;min-height:60px;margin-bottom:8px;resize:vertical">${(data?.text||'').replace(/</g,'&lt;')}</textarea>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <input type="text" data-rec-slug value="${(data?.slug||'').replace(/"/g,'&quot;')}" placeholder="Profile slug (optional)" maxlength="80" style="flex:1">
+      <button type="button" class="remove-entry" onclick="document.getElementById('rec-${id}')?.remove()">×</button>
+    </div>
+  `;
+  list.appendChild(entry);
+}
+if (document.getElementById('e-addRecommendBtn')) {
+  document.getElementById('e-addRecommendBtn').addEventListener('click', () => eAddRecommendEntry());
+}
+
+function eCollectRecommendations() {
+  const entries = document.querySelectorAll('#e-recommendList .entry-row');
+  const result = [];
+  entries.forEach(entry => {
+    const name = entry.querySelector('[data-rec-name]')?.value.trim();
+    const role = entry.querySelector('[data-rec-role]')?.value.trim();
+    const text = entry.querySelector('[data-rec-text]')?.value.trim();
+    const slug = entry.querySelector('[data-rec-slug]')?.value.trim() || '';
+    if (text && name) result.push({ text, name, role, slug });
+  });
+  return JSON.stringify(result);
+}
+
+// ─── Booking Email entries ───
+function eAddBookingEmailEntry(data) {
+  const list = document.getElementById('e-bookingEmailsList');
+  if (!list) return;
+  const id = Date.now() + Math.random();
+  const entry = document.createElement('div');
+  entry.className = 'entry-row';
+  entry.id = 'be-' + id;
+  entry.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:center;">
+      <input type="text" data-be-label value="${(data?.label||'').replace(/"/g,'&quot;')}" placeholder="Label (e.g. Booking, Asia)" maxlength="60" style="flex:1">
+      <input type="email" data-be-email value="${(data?.email||'').replace(/"/g,'&quot;')}" placeholder="email@example.com" maxlength="120" style="flex:2">
+      <button type="button" class="remove-entry" onclick="document.getElementById('be-${id}')?.remove()">×</button>
+    </div>
+  `;
+  list.appendChild(entry);
+}
+
+function eCollectBookingEmails() {
+  const list = document.getElementById('e-bookingEmailsList');
+  if (!list) return '[]';
+  const entries = list.querySelectorAll('.entry-row');
+  const result = [];
+  entries.forEach(entry => {
+    const label = entry.querySelector('[data-be-label]')?.value.trim();
+    const email = entry.querySelector('[data-be-email]')?.value.trim();
+    if (email) result.push({ label: label || '', email });
+  });
+  return JSON.stringify(result);
+}
+
 // ─── Save ───
 document.getElementById('saveBtn').addEventListener('click', async () => {
   const btn = document.getElementById('saveBtn');
@@ -1461,6 +1556,11 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     featLink2Label: document.getElementById('e-featLink2Label')?.value.trim() || '',
     featLink2Url: document.getElementById('e-featLink2Url')?.value.trim() || '',
     featLink2Img: imageData.featLink2Img || '',
+    city: document.getElementById('e-city')?.value.trim() || '',
+    bgImage: imageData.bgImage || '',
+    bookingEmails: eCollectBookingEmails(),
+    recommendVisible: document.getElementById('e-recommendVisible')?.checked ? '1' : '0',
+    recommendations: eCollectRecommendations(),
     updatedAt: new Date().toISOString()
   };
 
@@ -1540,5 +1640,19 @@ function eSwitchDesignPreview(num) {
   });
 }
 </script>
+
+<!-- Google Translate -->
+<script>
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'en,ja,zh-CN,zh-TW,ko,es,fr,de,pt,th,vi,id,ar,ru',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      autoDisplay: false
+    }, 'google_translate_element');
+  }
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<div style="text-align:center;padding:24px 0 16px;font-size:11px;color:#666;letter-spacing:0.5px;">Powered by <a href="https://www.thirdkagura.com" target="_blank" style="color:#666;text-decoration:none;">THIRD KAGURA</a> <a href="https://www.instagram.com/third_kagura_pty_ltd/" target="_blank" style="color:#666;text-decoration:none;vertical-align:middle;margin-left:6px;display:inline-block;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a></div>
 </body>
 </html>
