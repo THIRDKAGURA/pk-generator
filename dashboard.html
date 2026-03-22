@@ -8,7 +8,7 @@
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --bg:#000000; --surface:#141414; --border:#2a2a2a; --border-focus:#9aa3b0;
+      --bg:#000000; --surface:#141414; --border:#2a2a2a; --border-focus:#9aa3b
       --gold:#9aa3b0; --gold-dim:rgba(154,163,176,0.15);
       --text:#f0f0f0; --text-dim:#888; --text-muted:#555;
       --error:#e74c3c; --error-bg:rgba(231,76,60,0.1);
@@ -804,7 +804,7 @@ if (resetToken) {
         errEl.textContent = result.error;
         errEl.style.display = 'block';
       } else {
-        document.getElementById('newPasswordForm').innerHTML = '<p style="color:#4caf50;text-align:center;margin-top:24px">Password set successfully! <a href="dashboard.html" style="color:var(--gold);text-decoration:none">Sign in now</a></p>';
+        document.getElementById('newPasswordForm').innerHTML = '<p style="color:#4caf50;text-align:center;margin-top:24px">Password set successfully! <a href="index.html" style="color:var(--gold);text-decoration:none">Sign in now</a></p>';
       }
     } catch (e) {
       errEl.textContent = 'Connection error';
@@ -1584,7 +1584,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
   } catch(e) {
     if (e.message && (e.message.includes('expired') || e.message.includes('Invalid or expired'))) {
       showToast('Session expired. Please log in again.', 'error');
-      setTimeout(() => { currentToken = null; showView('loginView'); }, 2000);
+      setTimeout(() => { currentToken = null; showView('authView'); }, 2000);
     } else {
       showToast('Error: ' + (e.message || 'Save failed'), 'error');
     }
