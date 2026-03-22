@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="address=no, telephone=no">
   <title>THIRD KAGURA — Artist Profile</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -49,16 +50,16 @@
     /* ====== SHARED HERO TEXT ====== */
     .hero-name { font-family:'Bebas Neue',sans-serif; font-size:44px; font-weight:800; letter-spacing:1px; display:inline-flex; align-items:center; gap:10px; justify-content:center; line-height:1.1; }
     body.pat2 .hero-name, body.pat3bg .hero-name { text-shadow:0 2px 20px rgba(0,0,0,0.8); }
-    .hero-icon { width:20px; height:20px; opacity:0.55; color:var(--text); cursor:pointer; transition:opacity 0.2s; }
+    .hero-icon { width:28px; height:28px; opacity:0.55; color:var(--text); cursor:pointer; transition:opacity 0.2s; }
     .hero-icon:hover { opacity:1; }
     .hero-subtitle { font-size:12px; color:var(--text-dim); margin-top:7px; margin-bottom:5px; letter-spacing:1.5px; text-transform:uppercase; }
     body.pat2 .hero-subtitle, body.pat3bg .hero-subtitle { text-shadow:0 1px 8px rgba(0,0,0,0.6); }
-    .hero-roles { font-size:11px; color:var(--accent); letter-spacing:2px; font-weight:600; text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+    .hero-roles { font-size:13px; color:var(--accent); letter-spacing:2.5px; font-weight:600; text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
     .hero-agency-line { margin-top:4px; text-align:center; }
-    .hero-agency { font-size:10px; font-weight:500; color:var(--text-dim); letter-spacing:0.5px; text-transform:uppercase; text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:1px; }
+    .hero-agency { font-size:12px; font-weight:500; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; text-decoration:none; border-bottom:none; padding-bottom:0; }
     a.hero-agency:hover { color:var(--text); border-bottom-color:rgba(255,255,255,0.4); }
     .genre-tags { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; }
-    .genre-tag { padding:3px 14px; border:1px solid rgba(102,102,102,0.45); border-radius:20px; font-size:10px; color:var(--accent); letter-spacing:0.5px; font-weight:500; background:rgba(0,0,0,0.35); }
+    .genre-tag { padding:5px 16px; border:1px solid rgba(102,102,102,0.45); border-radius:20px; font-size:12px; color:var(--accent); letter-spacing:0.5px; font-weight:500; background:rgba(0,0,0,0.35); }
 
     /* ====== RECOMMEND CAROUSEL ====== */
     .recommend-section { padding:10px 20px 8px; max-width:480px; margin:0 auto; position:relative; z-index:2; overflow:hidden; }
@@ -290,6 +291,7 @@ function getUrlParam(name) {
 function esc(s) { const d = document.createElement('div'); d.textContent = String(s||''); return d.innerHTML; }
 function jp(s) { try { return JSON.parse(s); } catch(e) { return null; } }
 function formatDate(s) { try { const d=new Date(s); const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear(); } catch(e){return s;} }
+function formatYearMonth(s) { if (!s) return ''; const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const parts=String(s).split('-'); if(parts.length===2){const mi=parseInt(parts[1],10)-1; return (mi>=0&&mi<12?m[mi]+' ':'')+parts[0];} return s; }
 
 // Fee privacy: §PV§{base64} = private, plain text = public
 const FEE_PRIVATE_PREFIX = '§PV§';
@@ -471,7 +473,7 @@ function renderProfile(d) {
 
     if (track && dots) {
       shuffled.forEach((r, i) => {
-        const profileUrl = r.slug ? 'view.html?id=' + encodeURIComponent(r.slug) : '#';
+        const profileUrl = r.slug ? '/presskit/' + r.slug : '#';
         const av = '<div class="recommend-avatar">'+SVG.person+'</div>';
         track.innerHTML +=
           '<div class="recommend-slide">' +
@@ -536,7 +538,7 @@ function renderProfile(d) {
     }
     if (residencies.length) {
       html += '<div class="hist-cat"><div class="hist-cat-label">Resident</div>';
-      residencies.forEach(a => { const p = a.startDate+(a.currentlyRunning?' — Present':(a.endDate?' — '+a.endDate:'')); html += histItem(p, a.venue, a.country); });
+      residencies.forEach(a => { const p = formatYearMonth(a.startDate)+(a.currentlyRunning?' — Present':(a.endDate?' — '+formatYearMonth(a.endDate):'')); html += histItem(p, a.venue, a.country); });
       html += '</div>';
     }
     if (headliners.length) {
