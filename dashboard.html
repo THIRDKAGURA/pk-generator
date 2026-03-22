@@ -107,7 +107,7 @@
     }
     .remove-entry:hover { border-color:var(--error); color:var(--error); }
     .add-entry-btn {
-      display:inline-block; padding:8px 20px; background:transparent;
+      display:inline-block; padding:8px 20px; background:#141414;
       border:1px dashed var(--border); border-radius:var(--radius);
       color:var(--gold); font-family:inherit; font-size:13px; cursor:pointer;
     }
@@ -122,7 +122,7 @@
     .btn:hover { opacity:0.9; }
     .btn:disabled { opacity:0.4; cursor:not-allowed; }
     .btn-primary { background:var(--gold); color:#000; }
-    .btn-secondary { background:transparent; border:1px solid var(--border); color:var(--text-dim); }
+    .btn-secondary { background:#141414; border:1px solid var(--border); color:var(--text-dim); }
     .btn-row { display:flex; gap:12px; justify-content:center; padding-top:16px; }
     .spinner { display:none; width:18px; height:18px; border:2px solid transparent; border-top-color:#000; border-radius:50%; animation:spin 0.6s linear infinite; }
     .btn.loading .spinner { display:inline-block; }
@@ -585,8 +585,8 @@
         <h2 style="font-size:28px;font-weight:700;margin-bottom:12px">Pick your look</h2>
         <div id="e-designSelector" style="display:flex;gap:8px;justify-content:center">
           <button type="button" class="btn e-design-btn active" data-design="1" style="padding:10px 20px;font-size:12px;border:1px solid var(--gold);color:var(--gold);background:var(--gold-dim);border-radius:20px" onclick="eSwitchDesignPreview(1)">Photo</button>
-          <button type="button" class="btn e-design-btn" data-design="2" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="eSwitchDesignPreview(2)">BG</button>
-          <button type="button" class="btn e-design-btn" data-design="3" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="eSwitchDesignPreview(3)">Icon</button>
+          <button type="button" class="btn e-design-btn" data-design="2" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:#141414;border-radius:20px" onclick="eSwitchDesignPreview(2)">BG</button>
+          <button type="button" class="btn e-design-btn" data-design="3" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:#141414;border-radius:20px" onclick="eSwitchDesignPreview(3)">Icon</button>
         </div>
       </div>
 
@@ -595,7 +595,7 @@
       </div>
 
       <div style="display:flex;gap:12px;justify-content:center">
-        <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">EDIT MORE</button>
+        <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);background:#141414;color:var(--text-dim);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">EDIT MORE</button>
         <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('e-previewPhase').style.display='none';document.getElementById('e-actionsPhase').style.display='block'">Use this layout</button>
       </div>
     </div>
@@ -613,13 +613,13 @@
         <div style="display:flex;flex-direction:column;gap:10px">
           <button type="button" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;font-weight:600" onclick="window.open(document.getElementById('e-doneUrl').value,'_blank')">View press kit</button>
           <div style="display:flex;gap:10px">
-            <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px;font-weight:500" onclick="navigator.clipboard.writeText(document.getElementById('e-doneUrl').value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy link',2000)">Copy link</button>
-            <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);color:var(--text);font-size:13px;font-weight:500" onclick="var u=document.getElementById('e-doneUrl').value;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
+            <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);background:#141414;color:var(--text);font-size:13px;font-weight:500" onclick="navigator.clipboard.writeText(document.getElementById('e-doneUrl').value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy link',2000)">Copy link</button>
+            <button type="button" class="btn" style="flex:1;padding:12px;border:1px solid var(--border);background:#141414;color:var(--text);font-size:13px;font-weight:500" onclick="var u=document.getElementById('e-doneUrl').value;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
           </div>
         </div>
       </div>
 
-      <button type="button" class="btn" style="padding:12px 36px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">Back to editing</button>
+      <button type="button" class="btn" style="padding:12px 36px;border:1px solid var(--border);background:#141414;color:var(--text-dim);font-size:13px" onclick="showView('editView');window.scrollTo({top:0,behavior:'smooth'})">Back to editing</button>
     </div>
   </div>
 
