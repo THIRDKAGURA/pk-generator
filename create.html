@@ -10,13 +10,13 @@
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #0a0a0a;
+      --bg: #000000;
       --surface: #141414;
       --surface-hover: #1a1a1a;
       --border: #2a2a2a;
-      --border-focus: #c4a265;
-      --gold: #c4a265;
-      --gold-dim: rgba(196, 162, 101, 0.15);
+      --border-focus: #9aa3b0;
+      --gold: #9aa3b0;
+      --gold-dim: rgba(154, 163, 176, 0.15);
       --text: #f0f0f0;
       --text-dim: #888;
       --text-muted: #555;
@@ -30,6 +30,7 @@
     }
 
     html { scroll-behavior: smooth; }
+    html, body { max-width: 100vw; overflow-x: hidden; }
     body {
       font-family: 'Inter', -apple-system, sans-serif;
       background: var(--bg);
@@ -41,13 +42,14 @@
     /* ─── Layout ─── */
     .page-header {
       text-align: center;
-      padding: 48px 24px 24px;
-      border-bottom: 1px solid var(--border);
+      padding: 40px 24px 24px;
     }
-    .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
-    .page-header p { color: var(--text-dim); font-size: 14px; }
+    .page-header h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 6px; }
+    .page-header p { color: var(--text-dim); font-size: 13px; }
 
-    .form-container { max-width: 720px; margin: 0 auto; padding: 32px 24px 64px; }
+    .form-container {
+      max-width: 520px; margin: 0 auto; padding: 0 24px 64px;
+    }
 
     /* ─── Steps ─── */
     .step { display: none; }
@@ -56,13 +58,13 @@
     .step-indicator {
       display: flex;
       justify-content: center;
-      gap: 12px;
-      padding: 20px 0;
-      margin-bottom: 8px;
+      gap: 8px;
+      padding: 16px 0;
+      margin-bottom: 4px;
     }
     .step-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
+      width: 32px; height: 3px;
+      border-radius: 2px;
       background: var(--border);
       transition: background var(--transition);
     }
@@ -71,17 +73,17 @@
 
     .step-header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
-    .step-header h2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-    .step-header p { font-size: 13px; color: var(--text-dim); }
+    .step-header h2 { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+    .step-header p { font-size: 12px; color: var(--text-muted); }
 
     /* ─── Sections ─── */
-    .form-section { margin-bottom: 28px; }
+    .form-section { margin-bottom: 24px; }
     .form-section h3 {
-      font-size: 13px; font-weight: 600; color: var(--gold);
-      text-transform: uppercase; letter-spacing: 1px;
-      margin-bottom: 16px; padding-bottom: 6px;
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1.5px;
+      margin-bottom: 14px; padding-bottom: 6px;
       border-bottom: 1px solid var(--border);
     }
 
@@ -95,7 +97,7 @@
     .field .hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
     input[type="text"], input[type="email"], input[type="url"],
-    input[type="color"], select, textarea {
+    input[type="password"], input[type="color"], select, textarea {
       width: 100%; padding: 10px 14px;
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); color: var(--text);
@@ -120,8 +122,8 @@
     .bio-counter.under { color: var(--error); }
     .bio-counter.ok { color: var(--success); }
 
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    @media (max-width: 540px) { .field-row { grid-template-columns: 1fr; } }
+    .field-row { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 541px) { .field-row { grid-template-columns: 1fr 1fr; } }
 
     /* ─── Genre multi-select ─── */
     .genre-grid {
@@ -189,9 +191,12 @@
     }
     .entry-row .field { margin-bottom: 0; }
     .entry-row label { font-size: 12px; }
-    .gig-grid { grid-template-columns: 1fr auto auto 1fr auto; }
-    .link-grid { grid-template-columns: 140px 1fr auto; }
-    @media (max-width: 640px) { .gig-grid, .link-grid { grid-template-columns: 1fr; } }
+    .gig-grid { grid-template-columns: 1fr; }
+    .link-grid { grid-template-columns: 1fr; }
+    @media (min-width: 641px) {
+      .gig-grid { grid-template-columns: 1fr auto auto 1fr auto; }
+      .link-grid { grid-template-columns: 140px 1fr auto; }
+    }
     .remove-entry {
       background: none; border: 1px solid var(--border); color: var(--text-muted);
       border-radius: var(--radius); width: 36px; height: 36px;
@@ -211,9 +216,9 @@
     /* ─── Buttons ─── */
     .btn-row { display: flex; gap: 12px; justify-content: center; padding-top: 16px; }
     .btn {
-      display: inline-block; padding: 12px 40px;
+      display: inline-block; padding: 13px 40px;
       border: none; border-radius: var(--radius);
-      font-family: inherit; font-size: 14px; font-weight: 600;
+      font-family: inherit; font-size: 13px; font-weight: 600;
       letter-spacing: 0.5px; cursor: pointer; transition: opacity var(--transition);
     }
     .btn:hover { opacity: 0.9; }
@@ -262,15 +267,32 @@
       margin-top: 12px; cursor: pointer;
     }
     .skip-link:hover { color: var(--gold); text-decoration: underline; }
+    /* ─── Google Translate ─── */
+    .gt-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: #111; border-bottom: 1px solid var(--border);
+      padding: 6px 16px; text-align: right;
+    }
+    .gt-bar select {
+      background: #000; color: var(--text-dim); border: 1px solid var(--border);
+      border-radius: 4px; padding: 4px 8px; font-size: 12px; font-family: inherit;
+      cursor: pointer; outline: none;
+    }
+    .gt-bar select:focus { border-color: var(--gold); }
+    body { padding-top: 40px; }
+    .goog-te-banner-frame, .skiptranslate { display: none !important; }
+    body { top: 0 !important; }
   </style>
 </head>
 <body>
 
+<div class="gt-bar">
+  <div id="google_translate_element"></div>
+</div>
+
 <header class="page-header">
   <h1>Create Your Press Kit</h1>
-  <p>Takes about 30 seconds. You can add more details anytime later.</p>
-  <p style="font-size:13px;margin-top:12px;color:var(--text-dim)">Already have an account?</p>
-  <a href="dashboard.html" style="display:inline-block;margin-top:8px;padding:8px 24px;border:1px solid var(--gold);border-radius:20px;color:var(--gold);font-size:12px;text-decoration:none;letter-spacing:0.5px;transition:background 0.2s,color 0.2s" onmouseover="this.style.background='var(--gold)';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='var(--gold)'">Sign in to edit</a>
+  <p>Takes about 30 seconds. Add more details anytime.</p>
 </header>
 
 <main class="form-container">
@@ -287,9 +309,8 @@
     <!-- ═══════════════════════════════════════ -->
     <div class="step active" id="step1">
       <div class="step-header">
-        <p style="font-size:11px;color:var(--text-muted);letter-spacing:1px;margin-bottom:12px">STEP 1 → Basics &nbsp;|&nbsp; STEP 2 → Profile &nbsp;|&nbsp; STEP 3 → Design</p>
-        <h2>Step 1: The basics</h2>
-        <p>Your name, location, and login info.</p>
+        <h2>Basics</h2>
+        <p>Name, location, and login info</p>
       </div>
 
       <div class="validation-summary" id="validationSummary1">
@@ -312,6 +333,11 @@
       </div>
 
       <div class="field">
+        <label for="city">City <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+        <input type="text" id="city" name="city" placeholder="e.g., Sydney" maxlength="60">
+      </div>
+
+      <div class="field">
         <label>Role <span class="req">*</span></label>
         <div class="genre-grid" id="roleGrid" style="margin-top:6px">
           <div class="genre-chip" data-role="DJ">DJ</div>
@@ -324,12 +350,13 @@
       </div>
 
       <div class="field">
-        <label for="slug">Your Profile ID <span class="req">*</span></label>
+        <label for="slug">Choose your Creator ID <span class="req">*</span></label>
         <div style="display:flex;gap:8px;margin-top:6px;">
           <input type="text" id="slug" name="slug" maxlength="30" placeholder="auto-generated-from-name" style="flex:1;">
           <button type="button" id="generateSlugBtn" style="padding:8px 12px;background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);cursor:pointer;font-size:13px;white-space:nowrap;">Auto-generate</button>
         </div>
-        <div class="hint">This is your login ID and public profile URL. 3-30 characters, lowercase letters, numbers, hyphens, and underscores only.</div>
+        <div class="hint">This becomes your profile URL and login ID. 3-30 characters, lowercase letters, numbers, hyphens, and underscores only.</div>
+        <div id="slugPreview" style="margin-top:6px;font-size:12px;color:var(--text-muted);font-family:monospace;word-break:break-all;display:none;">presskit.thirdkagura.com/view.html?id=<span id="slugPreviewId"></span></div>
         <div id="slugStatus" style="margin-top:8px;font-size:13px;display:none;"></div>
         <div class="error-msg" id="err-slug"></div>
       </div>
@@ -362,8 +389,8 @@
     <!-- ═══════════════════════════════════════ -->
     <div class="step" id="step2">
       <div class="step-header">
-        <h2>Step 2: Build your press kit</h2>
-        <p>Photos, bio, music, gigs — everything that makes you stand out. You can edit and add more anytime after publishing.</p>
+        <h2>Profile</h2>
+        <p>Photos, bio, music, gigs. Edit anytime after publishing.</p>
       </div>
 
       <!-- Genre -->
@@ -376,13 +403,14 @@
         </div>
       </section>
 
-      <!-- Primary Sound Link -->
+      <!-- Primary Links -->
       <section class="form-section">
         <div class="field">
-          <label for="primarySoundLink">Primary Sound Link <span class="req">*</span></label>
-          <input type="url" id="primarySoundLink" name="primarySoundLink" placeholder="https://soundcloud.com/... or any music link">
-          <div class="hint">Your best mix or track — any platform.</div>
-          <div class="error-msg" id="err-primarySoundLink">A sound link is required</div>
+          <label>Primary Links <span class="req">*</span></label>
+          <div class="hint" style="margin-bottom:8px">SoundCloud, Mixcloud, Spotify, Apple Music, YouTube.</div>
+          <div id="primaryLinksContainer"></div>
+          <button type="button" class="add-entry-btn" id="addPrimaryLinkBtn">+ Add link</button>
+          <div class="error-msg" id="err-primarySoundLink">At least one link is required</div>
         </div>
       </section>
 
@@ -399,7 +427,7 @@
       <section class="form-section">
         <div class="field">
           <label for="bio">Bio <span class="req">*</span></label>
-          <textarea id="bio" name="bio" maxlength="1000" placeholder="Tell us about yourself and your sound"></textarea>
+          <textarea id="bio" name="bio" maxlength="1000" placeholder="Tell us about yourself"></textarea>
           <div class="bio-counter" id="bioCounter">0 / 1000</div>
           <div class="error-msg" id="err-bio">Bio must be at least 100 characters</div>
         </div>
@@ -447,12 +475,12 @@
         </div>
       </section>
 
-      <!-- Activity -->
+      <!-- History / Activity -->
       <section class="form-section" style="border-bottom:none;padding-bottom:0">
-        <h3>Activity</h3>
+        <h3>History / Activity</h3>
         <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
           <label class="genre-chip" id="actType-residency" style="cursor:pointer"><input type="checkbox" value="residency" class="act-type-cb" style="display:none"> Residency</label>
-          <label class="genre-chip" id="actType-clubGig" style="cursor:pointer"><input type="checkbox" value="clubGig" class="act-type-cb" style="display:none"> Club Gig</label>
+          <label class="genre-chip" id="actType-clubGig" style="cursor:pointer"><input type="checkbox" value="clubGig" class="act-type-cb" style="display:none"> Club</label>
           <label class="genre-chip" id="actType-festival" style="cursor:pointer"><input type="checkbox" value="festival" class="act-type-cb" style="display:none"> Festival</label>
           <label class="genre-chip" id="actType-live" style="cursor:pointer"><input type="checkbox" value="live" class="act-type-cb" style="display:none"> Live</label>
           <label class="genre-chip" id="actType-media" style="cursor:pointer"><input type="checkbox" value="media" class="act-type-cb" style="display:none"> Media</label>
@@ -465,9 +493,9 @@
           <button type="button" class="add-entry-btn" id="addResidencyBtn">+ Add residency</button>
         </div>
         <div id="clubGigSection" style="display:none;margin-top:16px">
-          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Club Gig</h4>
+          <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Club</h4>
           <div id="clubGigContainer"></div>
-          <button type="button" class="add-entry-btn" id="addClubGigBtn">+ Add club gig</button>
+          <button type="button" class="add-entry-btn" id="addClubGigBtn">+ Add club</button>
         </div>
         <div id="festivalSection" style="display:none;margin-top:16px">
           <h4 style="font-size:12px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">Festival</h4>
@@ -542,48 +570,16 @@
       <!-- Links + Featured Links -->
       <section class="form-section">
         <h3>Links</h3>
-        <div class="hint" style="margin-bottom:12px">SoundCloud, Spotify, website, or anything else.</div>
+        <div class="hint" style="margin-bottom:12px;font-size:13px">Any link — SNS (other than Instagram), streaming, portfolio, website, etc.</div>
         <div id="linksContainer"></div>
         <button type="button" class="add-entry-btn" id="addLinkBtn">+ Add a link</button>
 
-        <div style="margin-top:28px">
-          <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px">Add up to 2 links with a custom banner image.</p>
-          <div id="featuredLinksContainer">
-            <div id="featuredLink1" style="margin-bottom:20px">
-              <div class="field"><label>Title</label><input type="text" id="featLink1Label" placeholder="e.g. My Latest Mix"></div>
-              <div class="field"><label>URL</label><input type="url" id="featLink1Url" placeholder="https://..."></div>
-              <div class="field">
-                <label>Banner Image</label>
-                <div class="image-upload" id="drop-featLink1Img" style="height:80px">
-                  <input type="file" accept="image/*" data-field="featLink1Img">
-                  <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
-                  <img class="preview-img" id="preview-featLink1Img" alt="Featured link 1 preview">
-                  <button type="button" class="remove-btn" data-field="featLink1Img">×</button>
-                </div>
-              </div>
-            </div>
-            <div id="featuredLink2" style="display:none;margin-bottom:20px">
-              <div style="display:flex;justify-content:flex-end;margin-bottom:4px"><button type="button" class="remove-entry" id="removeFeatLink2" style="font-size:18px">×</button></div>
-              <div class="field"><label>Title</label><input type="text" id="featLink2Label" placeholder="e.g. Event Page"></div>
-              <div class="field"><label>URL</label><input type="url" id="featLink2Url" placeholder="https://..."></div>
-              <div class="field">
-                <label>Banner Image</label>
-                <div class="image-upload" id="drop-featLink2Img" style="height:80px">
-                  <input type="file" accept="image/*" data-field="featLink2Img">
-                  <span style="color:var(--text-muted);font-size:12px">Drop image or click to upload (16:5 landscape)</span>
-                  <img class="preview-img" id="preview-featLink2Img" alt="Featured link 2 preview">
-                  <button type="button" class="remove-btn" data-field="featLink2Img">×</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <button type="button" class="add-entry-btn" id="addFeatLinkBtn" style="margin-top:8px">+ Add a link</button>
-        </div>
       </section>
 
       <!-- Fees + Riders -->
       <section class="form-section">
-        <h3>Fees <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Private — never shown publicly)</span></h3>
+        <h3>Fees</h3>
+        <div class="hint" style="margin-bottom:14px;font-size:12px;line-height:1.5">This data is collected for our matching service. If you check "Keep private", your fee data will be encrypted and never displayed publicly.</div>
         <div class="field" style="margin-bottom:14px">
           <label for="feeCurrency">Currency</label>
           <select id="feeCurrency" name="feeCurrency" style="width:auto;min-width:160px">
@@ -630,13 +626,18 @@
             <input type="text" id="minimumFee" name="minimumFee" placeholder="Enter amount">
           </div>
         </div>
-        <div class="field" style="margin-top:20px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);cursor:pointer;margin-top:16px">
+          <input type="checkbox" id="feePrivate" style="accent-color:var(--gold)">
+          Keep private — visible only to organizers via matching
+        </label>
+        <hr style="border:none;border-top:1px solid var(--border);margin:24px 0">
+        <div class="field" style="margin-top:0">
           <label for="techRider">Tech Rider</label>
-          <textarea id="techRider" name="techRider" placeholder="Equipment requirements, setup preferences..."></textarea>
+          <textarea id="techRider" name="techRider" placeholder="CDJ model, mixer preference, monitoring, lighting, fog machine..."></textarea>
         </div>
         <div class="field">
           <label for="hospRider">Hospitality Rider</label>
-          <textarea id="hospRider" name="hospRider" placeholder="Drinks, food, travel requirements..."></textarea>
+          <textarea id="hospRider" name="hospRider" placeholder="Accommodation, transport, meals, backstage needs..."></textarea>
         </div>
       </section>
 
@@ -645,13 +646,25 @@
         <h3>Contact Information <span style="font-size:11px;font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0">(Shown on your profile)</span></h3>
         <div class="field-row">
           <div class="field">
-            <label for="bookingEmail">Booking Email</label>
-            <input type="email" id="bookingEmail" name="bookingEmail" placeholder="booking@example.com">
+            <label>Booking Emails <span style="font-weight:400;color:var(--text-muted);">(add multiple if needed)</span></label>
+            <div id="bookingEmailsList" style="margin-bottom:10px;"></div>
+            <button type="button" onclick="addBookingEmailEntry()" style="background:transparent;border:1px dashed var(--gold);color:var(--gold);padding:8px 12px;border-radius:var(--radius);font-size:12px;cursor:pointer;">+ Add Email</button>
           </div>
           <div class="field">
             <label for="mgmtEmail">Management Email</label>
             <input type="email" id="mgmtEmail" name="mgmtEmail" placeholder="mgmt@example.com">
           </div>
+        </div>
+        <div class="field">
+          <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <input type="checkbox" id="recommendVisible" name="recommendVisible">
+            <span>Show Recommend section on profile</span>
+          </label>
+        </div>
+        <div class="field">
+          <label>Recommendations <span style="font-weight:400;color:var(--text-muted);">(optional - from fans, collaborators, etc.)</span></label>
+          <div id="recommendList" style="margin-bottom:10px;"></div>
+          <button type="button" onclick="addRecommendEntry()" style="background:transparent;border:1px dashed var(--gold);color:var(--gold);padding:8px 12px;border-radius:var(--radius);font-size:12px;cursor:pointer;">+ Add Recommendation</button>
         </div>
         <div class="field-row">
           <div class="field">
@@ -711,7 +724,7 @@
       <div class="btn-row">
         <button type="button" class="btn btn-secondary" id="backBtn">BACK</button>
         <button type="submit" class="btn btn-primary" id="submitBtn">
-          <span class="btn-text">CREATE PRESS KIT</span>
+          <span class="btn-text">SELECT DESIGN</span>
           <span class="spinner"></span>
         </button>
       </div>
@@ -724,8 +737,8 @@
       <!-- Phase 1: Preview -->
       <div id="donePreview" style="padding:40px 0">
         <div style="text-align:center;margin-bottom:16px">
-          <h2 style="font-size:28px;font-weight:700;margin-bottom:12px">Pick your look</h2>
-          <!-- Design pattern selector -->
+          <h2 style="font-size:17px;font-weight:600;margin-bottom:6px">Choose your profile layout</h2>
+          <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px">This controls how your public profile is displayed.</p>
           <div id="designSelector" style="display:flex;gap:8px;justify-content:center">
             <button type="button" class="btn design-select-btn active" data-design="1" style="padding:10px 20px;font-size:12px;border:1px solid var(--gold);color:var(--gold);background:var(--gold-dim);border-radius:20px" onclick="switchDesignPreview(1)">Photo</button>
             <button type="button" class="btn design-select-btn" data-design="2" style="padding:10px 20px;font-size:12px;border:1px solid var(--border);color:var(--text-dim);background:transparent;border-radius:20px" onclick="switchDesignPreview(2)">BG</button>
@@ -738,34 +751,34 @@
         </div>
 
         <div style="display:flex;gap:12px;justify-content:center">
-          <button type="button" class="btn" style="padding:12px 32px;border:1px solid var(--border);color:var(--text-dim);font-size:13px" onclick="window.open('dashboard.html','_self')">EDIT MORE</button>
-          <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('donePreview').style.display='none';document.getElementById('doneActions').style.display='block'">Use this layout</button>
+          <button type="button" class="btn btn-secondary" style="padding:12px 32px;font-size:13px" onclick="document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById('step2').classList.add('active');window.scrollTo({top:0})">Back to editing</button>
+          <button type="button" class="btn btn-primary" style="padding:12px 48px;font-size:13px" onclick="document.getElementById('donePreview').style.display='none';document.getElementById('doneActions').style.display='block'">Apply this layout</button>
         </div>
       </div>
 
       <!-- Phase 2: Actions (after confirming preview) -->
       <div id="doneActions" style="display:none;text-align:center;padding:60px 0 40px">
         <div style="font-size:40px;margin-bottom:16px">🔗</div>
-        <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">Your press kit is live</h2>
-        <p style="color:var(--text-dim);font-size:14px;margin-bottom:32px">Share it with the world.</p>
+        <h2 style="font-size:22px;font-weight:700;margin-bottom:8px">Your profile is live</h2>
+        <p style="color:var(--text-dim);font-size:14px;margin-bottom:32px">Your page is ready to share.</p>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;text-align:left;margin-bottom:24px">
           <input type="text" id="doneUrl" readonly style="width:100%;background:var(--bg);cursor:text;font-size:13px;margin-bottom:12px">
           <div style="display:flex;gap:8px">
-            <button type="button" class="btn btn-primary" style="flex:1;padding:10px;font-size:13px" onclick="window.open(document.getElementById('doneUrl').value+'&design='+selectedDesign,'_blank')">View press kit</button>
-            <button type="button" class="btn" style="flex:1;padding:10px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="var u=document.getElementById('doneUrl').value+'&design='+selectedDesign;navigator.clipboard.writeText(u);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy link',2000)">Copy link</button>
-            <button type="button" class="btn" style="flex:1;padding:10px;border:1px solid var(--border);color:var(--text);font-size:13px" onclick="var u=document.getElementById('doneUrl').value+'&design='+selectedDesign;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
+            <button type="button" class="btn btn-primary" style="flex:1;padding:10px;font-size:13px" onclick="window.open(document.getElementById('doneUrl').value+'&design='+selectedDesign,'_blank')">View profile</button>
+            <button type="button" class="btn btn-secondary" style="flex:1;padding:10px;font-size:13px" onclick="var u=document.getElementById('doneUrl').value+'&design='+selectedDesign;navigator.clipboard.writeText(u);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy link',2000)">Copy link</button>
+            <button type="button" class="btn btn-secondary" style="flex:1;padding:10px;font-size:13px" onclick="var u=document.getElementById('doneUrl').value+'&design='+selectedDesign;if(navigator.share)navigator.share({title:'Press Kit',url:u});else{navigator.clipboard.writeText(u);this.textContent='Copied!';setTimeout(()=>this.textContent='Share',2000)}">Share</button>
           </div>
         </div>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:left;margin-bottom:32px">
           <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Edit anytime</div>
           <p style="font-size:13px;color:var(--text-dim);line-height:1.6">
-            Sign in to <a href="dashboard.html" style="color:var(--gold)">the dashboard</a> with your ID and password to update your press kit.
+            Sign in to <a href="dashboard.html" style="color:var(--gold)">the dashboard</a> with your ID and password to update your profile.
           </p>
         </div>
 
-        <a href="dashboard.html" class="btn btn-primary" style="text-decoration:none;padding:14px 48px">GO TO DASHBOARD</a>
+        <a href="dashboard.html" class="btn btn-primary" style="text-decoration:none;padding:14px 48px;display:inline-block">GO TO DASHBOARD</a>
       </div>
     </div>
 
@@ -781,6 +794,19 @@
 // ═══════════════════════════════════════════════════════════
 
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyNJ5Wk7frGflBAmZ_2gLu3NrDOKf1g_WYT6sOW-rHXQuCg6FzWwLaoT7pZOOZyXee2/exec';
+
+// ─── Invite Gate: block access without valid invite parameter ───
+(function() {
+  var inviteCode = new URLSearchParams(window.location.search).get('invite');
+  if (!inviteCode || !/^[0-9]{8,10}$/.test(inviteCode)) {
+    document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:Inter,sans-serif;color:#f0f0f0;padding:24px;text-align:center;">' +
+      '<h1 style="font-size:18px;font-weight:600;margin-bottom:12px;">Invitation Required</h1>' +
+      '<p style="color:#888;font-size:13px;margin-bottom:24px;">You need a valid invite code to create a Press Kit.</p>' +
+      '<a href="index.html" style="color:#9aa3b0;text-decoration:none;font-weight:500;font-size:13px;">Back to Home</a>' +
+      '</div>';
+    throw new Error('No invite code');
+  }
+})();
 
 // ─── Country List ───
 const COUNTRIES = [
@@ -887,11 +913,10 @@ const IMAGE_SPECS = {
   profilePhoto:  { maxWidth: 1200, quality: 0.85, aspect: 3/4 },
   perfPhoto:     { maxWidth: 1920, quality: 0.85, aspect: 16/9 },
   artistLogo:    { maxWidth: 200,  quality: 0.8,  aspect: 1/1 },
-  featLink1Img:  { maxWidth: 1200, quality: 0.85, aspect: 16/5 },
-  featLink2Img:  { maxWidth: 1200, quality: 0.85, aspect: 16/5 }
+  bgImage:       { maxWidth: 1920, quality: 0.8 },
 };
 
-const imageData = { profilePhoto: null, perfPhoto: null, artistLogo: null, featLink1Img: null, featLink2Img: null };
+const imageData = { profilePhoto: null, perfPhoto: null, artistLogo: null, bgImage: null };
 let isSubmitting = false;
 
 function processImage(file, spec) {
@@ -1058,7 +1083,7 @@ function addResidencyEntry() {
 }
 document.getElementById('addResidencyBtn').addEventListener('click', addResidencyEntry);
 
-// Club Gig entry
+// Club entry
 function addClubGigEntry() {
   clubGigCounter++;
   const id = clubGigCounter;
@@ -1071,7 +1096,7 @@ function addClubGigEntry() {
       <button type="button" class="remove-entry" onclick="document.getElementById('clubgig-${id}')?.remove()">×</button>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:8px">
-      <div class="field" style="flex:1"><label>Venue <span class="req">*</span></label><input type="text" data-cg="${id}" data-cg-field="venue" placeholder="e.g. Warehouse Club"></div>
+      <div class="field" style="flex:1"><label>Venue <span class="req">*</span></label><input type="text" data-cg="${id}" data-cg-field="venue" placeholder="e.g. WOMB Tokyo"></div>
       <div class="field" style="flex:1">
         <label>Role</label>
         <div style="display:flex;gap:10px;padding-top:6px">
@@ -1233,11 +1258,11 @@ function addUpcomingEntry() {
   div.className = 'entry-row'; div.id = 'upcoming-' + id; div.style.display = 'block';
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
-      <div class="field" style="flex:1"><label>Event Name <span class="req">*</span></label><input type="text" data-up="${id}" data-up-field="name" placeholder="e.g. NYE Rave"></div>
+      <div class="field" style="flex:1"><label>Event Name <span class="req">*</span></label><input type="text" data-up="${id}" data-up-field="name" placeholder="e.g. Summer Festival 2026"></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('upcoming-${id}')?.remove()">×</button>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:8px">
-      <div class="field" style="flex:1"><label>Venue <span class="req">*</span></label><input type="text" data-up="${id}" data-up-field="venue" placeholder="e.g. Warehouse Club"></div>
+      <div class="field" style="flex:1"><label>Venue <span class="req">*</span></label><input type="text" data-up="${id}" data-up-field="venue" placeholder="e.g. Sydney Opera House"></div>
       <div class="field" style="flex:1"><label>Date</label><input type="date" data-up="${id}" data-up-field="date"></div>
     </div>
     <div class="field"><label>Event info / Ticket link</label><input type="url" data-up="${id}" data-up-field="ticketUrl" placeholder="https://..."></div>
@@ -1295,7 +1320,7 @@ function collectActivity() {
     const description = entry.querySelector('[data-res-field="description"]')?.value.trim() || '';
     if (venue) activities.push({ type: 'residency', venue, country, startDate, endDate, currentlyRunning, description });
   });
-  // Club Gigs
+  // Club
   document.querySelectorAll('#clubGigContainer .entry-row').forEach(entry => {
     const eventName = entry.querySelector('[data-cg-field="eventName"]')?.value.trim();
     const venue = entry.querySelector('[data-cg-field="venue"]')?.value.trim() || '';
@@ -1382,6 +1407,62 @@ function collectUpcoming() {
 }
 
 
+// ═══ PRIMARY LINKS ═══
+let primaryLinkCounter = 0;
+const MAX_PRIMARY_LINKS = 3;
+
+function addPrimaryLinkEntry() {
+  const current = document.querySelectorAll('#primaryLinksContainer .entry-row').length;
+  if (current >= MAX_PRIMARY_LINKS) return;
+  primaryLinkCounter++;
+  const id = primaryLinkCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'plink-' + id; div.style.display = 'block';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="flex:1">
+        <select data-plink="${id}" data-plink-field="platform">
+          <option value="">Select platform</option>
+          <option value="soundcloud">SoundCloud</option>
+          <option value="mixcloud">Mixcloud</option>
+          <option value="spotify">Spotify</option>
+          <option value="applemusic">Apple Music</option>
+          <option value="youtube">YouTube</option>
+        </select>
+      </div>
+      <button type="button" class="remove-entry" onclick="removePrimaryLink('plink-${id}')">×</button>
+    </div>
+    <div class="field" style="margin-bottom:4px"><input type="url" data-plink="${id}" data-plink-field="url" placeholder="Paste your link here"></div>
+  `;
+  document.getElementById('primaryLinksContainer').appendChild(div);
+  updatePrimaryLinkBtn();
+}
+
+function removePrimaryLink(elId) {
+  document.getElementById(elId)?.remove();
+  updatePrimaryLinkBtn();
+}
+
+function updatePrimaryLinkBtn() {
+  const current = document.querySelectorAll('#primaryLinksContainer .entry-row').length;
+  const btn = document.getElementById('addPrimaryLinkBtn');
+  btn.style.display = current >= MAX_PRIMARY_LINKS ? 'none' : '';
+}
+
+function collectPrimaryLinks() {
+  const links = [];
+  document.querySelectorAll('#primaryLinksContainer .entry-row').forEach(entry => {
+    const platform = entry.querySelector('[data-plink-field="platform"]')?.value || '';
+    const url = entry.querySelector('[data-plink-field="url"]')?.value.trim() || '';
+    if (platform && url) links.push({ platform, url });
+  });
+  return links;
+}
+
+document.getElementById('addPrimaryLinkBtn').addEventListener('click', addPrimaryLinkEntry);
+// Auto-add first entry
+addPrimaryLinkEntry();
+
 // ═══ LINKS ═══
 let linkCounter = 0;
 
@@ -1409,22 +1490,31 @@ function collectLinks() {
 }
 document.getElementById('addLinkBtn').addEventListener('click', addLinkEntry);
 
-// Featured Link 2 toggle
-document.getElementById('addFeatLinkBtn').addEventListener('click', function() {
-  document.getElementById('featuredLink2').style.display = 'block';
-  this.style.display = 'none';
-});
-document.getElementById('removeFeatLink2').addEventListener('click', function() {
-  document.getElementById('featuredLink2').style.display = 'none';
-  document.getElementById('featLink2Label').value = '';
-  document.getElementById('featLink2Url').value = '';
-  imageData.featLink2Img = null;
-  var prev = document.getElementById('preview-featLink2Img');
-  if (prev) { prev.style.display = 'none'; prev.src = ''; }
-  var rmBtn = document.querySelector('#drop-featLink2Img .remove-btn');
-  if (rmBtn) rmBtn.style.display = 'none';
-  document.getElementById('addFeatLinkBtn').style.display = '';
-});
+
+// ═══ FEE ENCRYPTION ═══
+// Pattern: §PV§{base64} — Private Value marker + Base64 encoded data
+// Matching service: detect §PV§ prefix → decode Base64 → use for comparison
+// Display: detect §PV§ prefix → hide value
+const FEE_PRIVATE_PREFIX = '§PV§';
+
+function encodeFee(value) {
+  if (!value) return '';
+  return FEE_PRIVATE_PREFIX + btoa(unescape(encodeURIComponent(value)));
+}
+
+function decodeFee(encoded) {
+  if (!encoded || !encoded.startsWith(FEE_PRIVATE_PREFIX)) return encoded;
+  try {
+    return decodeURIComponent(escape(atob(encoded.slice(FEE_PRIVATE_PREFIX.length))));
+  } catch(e) { return ''; }
+}
+
+function getFeeValue(fieldId) {
+  const val = document.getElementById(fieldId)?.value.trim() || '';
+  if (!val) return '';
+  const isPrivate = document.getElementById('feePrivate')?.checked;
+  return isPrivate ? encodeFee(val) : val;
+}
 
 // ═══ VALIDATION (Step 1 only) ═══
 
@@ -1443,7 +1533,7 @@ const STEP1_RULES = [
 
 const STEP2_RULES = [
   { field: 'genre', test: () => { const needsGenre = selectedRoles.has('DJ') || selectedRoles.has('Producer'); return !needsGenre || selectedGenres.size > 0; }, message: 'Pick at least one genre (required for DJ/Producer)' },
-  { field: 'primarySoundLink', test: () => { const v = document.getElementById('primarySoundLink').value.trim(); return v.length > 0 && isValidUrl(v); }, message: 'A valid sound link is required' },
+  { field: 'primarySoundLink', test: () => { const links = collectPrimaryLinks(); return links.length > 0 && links.every(l => isValidUrl(l.url)); }, message: 'At least one valid primary link is required' },
   { field: 'instagram', test: () => { const v = document.getElementById('instagram').value.trim(); return v.length > 0 && isValidUrl(v); }, message: 'Instagram link is required' },
   { field: 'bio', test: () => document.getElementById('bio').value.trim().length >= 100, message: 'Bio must be at least 100 characters' },
   { field: 'profilePhoto', test: () => imageData.profilePhoto !== null, message: 'Profile photo is required' },
@@ -1644,6 +1734,16 @@ document.addEventListener('DOMContentLoaded', () => {
       slugEl.value = formatted;
       slugEl.setSelectionRange(cursorPos, cursorPos);
 
+      // Update URL preview
+      const previewEl = document.getElementById('slugPreview');
+      const previewId = document.getElementById('slugPreviewId');
+      if (formatted.length > 0) {
+        previewId.textContent = formatted;
+        previewEl.style.display = 'block';
+      } else {
+        previewEl.style.display = 'none';
+      }
+
       if (formatted.length >= 3) {
         slugCheckTimeout = setTimeout(() => {
           checkSlugAvailability(formatted);
@@ -1700,13 +1800,16 @@ async function submitForm() {
 
   try {
     const slug = document.getElementById('slug').value.trim();
+    const inviteParam = new URLSearchParams(window.location.search).get('invite') || '';
     const payload = {
       slug,
+      inviteId: inviteParam,
       artistName: document.getElementById('artistName').value.trim(),
+      city: document.getElementById('city')?.value.trim() || '',
       location: document.getElementById('location').value,
       role: JSON.stringify([...selectedRoles]),
       genre: JSON.stringify([...selectedGenres]),
-      primarySoundLink: document.getElementById('primarySoundLink').value.trim(),
+      primarySoundLink: JSON.stringify(collectPrimaryLinks()),
       instagram: document.getElementById('instagram').value.trim(),
       email: document.getElementById('email').value.trim(),
       password: document.getElementById('password').value,
@@ -1714,17 +1817,21 @@ async function submitForm() {
       profilePhoto: imageData.profilePhoto || '',
       perfPhoto: imageData.perfPhoto || '',
       artistLogo: imageData.artistLogo || '',
+      bgImage: imageData.bgImage || '',
       accentColor: colorPicker.value,
       font: document.getElementById('font').value,
       feeCurrency: document.getElementById('feeCurrency')?.value || 'AUD',
-      localFee: document.getElementById('localFee')?.value.trim() || '',
-      clubFee: document.getElementById('clubFee')?.value.trim() || '',
-      festivalFee: document.getElementById('festivalFee')?.value.trim() || '',
-      minimumFee: document.getElementById('minimumFee')?.value.trim() || '',
+      localFee: getFeeValue('localFee'),
+      clubFee: getFeeValue('clubFee'),
+      festivalFee: getFeeValue('festivalFee'),
+      minimumFee: getFeeValue('minimumFee'),
       techRider: document.getElementById('techRider')?.value.trim() || '',
       hospRider: document.getElementById('hospRider')?.value.trim() || '',
+      feePrivate: document.getElementById('feePrivate')?.checked ? '1' : '0',
       links: JSON.stringify(collectLinks()),
-      bookingEmail: document.getElementById('bookingEmail')?.value.trim() || '',
+      bookingEmails: collectBookingEmails(),
+      recommendVisible: document.getElementById('recommendVisible')?.checked ? '1' : '0',
+      recommendations: collectRecommendations(),
       mgmtEmail: document.getElementById('mgmtEmail')?.value.trim() || '',
       agencyName: document.getElementById('agencyName')?.value.trim() || '',
       agencyEmail: document.getElementById('agencyEmail')?.value.trim() || '',
@@ -1734,12 +1841,6 @@ async function submitForm() {
       promoter: collectPromoter(),
       upcoming: collectUpcoming(),
       awards: collectAwards(),
-      featLink1Label: document.getElementById('featLink1Label')?.value.trim() || '',
-      featLink1Url: document.getElementById('featLink1Url')?.value.trim() || '',
-      featLink1Img: imageData.featLink1Img || '',
-      featLink2Label: document.getElementById('featLink2Label')?.value.trim() || '',
-      featLink2Url: document.getElementById('featLink2Url')?.value.trim() || '',
-      featLink2Img: imageData.featLink2Img || '',
       consent: document.getElementById('consent').checked,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -1841,6 +1942,78 @@ function postViaIframe(url, payload) {
 }
 
 
+    function addBookingEmailEntry() {
+      const list = document.getElementById('bookingEmailsList');
+      if (!list) return;
+      const id = Date.now();
+      const entry = document.createElement('div');
+      entry.setAttribute('data-booking-email', id);
+      entry.style.marginBottom = '12px';
+      entry.style.padding = '12px';
+      entry.style.background = 'var(--surface)';
+      entry.style.borderRadius = 'var(--radius)';
+      entry.innerHTML = `
+        <div style="display:flex;gap:10px;margin-bottom:8px;">
+          <input type="text" data-booking-label placeholder="Label (e.g., Booking)" maxlength="40" style="flex:1;padding:8px;background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;">
+          <input type="email" data-booking-email placeholder="email@example.com" style="flex:1;padding:8px;background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;">
+          <button type="button" onclick="this.parentElement.parentElement.remove()" style="background:var(--error-bg);border:1px solid var(--error);color:var(--error);padding:8px 12px;border-radius:var(--radius);font-size:11px;cursor:pointer;">Remove</button>
+        </div>
+      `;
+      list.appendChild(entry);
+    }
+
+    function collectBookingEmails() {
+      const entries = document.querySelectorAll('[data-booking-email]');
+      const result = [];
+      entries.forEach(entry => {
+        const label = entry.querySelector('[data-booking-label]')?.value.trim();
+        const email = entry.querySelector('[data-booking-email]')?.value.trim();
+        if (label && email) {
+          result.push({ label, email });
+        }
+      });
+      return JSON.stringify(result);
+    }
+
+    function addRecommendEntry() {
+      const list = document.getElementById('recommendList');
+      if (!list) return;
+      const id = Date.now();
+      const entry = document.createElement('div');
+      entry.setAttribute('data-recommend', id);
+      entry.style.marginBottom = '16px';
+      entry.style.padding = '12px';
+      entry.style.background = 'var(--surface)';
+      entry.style.borderRadius = 'var(--radius)';
+      entry.innerHTML = `
+        <div style="display:flex;gap:10px;margin-bottom:8px;">
+          <input type="text" data-recommend-name placeholder="Name" maxlength="80" style="flex:1;padding:8px;background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;">
+          <input type="text" data-recommend-role placeholder="Role/Title (optional)" maxlength="80" style="flex:1;padding:8px;background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;">
+        </div>
+        <textarea data-recommend-text placeholder="Recommendation (max 500 chars)" maxlength="500" style="width:100%;padding:8px;background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;margin-bottom:8px;min-height:60px;font-family:inherit;resize:vertical;"></textarea>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="text" data-recommend-slug placeholder="Profile slug (optional)" maxlength="80" style="flex:1;padding:8px;background:var(--surface-hover);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;">
+          <button type="button" onclick="this.parentElement.parentElement.remove()" style="background:var(--error-bg);border:1px solid var(--error);color:var(--error);padding:8px 12px;border-radius:var(--radius);font-size:11px;cursor:pointer;">Remove</button>
+        </div>
+      `;
+      list.appendChild(entry);
+    }
+
+    function collectRecommendations() {
+      const entries = document.querySelectorAll('[data-recommend]');
+      const result = [];
+      entries.forEach(entry => {
+        const name = entry.querySelector('[data-recommend-name]')?.value.trim();
+        const role = entry.querySelector('[data-recommend-role]')?.value.trim();
+        const text = entry.querySelector('[data-recommend-text]')?.value.trim();
+        const slug = entry.querySelector('[data-recommend-slug]')?.value.trim() || '';
+        if (text && name) {
+          result.push({ text, name, role, slug });
+        }
+      });
+      return JSON.stringify(result);
+    }
+
 // ═══ TOAST ═══
 function showToast(message, type = 'success') {
   const t = document.getElementById('toast');
@@ -1848,5 +2021,19 @@ function showToast(message, type = 'success') {
   setTimeout(() => t.classList.remove('show'), 4000);
 }
 </script>
+
+<!-- Google Translate -->
+<script>
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'en,ja,zh-CN,zh-TW,ko,es,fr,de,pt,th,vi,id,ar,ru',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      autoDisplay: false
+    }, 'google_translate_element');
+  }
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<div style="text-align:center;padding:24px 0 16px;font-size:11px;color:#666;letter-spacing:0.5px;">Powered by <a href="https://www.thirdkagura.com" target="_blank" style="color:#666;text-decoration:none;">THIRD KAGURA</a> <a href="https://www.instagram.com/third_kagura_pty_ltd/" target="_blank" style="color:#666;text-decoration:none;vertical-align:middle;margin-left:6px;display:inline-block;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a></div>
 </body>
 </html>

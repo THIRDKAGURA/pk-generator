@@ -15,6 +15,7 @@
       --radius:8px;
     }
     html { scroll-behavior:smooth; }
+    html, body { max-width:100vw; overflow-x:hidden; }
     body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; min-height:100vh; }
 
     /* ====== BG LAYERS ====== */
@@ -290,6 +291,11 @@ function esc(s) { const d = document.createElement('div'); d.textContent = Strin
 function jp(s) { try { return JSON.parse(s); } catch(e) { return null; } }
 function formatDate(s) { try { const d=new Date(s); const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear(); } catch(e){return s;} }
 
+// Fee privacy: §PV§{base64} = private, plain text = public
+const FEE_PRIVATE_PREFIX = '§PV§';
+function isFeePrivate(val) { return val && val.startsWith(FEE_PRIVATE_PREFIX); }
+function decodeFee(val) { if (!isFeePrivate(val)) return val; try { return decodeURIComponent(escape(atob(val.slice(FEE_PRIVATE_PREFIX.length)))); } catch(e) { return ''; } }
+
 // ══════════════════════════
 // SVG ICONS
 // ══════════════════════════
@@ -563,8 +569,14 @@ function renderProfile(d) {
     if (fl.url) featItems.push('<a class="feat-link" href="'+esc(fl.url)+'" target="_blank">'+thumb+title+'<span class="feat-link-arrow">'+SVG.extLink+'</span></a>');
     else featItems.push('<div class="feat-link" style="cursor:default">'+thumb+title+'</div>');
   });
-  const sound = (d.primarySoundLink||'').trim();
-  if (sound) featItems.push('<div class="listen-item">'+buildCard(sound)+'</div>');
+  // Primary Links (supports JSON array or legacy single URL string)
+  const rawSound = (d.primarySoundLink||'').trim();
+  let primaryLinks = [];
+  if (rawSound.startsWith('[')) { try { primaryLinks = JSON.parse(rawSound); } catch(e){} }
+  else if (rawSound) { primaryLinks = [{ url: rawSound }]; }
+  primaryLinks.forEach(pl => {
+    if (pl.url) featItems.push('<div class="listen-item">'+buildCard(pl.url)+'</div>');
+  });
   const featEl = document.getElementById('featuredSection');
   if (featEl) {
     if (featItems.length) {
@@ -718,6 +730,8 @@ function buildCard(url) {
   let platform='Listen', cls='default', icon='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>';
   if (url.includes('soundcloud.com')) { platform='SoundCloud'; cls='sc'; icon='<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M1 18V11h1v7H1zm2.5-1V9h1v8h-1zm2.5 1V7h1v11H6zm2.5-1V8.5h1V17h-1zM11 18V6h1v12h-1zm6.5-9c-.3 0-.5 0-.8.1C16.3 7.3 14.8 6 13 6v12h7c1.7 0 3-1.3 3-3s-1.3-3-3-3h-.5z"/></svg>'; }
   else if (url.includes('spotify.com')) { platform='Spotify'; cls='sp'; icon='<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 17.3c-.2.3-.6.4-1 .2-2.7-1.6-6-2-10-1.1-.4.1-.8-.2-.8-.6-.1-.4.2-.8.6-.8 4.3-1 8-.6 11 1.2.4.2.4.7.2 1.1zm1.5-3.3c-.3.4-.8.5-1.2.3-3-1.9-7.7-2.4-11.3-1.3-.4.1-.9-.1-1-.5-.1-.4.1-.9.5-1 4.1-1.3 9.2-.7 12.6 1.5.4.2.5.7.4 1zm.1-3.4C15.4 8.3 9 8.1 5.2 9.2c-.5.1-1-.2-1.1-.7-.1-.5.2-1 .7-1.1C9.1 6.1 16 6.3 20.3 9c.5.3.6.9.3 1.3-.2.5-.8.6-1.5.3z"/></svg>'; }
+  else if (url.includes('mixcloud.com')) { platform='Mixcloud'; cls='mc'; icon='<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M2 16V8h2l3 4 3-4h2v8h-2v-5l-3 4-3-4v5H2zm14-4a4 4 0 118 0 4 4 0 01-8 0zm2 0a2 2 0 104 0 2 2 0 00-4 0z"/></svg>'; }
+  else if (url.includes('music.apple.com')) { platform='Apple Music'; cls='am'; icon='<svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M23 5.5v9.14a3.88 3.88 0 01-2.16 3.47 3.67 3.67 0 01-1.88.49 3.57 3.57 0 01-1.72-.44A2.42 2.42 0 0116 16.19a2.61 2.61 0 011.25-2.2 5.1 5.1 0 012.41-.79l1.34-.17V9.58L12 11.42v6.27a3.87 3.87 0 01-2.16 3.46 3.66 3.66 0 01-1.88.49 3.57 3.57 0 01-1.72-.44A2.42 2.42 0 015 19.23a2.61 2.61 0 011.25-2.2 5.1 5.1 0 012.41-.79L10 16.07V4.68a1.48 1.48 0 011-1.42l10.06-2.82A1.28 1.28 0 0123 1.72z"/></svg>'; }
   else if (url.includes('youtube.com')||url.includes('youtu.be')) { platform='YouTube'; cls='yt'; }
   return '<a href="'+esc(url)+'" target="_blank" class="listen-fallback"><div class="lf-icon '+cls+'">'+icon+'</div><div class="lf-text"><div class="lf-label">'+platform+'</div></div><span class="lf-arrow">'+SVG.extLink+'</span></a>';
 }
