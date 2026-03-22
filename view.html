@@ -412,22 +412,17 @@ function renderProfile(d) {
   let genres = jp(d.genre)||[];
   if (typeof d.genre === 'string' && !d.genre.startsWith('[')) genres = d.genre ? [d.genre] : [];
 
-  // Combine roles + agency on one line (e.g. "DJ / PRODUCER / THIRD KAGURA")
-  const rolesParts = roles.map(r => esc(r));
-  const agencyPart = d.agencyName
+  const agencyLine = d.agencyName
     ? (d.agencyWebsite
-        ? '<a href="'+esc(d.agencyWebsite)+'" target="_blank" style="color:inherit;text-decoration:none">'+esc(d.agencyName)+'</a>'
-        : esc(d.agencyName))
-    : '';
-  if (agencyPart) rolesParts.push(agencyPart);
-  const rolesAgencyLine = rolesParts.length
-    ? '<div class="hero-roles">' + rolesParts.join(' / ') + '</div>'
+        ? '<div class="hero-agency-line"><a class="hero-agency" href="'+esc(d.agencyWebsite)+'" target="_blank">'+esc(d.agencyName)+'</a></div>'
+        : '<div class="hero-agency-line"><span class="hero-agency">'+esc(d.agencyName)+'</span></div>')
     : '';
 
   const heroInner =
     '<h1 class="hero-name">'+esc(d.artistName||'')+' '+igLink+mailLink+'</h1>' +
     (d.location ? '<div class="hero-subtitle">'+esc(d.location)+'</div>' : '') +
-    rolesAgencyLine +
+    agencyLine +
+    (roles.length ? '<div class="hero-roles">'+esc(roles.join(' / '))+'</div>' : '') +
     (genres.length ? '<div class="genre-tags">'+genres.map(g=>'<span class="genre-tag">'+esc(g)+'</span>').join('')+'</div>' : '');
 
   if (currentDesign === 1) {
