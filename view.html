@@ -471,7 +471,7 @@ function renderProfile(d) {
 
     if (track && dots) {
       shuffled.forEach((r, i) => {
-        const profileUrl = r.slug ? '/presskit/' + r.slug : '#';
+        const profileUrl = r.slug ? 'view.html?id=' + encodeURIComponent(r.slug) : '#';
         const av = '<div class="recommend-avatar">'+SVG.person+'</div>';
         track.innerHTML +=
           '<div class="recommend-slide">' +
