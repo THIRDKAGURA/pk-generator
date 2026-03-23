@@ -108,7 +108,7 @@
     .toc-section { padding:12px 20px 4px; max-width:480px; margin:0 auto; position:relative; z-index:2; }
     .toc-item { display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border-a); cursor:pointer; user-select:none; }
     .toc-item:last-child { border-bottom:none; }
-    .toc-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:var(--text-dim); transition:color 0.2s; }
+    .toc-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:2px; color:var(--text-muted); transition:color 0.2s; }
     .toc-item:hover .toc-label { color:var(--text); }
     .toc-arrow { width:14px; height:14px; color:var(--text-muted); transition:transform 0.25s; flex-shrink:0; }
     .toc-item.open .toc-arrow { transform:rotate(180deg); }
@@ -378,7 +378,7 @@ function render() {
   });
 
   const tocItems = document.querySelectorAll('.toc-item');
-  tocItems.forEach(el => el?.classList.remove('open'));
+  tocItems.forEach(el => { if (el.dataset.sec !== 'download') el?.classList.remove('open'); });
 
   const aboutText = document.getElementById('aboutText');
   if (aboutText) {
