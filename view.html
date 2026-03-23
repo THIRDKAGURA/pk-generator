@@ -50,7 +50,7 @@
     /* ====== SHARED HERO TEXT ====== */
     .hero-name { font-family:'Bebas Neue',sans-serif; font-size:44px; font-weight:800; letter-spacing:1px; display:inline-flex; align-items:center; gap:10px; justify-content:center; line-height:1.1; }
     body.pat2 .hero-name, body.pat3bg .hero-name { text-shadow:0 2px 20px rgba(0,0,0,0.8); }
-    .hero-icon { width:32px; height:32px; opacity:0.55; color:var(--text); cursor:pointer; transition:opacity 0.2s; }
+    .hero-icon { width:32px; height:32px; opacity:0.55; color:var(--text); cursor:pointer; transition:opacity 0.2s; position:relative; bottom:3px; }
     .hero-icon:hover { opacity:1; }
     .hero-subtitle { font-size:12px; font-weight:600; color:var(--text-dim); margin-top:0; margin-bottom:0; letter-spacing:2px; text-transform:uppercase; }
     body.pat2 .hero-subtitle, body.pat3bg .hero-subtitle { text-shadow:0 1px 8px rgba(0,0,0,0.6); }
@@ -128,9 +128,9 @@
     .res-month { font-size:5px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0; line-height:1.2; color:var(--accent); }
     .res-dash { align-self:flex-end; }
     .hl-year { font-size:13px; }
-    .hist-role-label { font-size:13px; font-weight:600; color:var(--text); text-transform:uppercase; letter-spacing:1px; margin-top:1px; }
+    .hist-role-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-top:1px; }
     .award-item { display:flex; gap:16px; padding:5px 0; align-items:flex-start; }
-    .award-year { font-size:11px; color:var(--accent); font-weight:600; flex-shrink:0; width:80px; min-width:80px; }
+    .award-year { font-size:13px; color:var(--accent); font-weight:600; flex-shrink:0; width:80px; min-width:80px; }
     .award-title { font-size:13px; font-weight:600; color:var(--text); line-height:1.4; }
 
     /* ====== FEATURED ====== */
@@ -560,8 +560,11 @@ function renderProfile(d) {
       html += '<div class="hist-cat"><div class="hist-cat-label">HEADLINER・SPORT</div>';
       headliners.forEach(a => {
         const loc = [a.venue, a.country].filter(Boolean).join(' · ');
-        const roleLabel = (a.role||'').includes('Headliner') ? 'HEADLINER' : ((a.role||'').includes('Support') ? 'SPORT' : '');
-        html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(a.year||'')+(roleLabel?'<div class="hist-role-label">'+roleLabel+'</div>':'')+'</div><div><div class="hist-venue">'+esc(a.eventName||'')+'</div>'+(loc?'<div class="hist-loc">'+esc(loc)+'</div>':'')+'</div></div>';
+        let typeLabel = '';
+        if (a.type==='clubGig') { typeLabel = (a.role||'').includes('Headliner') ? 'HEADLINER' : ((a.role||'').includes('Support') ? 'SPORT' : ''); }
+        else if (a.type==='festival') { typeLabel = 'FESTIVAL'; }
+        else if (a.type==='live') { typeLabel = 'LIVE'; }
+        html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(a.year||'')+(typeLabel?'<div class="hist-role-label">'+typeLabel+'</div>':'')+'</div><div><div class="hist-venue">'+esc(a.eventName||a.name||'')+'</div>'+(loc?'<div class="hist-loc">'+esc(loc)+'</div>':'')+'</div></div>';
       });
       html += '</div>';
     }
