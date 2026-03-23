@@ -123,9 +123,15 @@
     .hist-year { font-size:11px; color:var(--accent); font-weight:600; width:80px; min-width:80px; flex-shrink:0; }
     .hist-venue { font-size:13px; font-weight:600; color:var(--text); line-height:1.4; }
     .hist-loc { font-size:11px; color:var(--text-muted); margin-top:2px; }
+    .res-year-block { display:flex; align-items:flex-end; gap:4px; }
+    .res-col { display:flex; flex-direction:column; }
+    .res-month { font-size:5px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0; line-height:1.2; color:var(--accent); }
+    .res-dash { align-self:flex-end; }
+    .hl-year { font-size:13px; }
+    .hist-role-label { font-size:13px; font-weight:600; color:var(--text); text-transform:uppercase; letter-spacing:1px; margin-top:1px; }
     .award-item { display:flex; gap:16px; padding:5px 0; align-items:flex-start; }
     .award-year { font-size:11px; color:var(--accent); font-weight:600; flex-shrink:0; width:80px; min-width:80px; }
-    .award-title { font-size:13px; color:var(--text-dim); line-height:1.4; }
+    .award-title { font-size:13px; font-weight:600; color:var(--text); line-height:1.4; }
 
     /* ====== FEATURED ====== */
     .feat-link { display:flex; align-items:center; gap:12px; padding:10px 14px; background:rgba(255,255,255,0.03); border:1px solid var(--border-a); border-radius:var(--radius); text-decoration:none; transition:border-color 0.2s; margin-bottom:8px; }
@@ -165,8 +171,8 @@
     .dl-all-btn svg { width:13px; height:13px; }
     .dl-thumbs { display:flex; gap:8px; margin-bottom:12px; }
     .dl-thumb-wrap { flex:1; text-decoration:none; }
-    .dl-thumb { border-radius:var(--radius); overflow:hidden; border:1px solid var(--border-a); }
-    .dl-thumb img { width:100%; height:auto; display:block; }
+    .dl-thumb { aspect-ratio:1; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border-a); }
+    .dl-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .dl-thumb-label { font-size:10px; color:var(--text-muted); text-align:center; margin-top:5px; letter-spacing:0.3px; }
     .dl-separator { border:none; border-top:1px solid var(--border-a); margin:10px 0; }
     .sub-acc-header { display:flex; align-items:center; gap:10px; padding:9px 0; cursor:pointer; user-select:none; }
@@ -292,6 +298,7 @@ function esc(s) { const d = document.createElement('div'); d.textContent = Strin
 function jp(s) { try { return JSON.parse(s); } catch(e) { return null; } }
 function formatDate(s) { try { const d=new Date(s); const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear(); } catch(e){return s;} }
 function formatYearMonth(s) { if (!s) return ''; const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const parts=String(s).split('-'); if(parts.length===2){const mi=parseInt(parts[1],10)-1; return (mi>=0&&mi<12?m[mi]+' ':'')+parts[0];} return s; }
+function splitYearMonth(s) { if (!s) return {month:'',year:''}; const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const parts=String(s).split('-'); if(parts.length===2){const mi=parseInt(parts[1],10)-1; return {month:(mi>=0&&mi<12?m[mi]+'.':''),year:parts[0]};} return {month:'',year:s}; }
 
 // Fee privacy: §PV§{base64} = private, plain text = public
 const FEE_PRIVATE_PREFIX = '§PV§';
@@ -420,7 +427,7 @@ function renderProfile(d) {
 
   const heroInner =
     '<h1 class="hero-name">'+esc(d.artistName||'')+' '+igLink+mailLink+'</h1>' +
-    (d.location ? '<div class="hero-subtitle">'+esc(d.location)+'</div>' : '') +
+    (d.location ? '<div class="hero-subtitle">Based in '+esc(d.location)+'</div>' : '') +
     agencyLine +
     (roles.length ? '<div class="hero-roles">'+esc(roles.join(' / '))+'</div>' : '') +
     (genres.length ? '<div class="genre-tags">'+genres.map(g=>'<span class="genre-tag">'+esc(g)+'</span>').join('')+'</div>' : '');
@@ -538,13 +545,24 @@ function renderProfile(d) {
     }
     if (residencies.length) {
       html += '<div class="hist-cat"><div class="hist-cat-label">Resident</div>';
-      residencies.forEach(a => { const p = formatYearMonth(a.startDate)+(a.currentlyRunning?' — Present':(a.endDate?' — '+formatYearMonth(a.endDate):'')); html += histItem(p, a.venue, a.country); });
+      residencies.forEach(a => {
+        const s = splitYearMonth(a.startDate);
+        const e = a.currentlyRunning ? {month:'',year:'Present'} : splitYearMonth(a.endDate);
+        const yearHtml = '<div class="res-year-block">' +
+          '<div class="res-col">'+(s.month?'<span class="res-month">'+esc(s.month)+'</span>':'')+'<span>'+esc(s.year)+'</span></div>' +
+          (e.year ? '<span class="res-dash"> — </span><div class="res-col">'+(e.month?'<span class="res-month">'+esc(e.month)+'</span>':'')+'<span>'+esc(e.year)+'</span></div>' : '') +
+          '</div>';
+        html += '<div class="hist-item"><div class="hist-year">'+yearHtml+'</div><div><div class="hist-venue">'+esc(a.venue)+'</div>'+(a.country?'<div class="hist-loc">'+esc(a.country)+'</div>':'')+'</div></div>';
+      });
       html += '</div>';
     }
     if (headliners.length) {
-      const catLabel = roles.includes('Dancer')||roles.includes('Choreographer') ? 'Performance' : (roles.includes('Singer')||roles.includes('Songwriter') ? 'Live' : 'Headliner');
-      html += '<div class="hist-cat"><div class="hist-cat-label">'+catLabel+'</div>';
-      headliners.forEach(a => { const loc = [a.venue, a.country].filter(Boolean).join(' · '); html += histItem(a.year||'', a.eventName||'', loc); });
+      html += '<div class="hist-cat"><div class="hist-cat-label">HEADLINER・SPORT</div>';
+      headliners.forEach(a => {
+        const loc = [a.venue, a.country].filter(Boolean).join(' · ');
+        const roleLabel = (a.role||'').includes('Headliner') ? 'HEADLINER' : ((a.role||'').includes('Support') ? 'SPORT' : '');
+        html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(a.year||'')+(roleLabel?'<div class="hist-role-label">'+roleLabel+'</div>':'')+'</div><div><div class="hist-venue">'+esc(a.eventName||'')+'</div>'+(loc?'<div class="hist-loc">'+esc(loc)+'</div>':'')+'</div></div>';
+      });
       html += '</div>';
     }
     if (others.length) {
