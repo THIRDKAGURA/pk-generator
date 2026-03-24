@@ -6,6 +6,8 @@
   <meta name="format-detection" content="address=no, telephone=no">
   <title>THIRD KAGURA — Artist Profile</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -828,6 +830,30 @@ async function downloadAllPdf() {
     if (d.instagram) info += '\nInstagram: https://instagram.com/' + d.instagram.replace('@','') + '\n';
 
     folder.file('profile_info.txt', info);
+
+    // Generate PDF of the page with all sections open
+    try {
+      const tocItems = document.querySelectorAll('.toc-item');
+      const prevStates = [];
+      tocItems.forEach(el => {
+        prevStates.push({ el, open: el.classList.contains('open') });
+        if (!el.classList.contains('open')) { el.classList.add('open'); const body = el.nextElementSibling; if (body && body.classList.contains('toc-body')) body.style.display = 'block'; }
+      });
+      const target = document.querySelector('.container') || document.body;
+      const canvas = await html2canvas(target, { backgroundColor: '#000000', scale: 2, useCORS: true, logging: false });
+      prevStates.forEach(s => {
+        if (!s.open) { s.el.classList.remove('open'); const body = s.el.nextElementSibling; if (body && body.classList.contains('toc-body')) body.style.display = 'none'; }
+      });
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const { jsPDF } = window.jspdf;
+      const pxW = canvas.width, pxH = canvas.height;
+      const pdfW = 210;
+      const pdfH = (pxH / pxW) * pdfW;
+      const pdf = new jsPDF({ orientation: pdfH > pdfW ? 'portrait' : 'landscape', unit: 'mm', format: [pdfW, pdfH] });
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
+      const pdfBlob = pdf.output('blob');
+      folder.file(artistName + '_presskit.pdf', pdfBlob);
+    } catch(pdfErr) { console.warn('PDF generation failed:', pdfErr); }
 
     // Generate and download ZIP
     const content = await zip.generateAsync({ type: 'blob' });
