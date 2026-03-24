@@ -301,7 +301,7 @@ function formatDate(s) { try { const d=new Date(s); const m=['Jan','Feb','Mar','
 function formatYearMonth(s) { if (!s) return ''; const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const parts=String(s).split('-'); if(parts.length===2){const mi=parseInt(parts[1],10)-1; return (mi>=0&&mi<12?m[mi]+' ':'')+parts[0];} return s; }
 function splitYearMonth(s) { if (!s) return {month:'',year:''}; const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const parts=String(s).split('-'); if(parts.length===2){const mi=parseInt(parts[1],10)-1; return {month:(mi>=0&&mi<12?m[mi]+'.':''),year:parts[0]};} return {month:'',year:s}; }
 function cacheBust(url) { if (!url) return ''; const sep = url.includes('?') ? '&' : '?'; return url + sep + '_t=' + Date.now(); }
-function origImgUrl(url) { if (!url) return ''; if (url.includes('lh3.googleusercontent.com')) { return url.replace(/=s\d+$/, '') + '=s0'; } return url; }
+function origImgUrl(url) { if (!url) return ''; if (url.includes('googleusercontent.com')) { var base = url.replace(/=[^/]+$/, ''); return base + '=s0'; } return url; }
 
 // Fee privacy: §PV§{base64} = private, plain text = public
 const FEE_PRIVATE_PREFIX = '§PV§';
