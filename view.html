@@ -857,42 +857,56 @@ async function downloadAllPdf() {
 
     folder.file('profile_info.txt', info);
 
-    // Generate PDF of the page with all sections open
+    // Generate PDF of the page — in-place expand, capture, restore
     try {
-      // --- 1. Save & expand all collapsible content ---
       const restoreFns = [];
 
-      // TOC accordion sections
+      // --- 1. Hide fixed-position bg layers (they cause huge blank space) ---
+      const bgLayer = document.getElementById('bgLayer');
+      const bgOverlay = document.querySelector('.bg-overlay');
+      if (bgLayer) { bgLayer.style.display = 'none'; restoreFns.push(() => { bgLayer.style.display = ''; }); }
+      if (bgOverlay) { bgOverlay.style.display = 'none'; restoreFns.push(() => { bgOverlay.style.display = ''; }); }
+
+      // --- 2. Hide download section in PDF ---
+      const dlItem = document.querySelector('.toc-item[data-sec="download"]');
+      const dlBody = document.getElementById('tocDownload');
+      if (dlItem) { dlItem.style.display = 'none'; restoreFns.push(() => { dlItem.style.display = ''; }); }
+      if (dlBody) { dlBody.style.display = 'none'; restoreFns.push(() => { dlBody.style.display = ''; }); }
+
+      // --- 3. Open all TOC accordion sections ---
       document.querySelectorAll('.toc-item').forEach(el => {
+        if (el.style.display === 'none') return; // skip hidden download
         const wasOpen = el.classList.contains('open');
         const body = el.nextElementSibling;
         if (!wasOpen) {
           el.classList.add('open');
           if (body && body.classList.contains('toc-body')) body.style.display = 'block';
-          restoreFns.push(() => { el.classList.remove('open'); if (body && body.classList.contains('toc-body')) body.style.display = 'none'; });
+          restoreFns.push(() => { el.classList.remove('open'); if (body && body.classList.contains('toc-body')) body.style.display = ''; });
         }
       });
 
-      // About "Read more"
+      // --- 4. Expand About text ---
       const aboutEl = document.getElementById('aboutText');
       const aboutBtn = document.getElementById('aboutToggle');
-      const aboutWasExpanded = aboutEl && aboutEl.classList.contains('expanded');
-      if (aboutEl && !aboutWasExpanded) {
+      if (aboutEl && !aboutEl.classList.contains('expanded')) {
         aboutEl.classList.add('expanded');
-        if (aboutBtn) aboutBtn.style.display = 'none';
-        restoreFns.push(() => { aboutEl.classList.remove('expanded'); if (aboutBtn) aboutBtn.style.display = ''; });
+        restoreFns.push(() => { aboutEl.classList.remove('expanded'); });
       }
+      if (aboutBtn) { aboutBtn.style.display = 'none'; restoreFns.push(() => { aboutBtn.style.display = ''; }); }
 
-      // History description "Read more" accordions
+      // --- 5. Expand all history "Read more" accordions ---
       document.querySelectorAll('.hist-desc-full').forEach(el => {
         if (!el.classList.contains('open')) {
           el.classList.add('open');
-          const btn = el.previousElementSibling || el.parentElement.querySelector('.hist-readmore');
           restoreFns.push(() => { el.classList.remove('open'); });
         }
       });
+      document.querySelectorAll('.hist-readmore').forEach(el => {
+        el.style.display = 'none';
+        restoreFns.push(() => { el.style.display = ''; });
+      });
 
-      // Recommend quote "Read more"
+      // --- 6. Expand recommend quotes ---
       document.querySelectorAll('.recommend-quote').forEach(el => {
         if (!el.classList.contains('expanded')) {
           el.classList.add('expanded');
@@ -900,106 +914,96 @@ async function downloadAllPdf() {
         }
       });
 
-      // --- 2. Build a temporary off-screen wrapper with all visible content ---
-      const pdfWrap = document.createElement('div');
-      pdfWrap.style.cssText = 'position:absolute;left:-9999px;top:0;width:480px;background:#000;color:#f0f0f0;font-family:Inter,sans-serif;padding:0;overflow:hidden;';
-      document.body.appendChild(pdfWrap);
-
-      // Hero section (clone whichever pattern is visible)
-      const heroSources = [document.getElementById('p1Hero'), document.querySelector('.p2-hero'), document.getElementById('p3Hero')];
-      heroSources.forEach(h => {
-        if (h && h.offsetHeight > 0) {
-          const clone = h.cloneNode(true);
-          clone.style.position = 'relative'; clone.style.display = 'block';
-          pdfWrap.appendChild(clone);
-        }
-      });
-
-      // Content sections to include (in order)
-      const sectionIds = ['featuredSection', 'recommendSection', 'upcomingSection'];
-      sectionIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el && el.offsetHeight > 0 && el.innerHTML.trim()) {
-          const clone = el.cloneNode(true);
-          clone.style.position = 'relative';
-          pdfWrap.appendChild(clone);
-        }
-      });
-
-      // About section
-      const aboutSec = document.querySelector('.about-section');
-      if (aboutSec && aboutSec.offsetHeight > 0) {
-        const clone = aboutSec.cloneNode(true);
-        // Remove the toggle button in PDF
-        const toggleBtn = clone.querySelector('.about-toggle');
-        if (toggleBtn) toggleBtn.remove();
-        // Ensure text is expanded
-        const cloneText = clone.querySelector('.about-text');
-        if (cloneText) cloneText.classList.add('expanded');
-        pdfWrap.appendChild(clone);
+      // --- 7. Make recommend carousel show all cards vertically ---
+      const recTrack = document.getElementById('recommendTrack');
+      const recCarousel = document.getElementById('recommendCarousel');
+      const recSection = document.getElementById('recommendSection');
+      if (recTrack) {
+        const oldTrackStyle = recTrack.style.cssText;
+        recTrack.style.cssText = 'display:flex;flex-direction:column;gap:12px;transform:none !important;';
+        restoreFns.push(() => { recTrack.style.cssText = oldTrackStyle; });
       }
-
-      // TOC sections (History, Contact — skip Download)
-      document.querySelectorAll('.toc-item').forEach(item => {
-        const sec = item.getAttribute('data-sec');
-        if (sec === 'download') return; // Skip download section in PDF
-        const body = item.nextElementSibling;
-        if (body && body.classList.contains('toc-body') && body.innerHTML.trim()) {
-          // Section header
-          const label = item.querySelector('.toc-label');
-          if (label) {
-            const headerDiv = document.createElement('div');
-            headerDiv.style.cssText = 'font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:#555;padding:14px 20px 6px;border-top:1px solid rgba(255,255,255,0.09);';
-            headerDiv.textContent = label.textContent;
-            pdfWrap.appendChild(headerDiv);
-          }
-          // Body content
-          const bodyClone = body.cloneNode(true);
-          bodyClone.style.display = 'block';
-          bodyClone.style.padding = '0 20px 12px';
-          // Expand all nested accordions
-          bodyClone.querySelectorAll('.hist-desc-full').forEach(d => d.classList.add('open'));
-          bodyClone.querySelectorAll('.hist-readmore').forEach(b => b.style.display = 'none');
-          pdfWrap.appendChild(bodyClone);
-        }
-      });
-
-      // Social bar
-      const socialBar = document.getElementById('socialBar');
-      if (socialBar && socialBar.offsetHeight > 0) {
-        pdfWrap.appendChild(socialBar.cloneNode(true));
+      if (recCarousel) {
+        const oldCarStyle = recCarousel.style.cssText;
+        recCarousel.style.overflow = 'visible';
+        restoreFns.push(() => { recCarousel.style.cssText = oldCarStyle; });
       }
-
-      // Footer
-      const footerEl = document.querySelector('.footer');
-      if (footerEl) pdfWrap.appendChild(footerEl.cloneNode(true));
-
-      // --- 3. Render to canvas ---
-      const canvas = await html2canvas(pdfWrap, {
-        backgroundColor: '#000000', scale: 2, useCORS: true, logging: false, width: 480,
-        onclone: function(doc) {
-          // Copy computed styles for fonts
-          const links = document.querySelectorAll('link[rel="stylesheet"]');
-          links.forEach(l => doc.head.appendChild(l.cloneNode(true)));
-          const styles = document.querySelectorAll('style');
-          styles.forEach(s => doc.head.appendChild(s.cloneNode(true)));
-        }
+      if (recSection) {
+        const oldSecOverflow = recSection.style.overflow;
+        recSection.style.overflow = 'visible';
+        restoreFns.push(() => { recSection.style.overflow = oldSecOverflow; });
+      }
+      // Set each slide to auto width in vertical mode
+      document.querySelectorAll('.recommend-slide').forEach(sl => {
+        const old = sl.style.cssText;
+        sl.style.minWidth = 'auto'; sl.style.width = '100%';
+        restoreFns.push(() => { sl.style.cssText = old; });
+      });
+      // Hide carousel dots and toggle buttons
+      const recDots = document.getElementById('recommendDots');
+      if (recDots) { recDots.style.display = 'none'; restoreFns.push(() => { recDots.style.display = ''; }); }
+      document.querySelectorAll('.recommend-toggle').forEach(t => {
+        t.style.display = 'none';
+        restoreFns.push(() => { t.style.display = ''; });
       });
 
-      // Remove temp wrapper
-      document.body.removeChild(pdfWrap);
+      // --- 8. Temporarily set body background solid black ---
+      const origBodyBg = document.body.style.background;
+      document.body.style.background = '#000';
+      restoreFns.push(() => { document.body.style.background = origBodyBg; });
 
-      // --- 4. Restore collapsed states ---
-      restoreFns.forEach(fn => fn());
+      // --- 9. Render via html2canvas (in-place, visible elements) ---
+      const canvas = await html2canvas(document.body, {
+        backgroundColor: '#000000',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        windowWidth: 480,
+        width: 480,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0
+      });
 
-      // --- 5. Build PDF ---
+      // --- 10. Restore everything ---
+      restoreFns.reverse().forEach(fn => fn());
+
+      // --- 11. Build multi-page A4 PDF ---
       const imgData = canvas.toDataURL('image/jpeg', 0.92);
       const { jsPDF } = window.jspdf;
       const pxW = canvas.width, pxH = canvas.height;
-      const pdfW = 210;
-      const pdfH = (pxH / pxW) * pdfW;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pdfW, pdfH] });
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
+      const pdfW = 210; // A4 width mm
+      const pdfH = 297; // A4 height mm
+      const scale = pdfW / pxW;
+      const totalH = pxH * scale; // total content height in mm
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      if (totalH <= pdfH) {
+        // Fits on one page
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, totalH);
+      } else {
+        // Multi-page: slice the canvas into page-sized chunks
+        const pageHeightPx = pdfH / scale; // how many px fit per page
+        let pages = Math.ceil(pxH / pageHeightPx);
+        for (let i = 0; i < pages; i++) {
+          if (i > 0) pdf.addPage();
+          const srcY = i * pageHeightPx;
+          const srcH = Math.min(pageHeightPx, pxH - srcY);
+          // Create a temp canvas for this page slice
+          const pageCanvas = document.createElement('canvas');
+          pageCanvas.width = pxW;
+          pageCanvas.height = Math.ceil(srcH);
+          const ctx = pageCanvas.getContext('2d');
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+          ctx.drawImage(canvas, 0, -srcY);
+          const pageImg = pageCanvas.toDataURL('image/jpeg', 0.92);
+          const sliceH = srcH * scale;
+          pdf.addImage(pageImg, 'JPEG', 0, 0, pdfW, sliceH);
+        }
+      }
+
       const pdfBlob = pdf.output('blob');
       folder.file(artistName + '_presskit.pdf', pdfBlob);
     } catch(pdfErr) { console.warn('PDF generation failed:', pdfErr); }
