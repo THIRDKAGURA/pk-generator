@@ -132,7 +132,16 @@
     .res-month { font-size:5px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0; line-height:1.2; color:var(--accent); }
     .res-dash { align-self:flex-end; }
     .hl-year { font-size:13px; color:var(--text); line-height:1.4; }
+    .hist-month { font-size:9px; text-transform:uppercase; letter-spacing:0.5px; color:var(--accent); margin-top:1px; }
     .hist-role-label { font-size:11px; font-weight:400; color:var(--text-muted); margin-top:2px; }
+    .hist-desc-full { display:none; }
+    .hist-desc-full.open { display:block; }
+    .hist-readmore { background:none; border:none; color:var(--accent); cursor:pointer; font-size:10px; font-family:inherit; padding:2px 0 0; letter-spacing:0.3px; }
+    .hist-readmore:hover { color:var(--text); }
+    .hist-title-row { display:flex; align-items:center; gap:12px; }
+    .hist-link-icon { flex-shrink:0; width:16px; height:16px; color:var(--accent); opacity:0.55; transition:opacity 0.2s; margin-left:auto; padding:2px; }
+    .hist-link-icon:hover { opacity:1; }
+    .hist-item > div:last-child { flex:1; min-width:0; }
     .award-item { display:flex; gap:16px; padding:5px 0; align-items:flex-start; }
     .award-year { font-size:13px; color:var(--text); font-weight:600; width:80px; min-width:80px; flex-shrink:0; }
     .award-title { font-size:13px; font-weight:600; color:var(--text); line-height:1.4; }
@@ -541,14 +550,23 @@ function renderProfile(d) {
   // ─── HISTORY ───
   const activities = jp(d.activity)||[];
   const awards = jp(d.awards)||[];
-  if (activities.length || awards.length) {
+  const releases = jp(d.releases)||[];
+  const MONTH_SHORT = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let histAccId = 0;
+  function descWithAccordion(desc) {
+    if (!desc) return '';
+    if (desc.length <= 20) return '<div class="hist-loc">'+esc(desc)+'</div>';
+    histAccId++;
+    const preview = esc(desc.substring(0,20)) + '…';
+    return '<div class="hist-loc">'+preview+' <button class="hist-readmore" onclick="var el=document.getElementById(\'ha'+histAccId+'\');var open=el.classList.toggle(\'open\');this.textContent=open?\'Close\':\'Read more\'">Read more</button><div class="hist-desc-full" id="ha'+histAccId+'">'+esc(desc)+'</div></div>';
+  }
+  function monthLabel(m) { const i=parseInt(m,10); return (i>=1&&i<=12)?MONTH_SHORT[i]:''; }
+
+  if (activities.length || awards.length || releases.length) {
     let html = '';
     const residencies = activities.filter(a=>a.type==='residency');
     const nonRes = activities.filter(a=>a.type!=='residency');
 
-    function histItem(period, venue, loc) {
-      return '<div class="hist-item"><div class="hist-year">'+esc(period)+'</div><div><div class="hist-venue">'+esc(venue)+'</div>'+(loc?'<div class="hist-loc">'+esc(loc)+'</div>':'')+'</div></div>';
-    }
     if (residencies.length) {
       html += '<div class="hist-cat"><div class="hist-cat-label">Resident</div>';
       residencies.forEach(a => {
@@ -565,7 +583,7 @@ function renderProfile(d) {
     if (nonRes.length) {
       html += '<div class="hist-cat"><div class="hist-cat-label">Activity History</div>';
       nonRes.forEach(a => {
-        // Type label: support both old format (clubGig+role) and new format (headliner/support/festival/live/other)
+        // Type label: support both old format (clubGig+role) and new format
         let typeLabel = '';
         if (a.type==='clubGig') { typeLabel = (a.role||'').includes('Headliner') ? 'HEADLINER' : ((a.role||'').includes('Support') ? 'SUPPORT' : ''); }
         else if (a.type==='headliner') typeLabel = 'HEADLINER';
@@ -574,12 +592,21 @@ function renderProfile(d) {
         else if (a.type==='live') typeLabel = 'LIVE';
         else if (a.type==='other') typeLabel = (a._otherText || 'OTHER').toUpperCase();
         else if (a.type==='media') typeLabel = 'MEDIA';
-        // Title: support old (eventName/name) and new (title) format
         const displayTitle = a.title || a.eventName || a.name || '';
-        // Description: new format uses description directly; old format had venue/country
         let desc = a.description || '';
         if (!desc) { const loc = [a.venue, a.country].filter(Boolean).join(' - '); if (loc) desc = loc; }
-        html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(a.year||'')+(typeLabel?'<div class="hist-role-label">'+typeLabel+'</div>':'')+'</div><div><div class="hist-venue">'+esc(displayTitle)+'</div>'+(desc?'<div class="hist-loc">'+esc(desc)+'</div>':'')+'</div></div>';
+        html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(a.year||'')+(typeLabel?'<div class="hist-role-label">'+typeLabel+'</div>':'')+'</div><div><div class="hist-venue">'+esc(displayTitle)+'</div>'+descWithAccordion(desc)+'</div></div>';
+      });
+      html += '</div>';
+    }
+    if (releases.length) {
+      html += '<div class="hist-cat"><div class="hist-cat-label">Release</div>';
+      releases.forEach(a => {
+        const ml = monthLabel(a.month);
+        let titleHtml = '<div class="hist-title-row"><span class="hist-venue">'+esc(a.title||'')+'</span>';
+        if (a.url) titleHtml += '<a href="'+esc(a.url)+'" target="_blank" rel="noopener" class="hist-link-icon" title="Listen">'+SVG.extLink+'</a>';
+        titleHtml += '</div>';
+        html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(a.year||'')+(ml?'<div class="hist-month">'+ml+'</div>':'')+'</div><div>'+titleHtml+descWithAccordion(a.description||'')+'</div></div>';
       });
       html += '</div>';
     }
@@ -832,23 +859,146 @@ async function downloadAllPdf() {
 
     // Generate PDF of the page with all sections open
     try {
-      const tocItems = document.querySelectorAll('.toc-item');
-      const prevStates = [];
-      tocItems.forEach(el => {
-        prevStates.push({ el, open: el.classList.contains('open') });
-        if (!el.classList.contains('open')) { el.classList.add('open'); const body = el.nextElementSibling; if (body && body.classList.contains('toc-body')) body.style.display = 'block'; }
+      // --- 1. Save & expand all collapsible content ---
+      const restoreFns = [];
+
+      // TOC accordion sections
+      document.querySelectorAll('.toc-item').forEach(el => {
+        const wasOpen = el.classList.contains('open');
+        const body = el.nextElementSibling;
+        if (!wasOpen) {
+          el.classList.add('open');
+          if (body && body.classList.contains('toc-body')) body.style.display = 'block';
+          restoreFns.push(() => { el.classList.remove('open'); if (body && body.classList.contains('toc-body')) body.style.display = 'none'; });
+        }
       });
-      const target = document.querySelector('.container') || document.body;
-      const canvas = await html2canvas(target, { backgroundColor: '#000000', scale: 2, useCORS: true, logging: false });
-      prevStates.forEach(s => {
-        if (!s.open) { s.el.classList.remove('open'); const body = s.el.nextElementSibling; if (body && body.classList.contains('toc-body')) body.style.display = 'none'; }
+
+      // About "Read more"
+      const aboutEl = document.getElementById('aboutText');
+      const aboutBtn = document.getElementById('aboutToggle');
+      const aboutWasExpanded = aboutEl && aboutEl.classList.contains('expanded');
+      if (aboutEl && !aboutWasExpanded) {
+        aboutEl.classList.add('expanded');
+        if (aboutBtn) aboutBtn.style.display = 'none';
+        restoreFns.push(() => { aboutEl.classList.remove('expanded'); if (aboutBtn) aboutBtn.style.display = ''; });
+      }
+
+      // History description "Read more" accordions
+      document.querySelectorAll('.hist-desc-full').forEach(el => {
+        if (!el.classList.contains('open')) {
+          el.classList.add('open');
+          const btn = el.previousElementSibling || el.parentElement.querySelector('.hist-readmore');
+          restoreFns.push(() => { el.classList.remove('open'); });
+        }
       });
+
+      // Recommend quote "Read more"
+      document.querySelectorAll('.recommend-quote').forEach(el => {
+        if (!el.classList.contains('expanded')) {
+          el.classList.add('expanded');
+          restoreFns.push(() => { el.classList.remove('expanded'); });
+        }
+      });
+
+      // --- 2. Build a temporary off-screen wrapper with all visible content ---
+      const pdfWrap = document.createElement('div');
+      pdfWrap.style.cssText = 'position:absolute;left:-9999px;top:0;width:480px;background:#000;color:#f0f0f0;font-family:Inter,sans-serif;padding:0;overflow:hidden;';
+      document.body.appendChild(pdfWrap);
+
+      // Hero section (clone whichever pattern is visible)
+      const heroSources = [document.getElementById('p1Hero'), document.querySelector('.p2-hero'), document.getElementById('p3Hero')];
+      heroSources.forEach(h => {
+        if (h && h.offsetHeight > 0) {
+          const clone = h.cloneNode(true);
+          clone.style.position = 'relative'; clone.style.display = 'block';
+          pdfWrap.appendChild(clone);
+        }
+      });
+
+      // Content sections to include (in order)
+      const sectionIds = ['featuredSection', 'recommendSection', 'upcomingSection'];
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetHeight > 0 && el.innerHTML.trim()) {
+          const clone = el.cloneNode(true);
+          clone.style.position = 'relative';
+          pdfWrap.appendChild(clone);
+        }
+      });
+
+      // About section
+      const aboutSec = document.querySelector('.about-section');
+      if (aboutSec && aboutSec.offsetHeight > 0) {
+        const clone = aboutSec.cloneNode(true);
+        // Remove the toggle button in PDF
+        const toggleBtn = clone.querySelector('.about-toggle');
+        if (toggleBtn) toggleBtn.remove();
+        // Ensure text is expanded
+        const cloneText = clone.querySelector('.about-text');
+        if (cloneText) cloneText.classList.add('expanded');
+        pdfWrap.appendChild(clone);
+      }
+
+      // TOC sections (History, Contact — skip Download)
+      document.querySelectorAll('.toc-item').forEach(item => {
+        const sec = item.getAttribute('data-sec');
+        if (sec === 'download') return; // Skip download section in PDF
+        const body = item.nextElementSibling;
+        if (body && body.classList.contains('toc-body') && body.innerHTML.trim()) {
+          // Section header
+          const label = item.querySelector('.toc-label');
+          if (label) {
+            const headerDiv = document.createElement('div');
+            headerDiv.style.cssText = 'font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:#555;padding:14px 20px 6px;border-top:1px solid rgba(255,255,255,0.09);';
+            headerDiv.textContent = label.textContent;
+            pdfWrap.appendChild(headerDiv);
+          }
+          // Body content
+          const bodyClone = body.cloneNode(true);
+          bodyClone.style.display = 'block';
+          bodyClone.style.padding = '0 20px 12px';
+          // Expand all nested accordions
+          bodyClone.querySelectorAll('.hist-desc-full').forEach(d => d.classList.add('open'));
+          bodyClone.querySelectorAll('.hist-readmore').forEach(b => b.style.display = 'none');
+          pdfWrap.appendChild(bodyClone);
+        }
+      });
+
+      // Social bar
+      const socialBar = document.getElementById('socialBar');
+      if (socialBar && socialBar.offsetHeight > 0) {
+        pdfWrap.appendChild(socialBar.cloneNode(true));
+      }
+
+      // Footer
+      const footerEl = document.querySelector('.footer');
+      if (footerEl) pdfWrap.appendChild(footerEl.cloneNode(true));
+
+      // --- 3. Render to canvas ---
+      const canvas = await html2canvas(pdfWrap, {
+        backgroundColor: '#000000', scale: 2, useCORS: true, logging: false, width: 480,
+        onclone: function(doc) {
+          // Copy computed styles for fonts
+          const links = document.querySelectorAll('link[rel="stylesheet"]');
+          links.forEach(l => doc.head.appendChild(l.cloneNode(true)));
+          const styles = document.querySelectorAll('style');
+          styles.forEach(s => doc.head.appendChild(s.cloneNode(true)));
+        }
+      });
+
+      // Remove temp wrapper
+      document.body.removeChild(pdfWrap);
+
+      // --- 4. Restore collapsed states ---
+      restoreFns.forEach(fn => fn());
+
+      // --- 5. Build PDF ---
       const imgData = canvas.toDataURL('image/jpeg', 0.92);
       const { jsPDF } = window.jspdf;
       const pxW = canvas.width, pxH = canvas.height;
       const pdfW = 210;
       const pdfH = (pxH / pxW) * pdfW;
-      const pdf = new jsPDF({ orientation: pdfH > pdfW ? 'portrait' : 'landscape', unit: 'mm', format: [pdfW, pdfH] });
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pdfW, pdfH] });
       pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
       const pdfBlob = pdf.output('blob');
       folder.file(artistName + '_presskit.pdf', pdfBlob);

@@ -343,6 +343,14 @@
     <!-- Activity -->
     <section class="form-section">
       <h3>Activity</h3>
+      <!-- Debut date (required, first field) -->
+      <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+        <label style="font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:8px">When did you start? <span style="color:var(--danger)">*</span></label>
+        <div style="display:flex;gap:10px">
+          <div class="field" style="width:100px"><label>Year</label><input type="text" id="e-debutYear" maxlength="4" placeholder="2018"></div>
+          <div class="field" style="width:100px"><label>Month</label><select id="e-debutMonth"><option value="">—</option><option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option><option value="04">Apr</option><option value="05">May</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Aug</option><option value="09">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select></div>
+        </div>
+      </div>
       <!-- Residency (separate, period-based) -->
       <div style="margin-bottom:16px">
         <label class="genre-chip" id="e-actType-residency" style="cursor:pointer"><input type="checkbox" value="residency" class="e-act-type-cb" style="display:none"> Residency</label>
@@ -356,6 +364,13 @@
       <h4 style="font-size:12px;color:var(--gold);margin:20px 0 12px;text-transform:uppercase;letter-spacing:0.5px">Activity History</h4>
       <div id="e-activityContainer"></div>
       <button type="button" class="add-entry-btn" id="e-addActivityBtn">+ Add activity</button>
+    </section>
+
+    <!-- Release -->
+    <section class="form-section">
+      <h3>Release</h3>
+      <div id="e-releaseContainer"></div>
+      <button type="button" class="add-entry-btn" id="e-addReleaseBtn">+ Add release</button>
     </section>
 
     <!-- Awards / Organizer / Promoter (no separators) -->
@@ -611,7 +626,7 @@ const GENRE_LIST = [
   'Hard Techno','Hardstyle','Hip Hop','House','Melodic Techno',
   'Minimal / Deep Tech','Open Format','Psytrance','Techno','Trance','UK Garage'
 ];
-let eResidencyCounter = 0, eActivityCounter = 0;
+let eResidencyCounter = 0, eActivityCounter = 0, eReleaseCounter = 0;
 let eOrganizerCounter = 0, ePromoterCounter = 0, eUpcomingCounter = 0, eAwardCounter = 0;
 
 const COUNTRIES = [
@@ -963,6 +978,18 @@ function populateForm(d) {
     }
   } catch(e) {}
 
+  // Debut date
+  if (d.debutYear) document.getElementById('e-debutYear').value = d.debutYear;
+  if (d.debutMonth) document.getElementById('e-debutMonth').value = d.debutMonth;
+
+  // Releases
+  try {
+    const releases = typeof d.releases === 'string' ? JSON.parse(d.releases) : d.releases;
+    if (Array.isArray(releases) && releases.length > 0) {
+      releases.forEach(r => eAddReleaseEntry(r));
+    }
+  } catch(e) {}
+
   // Featured Links
   if (d.featLink1Label) document.getElementById('e-featLink1Label').value = d.featLink1Label;
   if (d.featLink1Url) document.getElementById('e-featLink1Url').value = d.featLink1Url;
@@ -1096,61 +1123,67 @@ function eAddResidencyEntry(data) {
 document.getElementById('e-addResidencyBtn').addEventListener('click', () => eAddResidencyEntry());
 
 // ─── Unified Activity Entry ───
+const MONTH_OPTIONS = '<option value="">—</option><option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option><option value="04">Apr</option><option value="05">May</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Aug</option><option value="09">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option>';
+
 function eAddActivityEntry(data) {
   eActivityCounter++;
   const id = eActivityCounter;
   const div = document.createElement('div');
   div.className = 'entry-row'; div.id = 'e-activity-' + id; div.style.display = 'block';
-  // Resolve title from old formats: eventName (clubGig), name (festival/live), title (media/other)
+  // Resolve title from old formats
   const titleVal = (data?.title || data?.eventName || data?.name || '').replace(/"/g,'&quot;');
-  // Resolve description: merge venue/country into description for old data
+  // Resolve description: merge venue/country for old data
   let descVal = data?.description || '';
   if (!descVal && (data?.venue || data?.country)) {
     descVal = [data?.venue, data?.country].filter(Boolean).join(' - ');
   }
   descVal = descVal.replace(/</g,'&lt;');
-  // Resolve type
-  const typeVal = data?.type || '';
-  const roleStr = data?.role || '';
-  let resolvedType = '';
-  if (typeVal === 'clubGig') {
-    if (roleStr.includes('Support')) resolvedType = 'support';
-    else resolvedType = 'headliner';
-  } else if (typeVal === 'festival') resolvedType = 'festival';
-  else if (typeVal === 'live') resolvedType = 'live';
-  else if (typeVal === 'media' || typeVal === 'other') resolvedType = 'other';
-  else resolvedType = typeVal || '';
-  const otherText = (data?._otherText || '').replace(/"/g,'&quot;');
+  // Resolve type from old formats
+  let typeVal = data?.type || '';
+  if (typeVal === 'clubGig') { typeVal = (data?.role||'').includes('Support') ? 'support' : 'headliner'; }
+  const otherVal = (data?._otherText || '').replace(/"/g,'&quot;');
 
   div.innerHTML = `
     <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
-      <div class="field" style="width:90px"><label>Year</label><input type="text" data-act="${id}" data-act-field="year" value="${data?.year||''}" maxlength="4" placeholder="2025"></div>
+      <div class="field" style="width:80px"><label>Year</label><input type="text" data-act="${id}" data-act-field="year" value="${data?.year||''}" maxlength="4" placeholder="2025"></div>
       <div class="field" style="flex:1"><label>Title <span style="font-weight:400;color:var(--text-muted)">— event name, project, etc.</span></label><input type="text" data-act="${id}" data-act-field="title" value="${titleVal}" placeholder="e.g. GOODLIFE, Sound Director for..."></div>
       <button type="button" class="remove-entry" onclick="document.getElementById('e-activity-${id}')?.remove()">×</button>
     </div>
-    <div class="field" style="margin-bottom:8px"><label>Description <span style="font-weight:400;color:var(--text-muted)">— venue, city, details</span></label><textarea data-act="${id}" data-act-field="description" placeholder="e.g. Joule - OSAKA / RAVE Stage 7:00 - CLOSING" style="height:50px;resize:vertical">${descVal}</textarea></div>
-    <div style="margin-bottom:4px">
-      <label style="font-size:11px;color:var(--text-dim);display:block;margin-bottom:6px">Type</label>
-      <div style="display:flex;flex-wrap:wrap;gap:8px">
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="act-type-${id}" data-act="${id}" data-act-field="type" value="headliner" style="accent-color:var(--gold)"${resolvedType==='headliner'?' checked':''}> Headliner</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="act-type-${id}" data-act="${id}" data-act-field="type" value="support" style="accent-color:var(--gold)"${resolvedType==='support'?' checked':''}> Support</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="act-type-${id}" data-act="${id}" data-act-field="type" value="festival" style="accent-color:var(--gold)"${resolvedType==='festival'?' checked':''}> Festival</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="act-type-${id}" data-act="${id}" data-act-field="type" value="live" style="accent-color:var(--gold)"${resolvedType==='live'?' checked':''}> Live</label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="act-type-${id}" data-act="${id}" data-act-field="type" value="other" style="accent-color:var(--gold)"${resolvedType==='other'?' checked':''}> Other</label>
-        <input type="text" data-act="${id}" data-act-field="otherText" value="${otherText}" placeholder="Custom label" style="width:120px;font-size:12px;padding:4px 8px;display:${resolvedType==='other'?'inline-block':'none'}">
-      </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+      <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-actType-${id}" data-act="${id}" data-act-field="type" value="headliner"${typeVal==='headliner'?' checked':''}> Headliner</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-actType-${id}" data-act="${id}" data-act-field="type" value="support"${typeVal==='support'?' checked':''}> Support</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-actType-${id}" data-act="${id}" data-act-field="type" value="festival"${typeVal==='festival'?' checked':''}> Festival</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-actType-${id}" data-act="${id}" data-act-field="type" value="live"${typeVal==='live'?' checked':''}> Live</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-actType-${id}" data-act="${id}" data-act-field="type" value="media"${typeVal==='media'?' checked':''}> Media</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer"><input type="radio" name="e-actType-${id}" data-act="${id}" data-act-field="type" value="other"${typeVal==='other'?' checked':''} onchange="document.getElementById('e-actOther-${id}').style.display=this.checked?'block':'none'"> Other</label>
+      <input type="text" id="e-actOther-${id}" data-act="${id}" data-act-field="otherText" value="${otherVal}" placeholder="e.g. MEDIA, WORKSHOP..." style="display:${typeVal==='other'?'block':'none'};width:140px;padding:4px 8px;font-size:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text)">
     </div>
+    <div class="field" style="margin-bottom:4px"><label>Description <span style="font-weight:400;color:var(--text-muted)">— venue, city, details</span></label><textarea data-act="${id}" data-act-field="description" placeholder="e.g. Joule - OSAKA / RAVE Stage 7:00 - CLOSING" style="height:50px;resize:vertical">${descVal}</textarea></div>
   `;
-  // Show/hide custom label input when "Other" is selected
-  div.querySelectorAll(`input[name="act-type-${id}"]`).forEach(r => {
-    r.addEventListener('change', () => {
-      const otherInput = div.querySelector(`[data-act-field="otherText"]`);
-      if (otherInput) otherInput.style.display = r.value === 'other' && r.checked ? 'inline-block' : 'none';
-    });
-  });
   document.getElementById('e-activityContainer').appendChild(div);
 }
 document.getElementById('e-addActivityBtn').addEventListener('click', () => eAddActivityEntry());
+
+// ─── Release Entry ───
+function eAddReleaseEntry(data) {
+  eReleaseCounter++;
+  const id = eReleaseCounter;
+  const div = document.createElement('div');
+  div.className = 'entry-row'; div.id = 'e-release-' + id; div.style.display = 'block';
+  const monthVal = data?.month || '';
+  div.innerHTML = `
+    <div style="display:flex;gap:10px;align-items:end;margin-bottom:8px">
+      <div class="field" style="width:80px"><label>Year</label><input type="text" data-rel="${id}" data-rel-field="year" value="${data?.year||''}" maxlength="4" placeholder="2025"></div>
+      <div class="field" style="width:80px"><label>Month</label><select data-rel="${id}" data-rel-field="month">${MONTH_OPTIONS.replace('value="'+monthVal+'"','value="'+monthVal+'" selected')}</select></div>
+      <div class="field" style="flex:1"><label>Title <span style="font-weight:400;color:var(--text-muted)">— track name, album, mix, etc.</span></label><input type="text" data-rel="${id}" data-rel-field="title" value="${(data?.title||'').replace(/"/g,'&quot;')}" placeholder="e.g. Summer Vibes EP"></div>
+      <button type="button" class="remove-entry" onclick="document.getElementById('e-release-${id}')?.remove()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>Link <span style="font-weight:400;color:var(--text-muted)">— Spotify, SoundCloud, etc.</span></label><input type="url" data-rel="${id}" data-rel-field="url" value="${(data?.url||'').replace(/"/g,'&quot;')}" placeholder="https://..."></div>
+    <div class="field" style="margin-bottom:4px"><label>Description <span style="font-weight:400;color:var(--text-muted)">— label, genre, collaborators</span></label><textarea data-rel="${id}" data-rel-field="description" placeholder="e.g. Released on Defected Records / Collab with..." style="height:50px;resize:vertical">${(data?.description||'').replace(/</g,'&lt;')}</textarea></div>
+  `;
+  document.getElementById('e-releaseContainer').appendChild(div);
+}
+document.getElementById('e-addReleaseBtn').addEventListener('click', () => eAddReleaseEntry());
 
 // Organizer
 document.querySelectorAll('input[name="e-isOrganizer"]').forEach(r => {
@@ -1288,6 +1321,16 @@ function eCollectActivity() {
     activities.push({ type, title, year: entry.querySelector('[data-act-field="year"]')?.value.trim()||'', description: entry.querySelector('[data-act-field="description"]')?.value.trim()||'', _otherText: type === 'other' ? otherText : '' });
   });
   return activities;
+}
+
+function eCollectReleases() {
+  const releases = [];
+  document.querySelectorAll('#e-releaseContainer .entry-row').forEach(entry => {
+    const title = entry.querySelector('[data-rel-field="title"]')?.value.trim();
+    if (!title) return;
+    releases.push({ title, year: entry.querySelector('[data-rel-field="year"]')?.value.trim()||'', month: entry.querySelector('[data-rel-field="month"]')?.value||'', url: entry.querySelector('[data-rel-field="url"]')?.value.trim()||'', description: entry.querySelector('[data-rel-field="description"]')?.value.trim()||'' });
+  });
+  return releases;
 }
 
 function eCollectOrganizer() {
@@ -1462,6 +1505,9 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     agencyEmail: document.getElementById('e-agencyEmail').value.trim(),
     agencyWebsite: document.getElementById('e-agencyWebsite').value.trim(),
     activity: JSON.stringify(eCollectActivity()),
+    releases: JSON.stringify(eCollectReleases()),
+    debutYear: document.getElementById('e-debutYear')?.value.trim() || '',
+    debutMonth: document.getElementById('e-debutMonth')?.value || '',
     organizer: eCollectOrganizer(),
     promoter: eCollectPromoter(),
     upcoming: eCollectUpcoming(),
