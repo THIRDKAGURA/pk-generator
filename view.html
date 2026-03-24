@@ -544,8 +544,7 @@ function renderProfile(d) {
   if (activities.length || awards.length) {
     let html = '';
     const residencies = activities.filter(a=>a.type==='residency');
-    const headliners = activities.filter(a=>a.type==='clubGig'||a.type==='festival'||a.type==='live');
-    const others = activities.filter(a=>a.type==='media'||a.type==='other');
+    const nonRes = activities.filter(a=>a.type!=='residency');
 
     function histItem(period, venue, loc) {
       return '<div class="hist-item"><div class="hist-year">'+esc(period)+'</div><div><div class="hist-venue">'+esc(venue)+'</div>'+(loc?'<div class="hist-loc">'+esc(loc)+'</div>':'')+'</div></div>';
@@ -563,22 +562,26 @@ function renderProfile(d) {
       });
       html += '</div>';
     }
-    if (headliners.length) {
+    if (nonRes.length) {
       html += '<div class="hist-cat"><div class="hist-cat-label">Activity History</div>';
-      headliners.forEach(a => {
-        const loc = [a.venue, a.country].filter(Boolean).join(' · ');
+      nonRes.forEach(a => {
+        // Type label: support both old format (clubGig+role) and new format (headliner/support/festival/live/other)
         let typeLabel = '';
-        if (a.type==='clubGig') { typeLabel = (a.role||'').includes('Headliner') ? 'HEADLINER' : ((a.role||'').includes('Support') ? 'SPORT' : ''); }
-        else if (a.type==='festival') { typeLabel = 'FESTIVAL'; }
-        else if (a.type==='live') { typeLabel = 'LIVE'; }
-        html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(a.year||'')+(typeLabel?'<div class="hist-role-label">'+typeLabel+'</div>':'')+'</div><div><div class="hist-venue">'+esc(a.eventName||a.name||'')+'</div>'+(loc?'<div class="hist-loc">'+esc(loc)+'</div>':'')+(a.description?'<div class="hist-loc">'+esc(a.description)+'</div>':'')+'</div></div>';
+        if (a.type==='clubGig') { typeLabel = (a.role||'').includes('Headliner') ? 'HEADLINER' : ((a.role||'').includes('Support') ? 'SUPPORT' : ''); }
+        else if (a.type==='headliner') typeLabel = 'HEADLINER';
+        else if (a.type==='support') typeLabel = 'SUPPORT';
+        else if (a.type==='festival') typeLabel = 'FESTIVAL';
+        else if (a.type==='live') typeLabel = 'LIVE';
+        else if (a.type==='other') typeLabel = (a._otherText || 'OTHER').toUpperCase();
+        else if (a.type==='media') typeLabel = 'MEDIA';
+        // Title: support old (eventName/name) and new (title) format
+        const displayTitle = a.title || a.eventName || a.name || '';
+        // Description: new format uses description directly; old format had venue/country
+        let desc = a.description || '';
+        if (!desc) { const loc = [a.venue, a.country].filter(Boolean).join(' - '); if (loc) desc = loc; }
+        html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(a.year||'')+(typeLabel?'<div class="hist-role-label">'+typeLabel+'</div>':'')+'</div><div><div class="hist-venue">'+esc(displayTitle)+'</div>'+(desc?'<div class="hist-loc">'+esc(desc)+'</div>':'')+'</div></div>';
       });
       html += '</div>';
-    }
-    if (others.length) {
-      others.forEach(a => {
-        html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(a.year||'')+'</div><div><div class="hist-venue">'+esc(a.title||a.name||'')+'</div>'+(a.url?'<div class="hist-loc"><a href="'+esc(a.url)+'" target="_blank" style="color:inherit">'+esc(a.url)+'</a></div>':'')+(a.description?'<div class="hist-loc">'+esc(a.description)+'</div>':'')+'</div></div>';
-      });
     }
     if (awards.length) {
       html += '<div class="hist-cat"><div class="hist-cat-label">Award</div>';
