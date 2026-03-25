@@ -562,8 +562,8 @@ function renderProfile(d) {
   }
   function monthLabel(m) { const i=parseInt(m,10); return (i>=1&&i<=12)?MONTH_SHORT[i]:''; }
 
-  const debutYear = (d.debutYear||'').trim();
-  const debutMonth = (d.debutMonth||'').trim();
+  const debutYear = String(d.debutYear||'').trim();
+  const debutMonth = String(d.debutMonth||'').trim();
   if (activities.length || awards.length || releases.length || debutYear) {
     let html = '';
 
