@@ -562,8 +562,19 @@ function renderProfile(d) {
   }
   function monthLabel(m) { const i=parseInt(m,10); return (i>=1&&i<=12)?MONTH_SHORT[i]:''; }
 
-  if (activities.length || awards.length || releases.length) {
+  const debutYear = (d.debutYear||'').trim();
+  const debutMonth = (d.debutMonth||'').trim();
+  if (activities.length || awards.length || releases.length || debutYear) {
     let html = '';
+
+    // Debut date
+    if (debutYear) {
+      const dm = monthLabel(debutMonth);
+      html += '<div class="hist-cat"><div class="hist-cat-label">Debut</div>';
+      html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(debutYear)+(dm?'<div class="hist-month">'+dm+'</div>':'')+'</div><div><div class="hist-venue">Started</div></div></div>';
+      html += '</div>';
+    }
+
     const residencies = activities.filter(a=>a.type==='residency');
     const nonRes = activities.filter(a=>a.type!=='residency');
 
