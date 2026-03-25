@@ -571,10 +571,11 @@ function renderProfile(d) {
       html += '<div class="hist-cat"><div class="hist-cat-label">Resident</div>';
       residencies.forEach(a => {
         const s = splitYearMonth(a.startDate);
-        const e = a.currentlyRunning ? {month:'',year:'Present'} : splitYearMonth(a.endDate);
+        const e = a.currentlyRunning ? null : splitYearMonth(a.endDate);
         const yearHtml = '<div class="res-year-block">' +
           '<div class="res-col">'+(s.month?'<span class="res-month">'+esc(s.month)+'</span>':'')+'<span>'+esc(s.year)+'</span></div>' +
-          (e.year ? '<span class="res-dash"> — </span><div class="res-col">'+(e.month?'<span class="res-month">'+esc(e.month)+'</span>':'')+'<span>'+esc(e.year)+'</span></div>' : '') +
+          (a.currentlyRunning ? '<span class="res-dash"> —</span>' :
+           (e && e.year ? '<span class="res-dash"> — </span><div class="res-col">'+(e.month?'<span class="res-month">'+esc(e.month)+'</span>':'')+'<span>'+esc(e.year)+'</span></div>' : '')) +
           '</div>';
         html += '<div class="hist-item"><div class="hist-year">'+yearHtml+'</div><div><div class="hist-venue">'+esc(a.venue)+'</div>'+(a.country?'<div class="hist-loc">'+esc(a.country)+'</div>':'')+(a.description?'<div class="hist-loc">'+esc(a.description)+'</div>':'')+'</div></div>';
       });
