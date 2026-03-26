@@ -602,7 +602,7 @@ function renderProfile(d) {
         else if (a.type==='support') typeLabel = 'SUPPORT';
         else if (a.type==='festival') typeLabel = 'FESTIVAL';
         else if (a.type==='live') typeLabel = 'LIVE';
-        else if (a.type==='other') typeLabel = (a._otherText || 'OTHER').toUpperCase();
+        else if (a.type==='other') typeLabel = a._otherText ? a._otherText.toUpperCase() : '';
         else if (a.type==='media') typeLabel = 'MEDIA';
         const displayTitle = a.title || a.eventName || a.name || '';
         let desc = a.description || '';
