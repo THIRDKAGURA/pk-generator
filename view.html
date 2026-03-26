@@ -564,16 +564,16 @@ function renderProfile(d) {
 
   const debutYear = String(d.debutYear||'').trim();
   const debutMonth = String(d.debutMonth||'').trim();
+  // Update HISTORY header with debut info
+  if (debutYear) {
+    const dm = monthLabel(debutMonth);
+    const sinceText = dm ? dm + ' ' + esc(debutYear) : esc(debutYear);
+    const histLabel = document.querySelector('[data-sec="history"] .toc-label');
+    if (histLabel) histLabel.innerHTML = 'History <span style="font-size:9px;color:var(--text-muted);margin-left:6px;font-weight:400;letter-spacing:0.5px">Since ' + sinceText + '</span>';
+  }
+
   if (activities.length || awards.length || releases.length || debutYear) {
     let html = '';
-
-    // Debut date
-    if (debutYear) {
-      const dm = monthLabel(debutMonth);
-      html += '<div class="hist-cat"><div class="hist-cat-label">Debut</div>';
-      html += '<div class="hist-item"><div class="hist-year hl-year">'+esc(debutYear)+(dm?'<div class="hist-month">'+dm+'</div>':'')+'</div><div><div class="hist-venue">Started</div></div></div>';
-      html += '</div>';
-    }
 
     const residencies = activities.filter(a=>a.type==='residency');
     const nonRes = activities.filter(a=>a.type!=='residency');
